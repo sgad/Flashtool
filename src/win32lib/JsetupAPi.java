@@ -76,6 +76,10 @@ public class JsetupAPi {
 		return setupapi.SetupDiGetClassDevs(USBGuid, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_DEVICEINTERFACE|SetupApi.DIGCF_PROFILE|SetupApi.DIGCF_ALLCLASSES);
 	}
 	
+	public static HDEVINFO getHandleForConnectedDevices() {
+		return setupapi.SetupDiGetClassDevs(null, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_PROFILE|SetupApi.DIGCF_ALLCLASSES);
+	}
+
 	public static boolean isInstalled(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData) {
 		byte[] res = {'a','a','a','a'};
 		setupapi.SetupDiGetDeviceRegistryProperty(DeviceInfoSet, DeviceInfoData, SetupApi.SPDRP_INSTALL_STATE,null,res,4,null);

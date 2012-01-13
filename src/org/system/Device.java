@@ -73,9 +73,31 @@ public class Device {
 	        } while (DeviceInfoData!=null);
 	        JsetupAPi.destroyHandle(hDevInfo);
         }
-    	synchronized (lastid) {
+    	hDevInfo = JsetupAPi.getHandleForConnectedDevices();
+        if (hDevInfo.equals(WinBase.INVALID_HANDLE_VALUE)) {
+        	MyLogger.getLogger().error("Cannot have device list");
+        }
+        else {
+        	SP_DEVINFO_DATA DeviceInfoData;
+        	int index = 0;
+	        do {
+	        	DeviceInfoData = JsetupAPi.enumDevInfo(hDevInfo, index);
+	            String devid = JsetupAPi.getDevId(hDevInfo, DeviceInfoData);
+	            if (devid.contains("VID_0FCE")) {
+	            	id.addDevId(devid);
+	            	if (!JsetupAPi.isInstalled(hDevInfo, DeviceInfoData))
+	            		id.setDriverOk(devid,false);
+	            	else
+	            		id.setDriverOk(devid,true);
+	            }
+	            index++;
+	        } while (DeviceInfoData!=null);
+	        JsetupAPi.destroyHandle(hDevInfo);
+        }
+        synchronized (lastid) {
     		lastid=id;
     	}
+        System.out.println(id.getSerial());
     	return id;
     }
 

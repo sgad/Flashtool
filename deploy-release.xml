@@ -90,10 +90,6 @@
         	<fileset dir="./win32"
     			excludes="**/.svn"/>
         </copy>
-        <copy todir="../Deploy/FlashTool/drivers">
-        	<fileset dir="./drivers"
-    			excludes="**/.svn"/>
-        </copy>
     </target>
 
     <target name="E15 Device">

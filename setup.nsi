@@ -9,7 +9,7 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.6.6.0
+!define VERSION 0.6.7.0
 !define COMPANY Androxyde
 !define URL http://androxyde.github.com/Flashtool/
 
@@ -48,7 +48,7 @@ InstallDir C:\Flashtool
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.6.6.0
+VIProductVersion ${VERSION}
 VIAddVersionKey ProductName Flashtool
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

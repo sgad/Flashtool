@@ -6,7 +6,7 @@ RequestExecutionLevel highest
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Flashtool Drivers"
-!define PRODUCT_VERSION "1.0.0"
+!define PRODUCT_VERSION "1.0.1"
 !define PRODUCT_PUBLISHER "Androxyde"
 !define PRODUCT_WEB_SITE "http://androxyde.github.com/Flashtool/"
 
@@ -43,44 +43,44 @@ ShowInstDetails show
 
 Section /o "X10 ADB Drivers" SEC01
   SetOutPath "$TEMP\Flashtool\ADB\X10"
-  File /r "..\Deploy\Drivers\ADB\X10\*"
+  File /r "Drivers\ADB\X10\*"
 SectionEnd
 
 Section /o "Arc-Play-Neo-Acro ADB Drivers" SEC02
   SetOutPath "$TEMP\Flashtool\ADB\Arc-Play-Neo-Acro"
-  File /r "..\Deploy\Drivers\ADB\Arc-Play-Neo-Acro\*"
+  File /r "Drivers\ADB\Arc-Play-Neo-Acro\*"
 SectionEnd
 
 Section /o "Pro-Ray ADB Drivers" SEC03
   SetOutPath "$TEMP\Flashtool\ADB\Pro-Ray"
-  File /r "..\Deploy\Drivers\ADB\Pro-Ray\*"
+  File /r "Drivers\ADB\Pro-Ray\*"
 SectionEnd
 
 Section /o "X8 ADB Drivers" SEC04
   SetOutPath "$TEMP\Flashtool\ADB\X8"
-  File /r "..\Deploy\Drivers\ADB\X8\*"
+  File /r "Drivers\ADB\X8\*"
 SectionEnd
 
 Section /o "X10 MiniPro ADB Drivers" SEC05
   SetOutPath "$TEMP\Flashtool\ADB\X10 MiniPro"
-  File /r "..\Deploy\Drivers\ADB\X10 MiniPro\*"
+  File /r "Drivers\ADB\X10 MiniPro\*"
 SectionEnd
 
 Section /o "Flashmode Drivers" SEC06
   SetOutPath "$TEMP\Flashtool\GordonGate"
-  File /r "..\Deploy\Drivers\GordonGate\*"
+  File /r "Drivers\GordonGate\*"
 SectionEnd
 
 Section /o "Fastboot Drivers" SEC07
   SetOutPath "$TEMP\Flashtool\Fastboot"
-  File /r "..\Deploy\Drivers\FASTBOOT\*"
+  File /r "Drivers\FASTBOOT\*"
 SectionEnd
 
 Section -Post
   SetOutPath "$TEMP\Flashtool"
-  File "..\Deploy\Drivers\dpinst.xml"
-  File "..\Deploy\Drivers\DPInst32.exe"
-  File "..\Deploy\Drivers\DPInst64.exe"
+  File "Drivers\dpinst.xml"
+  File "Drivers\DPInst32.exe"
+  File "Drivers\DPInst64.exe"
   ${If} ${RunningX64}
      ExecWait '"$TEMP\Flashtool\dpinst64.exe"'
   ${Else}

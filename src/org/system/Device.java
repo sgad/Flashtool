@@ -12,9 +12,11 @@ import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.logger.MyLogger;
 import com.sun.jna.platform.win32.WinBase;
+
+import win32lib.JKernel32;
 import win32lib.JsetupAPi;
 import win32lib.SetupApi.HDEVINFO;
-import win32lib.SetupApi.SP_DEVINFO_DATA;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 
 public class Device {	
 
@@ -97,7 +99,6 @@ public class Device {
         synchronized (lastid) {
     		lastid=id;
     	}
-        System.out.println(id.getSerial());
     	return id;
     }
 

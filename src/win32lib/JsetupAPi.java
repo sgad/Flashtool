@@ -2,11 +2,12 @@ package win32lib;
 
 import org.logger.MyLogger;
 import win32lib.SetupApi.HDEVINFO;
-import win32lib.SetupApi.SP_DEVICE_INTERFACE_DATA;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA;
 import win32lib.SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA;
-import win32lib.SetupApi.SP_DEVINFO_DATA;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -14,6 +15,7 @@ public class JsetupAPi {
 	
 	static SetupApi setupapi = (SetupApi) Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.UNICODE_OPTIONS);
     public static GUID USBGuid = new GUID();
+    private static SP_DEVINFO_DATA DeviceInfoData = new SP_DEVINFO_DATA();
     
     static {
 	    USBGuid.Data1=0xA5DCBF10;
@@ -22,12 +24,13 @@ public class JsetupAPi {
 	    USBGuid.Data4=new byte[8];
 	    USBGuid.Data4[0]=(byte)0x90;
 	    USBGuid.Data4[1]=(byte)0x1F;
-	    USBGuid.Data4[2]=(byte)0x00; 
-	    USBGuid.Data4[3]=(byte)0xC0; 
-	    USBGuid.Data4[4]=(byte)0x4F; 
-	    USBGuid.Data4[5]=(byte)0xB9; 
-	    USBGuid.Data4[6]=(byte)0x51; 
+	    USBGuid.Data4[2]=(byte)0x00;
+	    USBGuid.Data4[3]=(byte)0xC0;
+	    USBGuid.Data4[4]=(byte)0x4F;
+	    USBGuid.Data4[5]=(byte)0xB9;
+	    USBGuid.Data4[6]=(byte)0x51;
 	    USBGuid.Data4[7]=(byte)0xED;
+	    DeviceInfoData.cbSize = DeviceInfoData.size();
     }
 	
 	public static String getClassName(GUID guid) {
@@ -65,19 +68,19 @@ public class JsetupAPi {
 	}
 	
 	public static SP_DEVINFO_DATA enumDevInfo(HDEVINFO hDevInfo, int index) {
-        SP_DEVINFO_DATA DeviceInfoData = new SP_DEVINFO_DATA();
-        DeviceInfoData.cbSize = DeviceInfoData.size();
 		int result = setupapi.SetupDiEnumDeviceInfo(hDevInfo, index, DeviceInfoData);
-		if (result == 0) DeviceInfoData=null;
+		if (result == 0) {
+			return null;
+		}
 		return DeviceInfoData;
 	}
 	
 	public static HDEVINFO getHandleForConnectedInterfaces() {
-		return setupapi.SetupDiGetClassDevs(USBGuid, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_DEVICEINTERFACE|SetupApi.DIGCF_PROFILE|SetupApi.DIGCF_ALLCLASSES);
+		return setupapi.SetupDiGetClassDevs(USBGuid, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_DEVICEINTERFACE);
 	}
 	
 	public static HDEVINFO getHandleForConnectedDevices() {
-		return setupapi.SetupDiGetClassDevs(null, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_PROFILE|SetupApi.DIGCF_ALLCLASSES);
+		return setupapi.SetupDiGetClassDevs(null, null, null, SetupApi.DIGCF_PRESENT|SetupApi.DIGCF_ALLCLASSES);
 	}
 
 	public static boolean isInstalled(HDEVINFO DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData) {
@@ -116,15 +119,18 @@ public class JsetupAPi {
     	    /* Obtain the length of the detailed data structure, and then allocate space and retrieve it */
     	    result = setupapi.SetupDiGetDeviceInterfaceDetail(hDevInfo, DeviceInterfaceData, null, 0, reqlength, null);
     	    // Create SP_DEVICE_INTERFACE_DETAIL_DATA structure and set appropriate length for device Path */
-    	    SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData      = new SP_DEVICE_INTERFACE_DETAIL_DATA();
-    	    SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailDataDummy = new SP_DEVICE_INTERFACE_DETAIL_DATA();
-    	    DeviceInterfaceDetailData.cbSize = DeviceInterfaceDetailDataDummy.size();
-    	    DeviceInterfaceDetailData.devicePath = new char[reqlength.getValue()];
+    	    SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData      = new SP_DEVICE_INTERFACE_DETAIL_DATA(reqlength.getValue());
     	    result = setupapi.SetupDiGetDeviceInterfaceDetail(hDevInfo, DeviceInterfaceData, DeviceInterfaceDetailData, reqlength.getValue(), reqlength, null);
     	    devpath = Native.toString(DeviceInterfaceDetailData.devicePath);
+    	    if (devpath.length()==0) {
+        	    SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailDataDummy      = new SP_DEVICE_INTERFACE_DETAIL_DATA();
+        	    DeviceInterfaceDetailData.cbSize=DeviceInterfaceDetailDataDummy.size();
+        	    result = setupapi.SetupDiGetDeviceInterfaceDetail(hDevInfo, DeviceInterfaceData, DeviceInterfaceDetailData, reqlength.getValue(), reqlength, null);
+        	    devpath = Native.toString(DeviceInterfaceDetailData.devicePath);
+    	    }
             index++;
         } while (true);
         return devpath;
 	}
-
+	
 }

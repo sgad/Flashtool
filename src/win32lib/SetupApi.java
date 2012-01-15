@@ -2,11 +2,15 @@ package win32lib;
 
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA;
 
 /** 
  * Declare a Java interface that holds the native "setupapi.dll" library methods by extending the W32API interface. 
@@ -29,34 +33,43 @@ public interface SetupApi extends Library {
         public int DriverVersion;
     }
 
-    public static class SP_DEVINFO_DATA extends Structure {
-        public SP_DEVINFO_DATA() {
-            ClassGuid = new GUID();
+    
+    public static class SP_DEVICE_INTERFACE_DETAIL_DATA extends Structure {
+
+        public static class ByReference extends SP_DEVINFO_DATA implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
         }
-        public int  cbSize;
-        public GUID ClassGuid;
-        public int  DevInst;
-        public int  Reserved;
+
+        public SP_DEVICE_INTERFACE_DETAIL_DATA() {
+            cbSize = size();
+            setAlignType(Structure.ALIGN_NONE);
+        }
+        
+        public SP_DEVICE_INTERFACE_DETAIL_DATA(int size) {
+        	cbSize = size();
+        	devicePath = new char[size];
+        	setAlignType(Structure.ALIGN_NONE);
+        }
+
+        public SP_DEVICE_INTERFACE_DETAIL_DATA(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        /**
+         * The size, in bytes, of the SP_DEVINFO_DATA structure.
+         */
+        public int cbSize;
+
+        public char[] devicePath = new char[1];
+
     }
 
-    public static class SP_DEVICE_INTERFACE_DATA extends Structure {
-        public SP_DEVICE_INTERFACE_DATA() {
-            InterfaceClassGuid = new GUID();
-        }
-        public int  cbSize;
-        public GUID InterfaceClassGuid;
-        public int  Flags;
-        public int  Reserved;
-    }
- 
-    public static class SP_DEVICE_INTERFACE_DETAIL_DATA extends Structure {
-        public int cbSize;
-        public char[] devicePath = new char[1];
-        public SP_DEVICE_INTERFACE_DETAIL_DATA() {
-            setAlignType(Structure.ALIGN_NONE);
-        }        
-    }
-	
     public static int DIGCF_DEFAULT         = 0x00000001; 
     public static int DIGCF_PRESENT         = 0x00000002;
     public static int DIGCF_ALLCLASSES      = 0x00000004; 

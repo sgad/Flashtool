@@ -8,9 +8,17 @@
 	<target name="JRE">
         <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
         <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-        <unzip src="jre/winjre.zip" dest="../Deploy/FlashTool/x10flasher_lib"/>
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
+		<unzip src="jre/winjre.zip" dest="../Deploy/FlashTool/x10flasher_lib"/>
 		<untar src="jre/linjre.tar" dest="../Deploy/FlashTool/x10flasher_lib"/>
-    </target>
+		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre64/bin" perm="755" includes="**/*"/>
+		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre32/bin" perm="755" includes="**/*"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linjre32/lib/jexec" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linjre64/lib/jexec" perm="755"/>
+		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre64/lib" perm="755" includes="**/*.so"/>
+		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre32/lib" perm="755" includes="**/*.so"/>
+	</target>
 
 	<target name="clean">
     	<mkdir dir="../Deploy"/>
@@ -67,7 +75,8 @@
 		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
         <copy file="./linux/FlashTool" todir="../Deploy/FlashTool"/>
 		<copy file="./linux/FlashToolConsole" todir="../Deploy/FlashTool"/>
-    	<chmod file="../Deploy/FlashTool/XperiaFlashTool" perm="755"/>
+		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
         <copy file="./linux/adb" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<copy file="./linux/fastboot" todir="../Deploy/FlashTool/x10flasher_lib"/>
     	<copy todir="../Deploy/FlashTool/x10flasher_lib">

@@ -37,9 +37,9 @@ public class AdbUtility  {
 	public static String getShPath(boolean force) {
 		if (shpath==null || force) {
 			try {
-				OsRun command = new OsRun(new String[] {adbpath,"shell", "type /system/xbin/sh"});
+				OsRun command = new OsRun(new String[] {adbpath,"shell", "ls /system/xbin/sh"});
 				command.run();
-				if (command.getStdOut().contains("not found")) {
+				if (command.getStdOut().contains("No such")) {
 					OsRun command1 = new OsRun(new String[] {adbpath,"shell", "'echo $0'"});
 					command.run();
 					shpath = command.getStdOut().trim();

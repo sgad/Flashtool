@@ -6,7 +6,7 @@
 
 .dynamic-tab-pane-control .tab-row .tab {
 
-	width:				70px;
+	width:				90px;
 	height:				16px;
 	background-image:	url( "tab.png" );
 	
@@ -29,7 +29,7 @@
 }
 
 .dynamic-tab-pane-control .tab-row .tab.selected {
-	width:				74px !important;
+	width:				94px !important;
 	height:				18px !important;
 	background-image:	url( "tab.active.png" ) !important;
 	background-repeat:	no-repeat;
@@ -51,7 +51,7 @@
 
 .dynamic-tab-pane-control .tab-row .tab.hover {
 	font:				11px Tahoma;
-	width:				70px;
+	width:				90px;
 	height:				16px;
 	background-image:	url( "tab.hover.png" );
 	background-repeat:	no-repeat;

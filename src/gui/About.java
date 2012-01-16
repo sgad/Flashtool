@@ -58,7 +58,7 @@ public class About extends JDialog {
 		}
 		{
 			
-			JLabel lblJavaVersion = new JLabel("Java Version " + System.getProperty("java.version"));
+			JLabel lblJavaVersion = new JLabel("Java Version " + System.getProperty("java.version") + " " + System.getProperty("sun.arch.data.model") + "bits Edition");
 			lblJavaVersion.setHorizontalAlignment(SwingConstants.CENTER);
 			lblJavaVersion.setBounds(10, 61, 348, 14);
 			contentPanel.add(lblJavaVersion);

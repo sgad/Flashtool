@@ -146,6 +146,7 @@ public class FlasherGUI extends JFrame {
 			System.exit(1);
 		}
 		MyLogger.getLogger().info("Flashtool "+About.getVersion());
+		MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
 		String userdir = System.getProperty("user.dir");
 		String pathsep = System.getProperty("path.separator");
 		System.setProperty("java.library.path", OS.getWinDir()+pathsep+OS.getSystem32Dir()+pathsep+userdir+fsep+"x10flasher_lib");

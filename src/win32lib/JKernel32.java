@@ -32,7 +32,23 @@ public class JKernel32 {
 		if (HandleToDevice == WinBase.INVALID_HANDLE_VALUE) throw new IOException(getLastError());
 		return true;
 	}
-	
+
+	public static boolean openDeviceAsync() throws IOException {
+        /* Kernel32RW.GENERIC_READ | Kernel32RW.GENERIC_WRITE not used in dwDesiredAccess field for system devices such a keyboard or mouse */
+        int shareMode = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
+        int Access = WinNT.GENERIC_WRITE | WinNT.GENERIC_READ;
+		HandleToDevice = Kernel32.INSTANCE.CreateFile(
+                Device.getConnectedDeviceWin32().getDevPath(), 
+                Access, 
+                shareMode, 
+                null, 
+                WinNT.OPEN_EXISTING, 
+                WinNT.FILE_FLAG_OVERLAPPED, 
+                (WinNT.HANDLE)null);
+		if (HandleToDevice == WinBase.INVALID_HANDLE_VALUE) throw new IOException(getLastError());
+		return true;
+	}
+
 	public static byte[] readBytes(int bufsize) throws IOException {
 		IntByReference nbread = new IntByReference();
 		byte[] b = new byte[bufsize];
@@ -40,7 +56,23 @@ public class JKernel32 {
 		if (!result) throw new IOException("Read error :"+getLastError());
 		return BytesUtil.getReply(b,nbread.getValue());
 	}
-	
+
+	public static byte[] readBytesAsync(int bufsize) throws IOException {
+		IntByReference nbread = new IntByReference();
+		WinBase.OVERLAPPED ov = new WinBase.OVERLAPPED();
+		ov.Offset     = 0; 
+		ov.OffsetHigh = 0;
+		ov.hEvent = kernel32.CreateEvent(null, true, false, null);
+		byte[] b = new byte[bufsize];
+		boolean result = kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, ov);
+		if (!result) {
+			result = kernel32.GetOverlappedResult(HandleToDevice, ov, nbread, true);
+			System.out.println(JKernel32.getLastError());
+		}
+		kernel32.CloseHandle(ov.hEvent);
+		return BytesUtil.getReply(b,nbread.getValue());
+	}
+
 	public static boolean writeBytes(byte bytes[]) throws IOException {
 		IntByReference nbwritten = new IntByReference();
 		boolean result = kernel32.WriteFile(HandleToDevice, bytes, bytes.length, nbwritten, null);

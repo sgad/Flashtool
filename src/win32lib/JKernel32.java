@@ -16,6 +16,8 @@ public class JKernel32 {
 
 	public static Kernel32RW kernel32 = (Kernel32RW) Native.loadLibrary("kernel32", Kernel32RW.class, W32APIOptions.UNICODE_OPTIONS);
 	static WinNT.HANDLE HandleToDevice = WinBase.INVALID_HANDLE_VALUE;
+	static WinBase.OVERLAPPED ovread = new WinBase.OVERLAPPED();
+	static WinBase.OVERLAPPED ovwrite = new WinBase.OVERLAPPED();
 
 	public static boolean openDevice() throws IOException {
         /* Kernel32RW.GENERIC_READ | Kernel32RW.GENERIC_WRITE not used in dwDesiredAccess field for system devices such a keyboard or mouse */
@@ -57,20 +59,55 @@ public class JKernel32 {
 		return BytesUtil.getReply(b,nbread.getValue());
 	}
 
+	public static WinNT.HANDLE createEvent() throws IOException {
+		WinNT.HANDLE hevent = kernel32.CreateEvent(null, true, false, null);
+		if (hevent == WinBase.INVALID_HANDLE_VALUE)
+				throw new IOException(JKernel32.getLastError());
+		return hevent;
+	}
+	
 	public static byte[] readBytesAsync(int bufsize) throws IOException {
 		IntByReference nbread = new IntByReference();
-		WinBase.OVERLAPPED ov = new WinBase.OVERLAPPED();
-		ov.Offset     = 0; 
-		ov.OffsetHigh = 0;
-		ov.hEvent = kernel32.CreateEvent(null, true, false, null);
+		ovread.Offset     = 0; 
+		ovread.OffsetHigh = 0;
+		ovread.hEvent = JKernel32.createEvent();
 		byte[] b = new byte[bufsize];
-		boolean result = kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, ov);
-		if (!result) {
-			result = kernel32.GetOverlappedResult(HandleToDevice, ov, nbread, true);
-			System.out.println(JKernel32.getLastError());
+		boolean result = kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, ovread);
+		while (!result) {
+			kernel32.WaitForSingleObject(ovread.hEvent, 10000);
+			result = kernel32.GetOverlappedResult(HandleToDevice, ovread, nbread, false);
+			result = (kernel32.GetLastError()!=997);
+			System.out.println("Read GetOverlappedResult : "+JKernel32.getLastError());
+			System.out.println(result + " " + kernel32.GetLastError());
 		}
-		kernel32.CloseHandle(ov.hEvent);
+		kernel32.CloseHandle(ovread.hEvent);
+		System.out.println("Read CloseHandle : "+JKernel32.getLastError());
 		return BytesUtil.getReply(b,nbread.getValue());
+	}
+	
+	public static void sleep(int ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (Exception e) {}
+	}
+	
+	public static boolean writeBytesAsync(byte bytes[]) throws IOException {
+		System.out.println("Writing to device");
+		IntByReference nbwritten = new IntByReference();
+		ovwrite.Offset     = 0; 
+		ovwrite.OffsetHigh = 0;
+		ovwrite.hEvent = JKernel32.createEvent();
+		boolean result = kernel32.WriteFile(HandleToDevice, bytes, bytes.length, nbwritten,ovwrite);
+		while (!result) {
+			kernel32.WaitForSingleObject(ovwrite.hEvent, 3000);
+			result = kernel32.GetOverlappedResult(HandleToDevice, ovwrite, nbwritten, true);
+			System.out.println("Write GetOverlappedResult : "+JKernel32.getLastError());
+		}
+		kernel32.CloseHandle(ovwrite.hEvent);
+		System.out.println("Write CloseHandle : "+JKernel32.getLastError());
+		if (nbwritten.getValue()!=bytes.length) throw new IOException("Did not write all data");
+		bytes = null;
+		return result;
 	}
 
 	public static boolean writeBytes(byte bytes[]) throws IOException {

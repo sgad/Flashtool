@@ -286,9 +286,11 @@ public class X10flash {
     	try {
     		USBFlash.open();
     		phoneident = new String (USBFlash.getLastReply());
+    		System.out.println(phoneident);
     	    cmd = new Command(_bundle.simulate());	
     		cmd.send(Command.CMD01, Command.VALNULL, false);
     		loaderident = new String (USBFlash.getLastReply());
+    		System.out.println(loaderident);
     		found = true;
     	}
     	catch (Exception e){

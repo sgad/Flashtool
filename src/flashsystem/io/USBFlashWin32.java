@@ -12,7 +12,7 @@ public class USBFlashWin32 {
 	
 	public static void open() throws IOException {
 		try {
-			JKernel32.openDeviceAsync();
+			JKernel32.openDevice();
 			readReply();
 		}catch (Exception e) {
 			if (lastreply == null) throw new IOException("Unable to read from device");
@@ -31,7 +31,7 @@ public class USBFlashWin32 {
 	}
 
 	public static boolean write(S1Packet p) throws IOException,X10FlashException {
-		JKernel32.writeBytesAsync(p.getByteArray());
+		JKernel32.writeBytes(p.getByteArray());
 		readReply();
 		return true;
 	}
@@ -41,7 +41,7 @@ public class USBFlashWin32 {
     	S1Packet p=null;
 		boolean finished = false;
 		while (!finished) {
-			byte[] read = JKernel32.readBytesAsync(0x10000);
+			byte[] read = JKernel32.readBytes(0x10000);
 			if (p==null) {
 				p = new S1Packet(read);
 			}

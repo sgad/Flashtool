@@ -96,6 +96,7 @@ public class X10flash {
 	        MyLogger.initProgress(0);
 	        tazone.close();
 	        tazoneS.close();
+	        cmd.send(Command.CMD04,Command.VALNULL,false);
 			MyLogger.getLogger().info("Dumping properties finished.");
 			DeviceChangedListener.pause(false);
 			closeDevice();
@@ -286,11 +287,11 @@ public class X10flash {
     	try {
     		USBFlash.open();
     		phoneident = new String (USBFlash.getLastReply());
-    		System.out.println(phoneident);
     	    cmd = new Command(_bundle.simulate());	
     		cmd.send(Command.CMD01, Command.VALNULL, false);
     		loaderident = new String (USBFlash.getLastReply());
-    		System.out.println(loaderident);
+    		LoaderInfo li = new LoaderInfo(loaderident);
+    		System.out.println(li.getProperty("LOADER_ROOT"));
     		found = true;
     	}
     	catch (Exception e){

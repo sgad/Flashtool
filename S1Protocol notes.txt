@@ -20,7 +20,7 @@ otherwise we are done with command.
 
 COMMANDS:
 0x01 - loader info?
-0x04 - 
+0x04 - Kick device off flashmode
 0x05 - write SIN header
 0x06 - write SIN
 0x07 - Get last error ?

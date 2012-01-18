@@ -16,7 +16,6 @@ public class JKernel32 {
 
 	public static Kernel32RW kernel32 = (Kernel32RW) Native.loadLibrary("kernel32", Kernel32RW.class, W32APIOptions.UNICODE_OPTIONS);
 	static WinNT.HANDLE HandleToDevice = WinBase.INVALID_HANDLE_VALUE;
-	static WinBase.OVERLAPPED ovread = new WinBase.OVERLAPPED();
 	static WinBase.OVERLAPPED ovwrite = new WinBase.OVERLAPPED();
 
 	public static boolean openDevice() throws IOException {
@@ -69,23 +68,24 @@ public class JKernel32 {
 	
 	public static byte[] readBytesAsync(int bufsize) throws IOException {
 		IntByReference nbread = new IntByReference();
+		WinBase.OVERLAPPED ovread = new WinBase.OVERLAPPED();
 		ovread.Offset     = 0; 
 		ovread.OffsetHigh = 0;
-		ovread.hEvent = JKernel32.createEvent();
+		//ovread.hEvent = JKernel32.createEvent();
 		System.out.println("Read Event created");
 		byte[] b = new byte[bufsize];
 		if (!kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, ovread)) {
 			System.out.println("Read done");
 			if (kernel32.GetLastError() == kernel32.ERROR_IO_PENDING) {
 				System.out.println("IO Pending, waiting event");
-				if (kernel32.WaitForSingleObject(ovread.hEvent, 10000)==kernel32.WAIT_OBJECT_0) {
+				//if (kernel32.WaitForSingleObject(ovread.hEvent, 10000)==kernel32.WAIT_OBJECT_0) {
 					System.out.println("Getting overlapped result");
-					kernel32.GetOverlappedResult(HandleToDevice, ovread, nbread, true);
-					System.out.println(JKernel32.getLastError());
-				}
-				else {
-					System.out.println(JKernel32.getLastError());
-				}
+					boolean result = kernel32.GetOverlappedResult(HandleToDevice, ovread, nbread, true);
+					System.out.println(result + " : " + JKernel32.getLastError());
+				//}
+				//else {
+				//	System.out.println(JKernel32.getLastError());
+				//}
 			}
 		}
 		kernel32.CloseHandle(ovread.hEvent);

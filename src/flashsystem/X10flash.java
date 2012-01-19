@@ -18,8 +18,7 @@ public class X10flash {
 
     private Bundle _bundle;
     private Command cmd;
-    private String phoneident = "";
-    private String loaderident = "";
+    private LoaderInfo phoneprops = null;
     byte readarray65[] = new byte[0x10000];
     byte readarray4[] = new byte[0x1000];
 
@@ -206,12 +205,8 @@ public class X10flash {
 	    return totalsize+13;
     }
 
-    public String getPhoneIdent() {
-    	return phoneident;
-    }
-
-    public String getLoaderIdent() {
-    	return loaderident;
+    public String getPhoneProperty(String property) {
+    	return phoneprops.getProperty(property);
     }
 
     private void init() throws X10FlashException,FileNotFoundException, IOException {
@@ -219,8 +214,11 @@ public class X10flash {
         cmd.send(Command.CMD10, Command.VALNULL, false);
 		sendLoader();		
 		cmd.send(Command.CMD01, Command.VALNULL, false);
-		loaderident = cmd.getLastReplyString();
-		MyLogger.getLogger().info(loaderident);
+		phoneprops.update(cmd.getLastReplyString());
+		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
+		if (phoneprops.getProperty("VER").startsWith("r"))
+			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
+		MyLogger.info("Loader version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
         cmd.send(Command.CMD09, Command.VAL2,false);    	
     }
 
@@ -286,16 +284,19 @@ public class X10flash {
     	boolean found=false;
     	try {
     		USBFlash.open();
-    		phoneident = new String (USBFlash.getLastReply());
+    		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
     	    cmd = new Command(_bundle.simulate());	
     		cmd.send(Command.CMD01, Command.VALNULL, false);
-    		loaderident = new String (USBFlash.getLastReply());
-    		LoaderInfo li = new LoaderInfo(loaderident);
-    		System.out.println(li.getProperty("LOADER_ROOT"));
+    		phoneprops.update(new String (USBFlash.getLastReply()));
+    		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
+    		if (phoneprops.getProperty("VER").startsWith("r"))
+				phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
+    		//System.out.println(getPhoneProperty("LOADER_ROOT"));
+    		//System.out.println(getPhoneProperty("ROOTING_STATUS"));
     		found = true;
     	}
     	catch (Exception e){
-    		found=false;    		
+    		found=false;
     	}
     	return found;
     }

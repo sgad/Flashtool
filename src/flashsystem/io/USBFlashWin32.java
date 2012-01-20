@@ -3,6 +3,9 @@ package flashsystem.io;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 import java.io.IOException;
+
+import org.logger.MyLogger;
+
 import win32lib.JKernel32;
 
 public class USBFlashWin32 {
@@ -12,7 +15,9 @@ public class USBFlashWin32 {
 	
 	public static void open() throws IOException {
 		try {
+    		MyLogger.getLogger().info("Opening device for R/W");
 			JKernel32.openDevice();
+			MyLogger.getLogger().info("Reading device information");
 			readReply();
 		}catch (Exception e) {
 			if (lastreply == null) throw new IOException("Unable to read from device");

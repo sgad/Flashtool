@@ -917,7 +917,7 @@ public class FlasherGUI extends JFrame {
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 					Shell shell = new Shell("busyhelper");
 					shell.run(true);
-					AdbUtility.push(new File("."+fsep+"custom"+fsep+"root"+fsep+"zergrush.tar").getAbsolutePath(),GlobalConfig.getProperty("deviceworkdir"));
+					AdbUtility.push(new File("."+fsep+"custom"+fsep+"root"+fsep+"zergrush.tar.uue").getAbsolutePath(),GlobalConfig.getProperty("deviceworkdir"));
 					shell = new Shell("rootit");
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(true);
@@ -942,7 +942,7 @@ public class FlasherGUI extends JFrame {
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 					Shell shell = new Shell("busyhelper");
 					shell.run(true);
-					AdbUtility.push("."+fsep+"custom"+fsep+"root"+fsep+"psneuter.tar",GlobalConfig.getProperty("deviceworkdir"));
+					AdbUtility.push("."+fsep+"custom"+fsep+"root"+fsep+"psneuter.tar.uue",GlobalConfig.getProperty("deviceworkdir"));
 					shell = new Shell("rootit");
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(false);

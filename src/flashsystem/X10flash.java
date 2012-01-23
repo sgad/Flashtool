@@ -284,7 +284,7 @@ public class X10flash {
     	boolean found=false;
     	try {
     		USBFlash.open();
-    		MyLogger.getLogger().info("Phone reading for flashing.");
+    		MyLogger.getLogger().info("Phone ready for flashing.");
     		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
     	    cmd = new Command(_bundle.simulate());	
     		cmd.send(Command.CMD01, Command.VALNULL, false);

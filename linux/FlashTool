@@ -13,8 +13,10 @@ then
 	echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
 fi
 
-chmod 755 ${BASEDIR}/x10flasher_lib/adb
-chmod 755 ${BASEDIR}/x10flasher_lib/fastboot
+chmod 755 ${BASEDIR}/x10flasher_lib/adb.linux
+chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.linux
+chmod 755 ${BASEDIR}/x10flasher_lib/adb.mac
+chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.mac
 
 if test -e ${JAVA_HOME}/bin/java
 then

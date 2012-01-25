@@ -24,10 +24,11 @@ public class OS {
 	
 	public static String getAdbPath() {
 			String fsep = OS.getFileSeparator();
-		   if (OS.getName().equals("linux"))
-			   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb").getAbsolutePath();
+		   if (OS.getName().equals("windows"))
+			   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb.exe").getAbsolutePath();
 		   else
-			   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb.exe").getAbsolutePath();	
+			   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb."+OS.getName()).getAbsolutePath();
+			   	
 	}
 
 	public static String get7z() {
@@ -38,9 +39,9 @@ public class OS {
 	public static String getFastBootPath() {
 		String fsep = OS.getFileSeparator();
 	   if (OS.getName().equals("linux"))
-		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot").getAbsolutePath();
+		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();
 	   else
-		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot.exe").getAbsolutePath();	
+		   return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"fastboot."+OS.getName()).getAbsolutePath();		   	
 	}
 	
 	public static String getWorkDir() {

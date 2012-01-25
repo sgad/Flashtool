@@ -153,6 +153,6 @@ public class Device {
     }
 
     public static void clean() {
-    	if (OS.getName().equals("linux")) JUsb.clean(); 
+    	if (!OS.getName().equals("windows")) JUsb.clean(); 
     }
 }

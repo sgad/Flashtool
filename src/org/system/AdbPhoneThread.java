@@ -6,6 +6,7 @@ import java.util.Scanner;
 import javax.swing.event.EventListenerList;
 
 import org.adb.AdbUtility;
+import org.logger.MyLogger;
 
 public class AdbPhoneThread extends Thread {
 	
@@ -26,15 +27,18 @@ public class AdbPhoneThread extends Thread {
 	
 	public void run() {
 		try {
+			
 			builder = new ProcessBuilder(OS.getAdbPath(), "status-window");
 			adb = builder.start();
 		    Thread t = new Thread() {
 		    	  public void run() {
 				      processInput = adb.getInputStream();
+				      boolean adbok = false;
 				      sc = new Scanner(processInput);
 				      DeviceIdent id = null;
 				      DeviceIdent newid = null;
 			    	  while (sc.hasNextLine()) {
+			    		  adbok=true;
 			    		  String line = sc.nextLine();
 			    		  if (line.contains("State")) {
 				    		  if (line.contains("device")) {
@@ -60,6 +64,11 @@ public class AdbPhoneThread extends Thread {
 				    		  }
 			    		  }
 			    	  }
+			    	  if (!adbok) {
+			    		  Scanner scerr = new Scanner(adb.getErrorStream());
+			    		  while (scerr.hasNextLine()) MyLogger.getLogger().error(scerr.nextLine());
+			    	  }
+				      
 		    	  }
 		    };
 		    t.start();
@@ -78,6 +87,7 @@ public class AdbPhoneThread extends Thread {
 			}
 		}
 		catch (Exception e) {
+			MyLogger.getLogger().error(e.getMessage());
 		}
 	}
 

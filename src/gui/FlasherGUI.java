@@ -126,8 +126,10 @@ public class FlasherGUI extends JFrame {
 	}
 
 	static public void runAdb() throws Exception {
-		if (OS.getName().equals("linux")) {
-			OsRun giveRights = new OsRun(new String[] {"chmod", "755", "./x10flasher_lib/adb"});
+		if (!OS.getName().equals("windows")) {
+			OsRun giveRights = new OsRun(new String[] {"chmod", "755", OS.getAdbPath()});
+			giveRights.run();
+			giveRights = new OsRun(new String[] {"chmod", "755", OS.getFastBootPath()});
 			giveRights.run();
 		}
 		killAdbandFastboot();

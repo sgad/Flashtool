@@ -77,9 +77,11 @@
 		<copy file="./linux/FlashToolConsole" todir="../Deploy/FlashTool"/>
 		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-        <copy file="./linux/adb" todir="../Deploy/FlashTool/x10flasher_lib"/>
-		<copy file="./linux/fastboot" todir="../Deploy/FlashTool/x10flasher_lib"/>
-    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
+        <copy file="./linux/adb.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
+		<copy file="./linux/fastboot.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
+        <copy file="./linux/adb.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
+        <copy file="./linux/fastboot.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="./libs"
 				excludes="**/.svn"/>
     	</copy>

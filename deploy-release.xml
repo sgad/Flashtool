@@ -67,7 +67,11 @@
     		<fileset dir="./src/org/lang/ressources"
 				excludes="**/.svn"/>
     	</copy>
-    	<copy file="./src/org/adb/config/x10list.properties" todir="../Deploy/FlashTool/custom/clean"/>
+        <copy todir="../Deploy/FlashTool/firmwares">
+            <fileset dir="./firmwares"
+                excludes="**/.svn"/>
+        </copy>
+		<copy file="./src/org/adb/config/x10list.properties" todir="../Deploy/FlashTool/custom/clean"/>
     	<copy file="./src/org/adb/config/customlist.properties" todir="../Deploy/FlashTool/custom/clean"/>
     	<copy file="./romupdates/psneuter.tar.uue" todir="../Deploy/FlashTool/custom/root"/>
     	<copy file="./romupdates/zergrush.tar.uue" todir="../Deploy/FlashTool/custom/root"/>

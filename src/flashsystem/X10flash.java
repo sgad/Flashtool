@@ -240,7 +240,7 @@ public class X10flash {
         	}
             
 			cmd.send(Command.CMD10,Command.VALNULL,false);            
-			cmd.send(Command.CMD04,Command.VALNULL,false);
+			
 	
 			closeDevice();
 			
@@ -276,6 +276,10 @@ public class X10flash {
     }
 
     public void closeDevice() {
+    	try {
+    		cmd.send(Command.CMD04,Command.VALNULL,false);
+    	}
+    	catch (Exception e) {}
     	USBFlash.close();
     }
     
@@ -284,7 +288,7 @@ public class X10flash {
     	boolean found=false;
     	try {
     		USBFlash.open();
-    		MyLogger.getLogger().info("Phone ready for flashing.");
+    		MyLogger.getLogger().info("Phone ready for flashmode operations.");
     		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
     	    cmd = new Command(_bundle.simulate());	
     		cmd.send(Command.CMD01, Command.VALNULL, false);

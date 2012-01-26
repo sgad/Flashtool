@@ -1338,8 +1338,10 @@ public class FlasherGUI extends JFrame {
 		        		while (e.hasMoreElements()) {
 		        			DeviceEntry current = Devices.getDevice((String)e.nextElement());
 		        			String prop = current.getBuildProp();
-		        			if (!buildprop.containsKey(prop))
-		        				buildprop.setProperty(prop,AdbUtility.getProperty(prop));
+		        			if (!buildprop.containsKey(prop)) {
+		        				String readprop = AdbUtility.getProperty(prop);
+		        				buildprop.setProperty(prop,readprop);
+		        			}
 		        			Iterator<String> i = current.getRecognitionList().iterator();
 		        			String localdev = buildprop.getProperty(prop);
 		        			while (i.hasNext()) {
@@ -1426,7 +1428,7 @@ public class FlasherGUI extends JFrame {
 		if (new File(OS.getWorkDir()+fsep+"devices"+fsep+Devices.getCurrent().getId()+fsep+"rebrand").isDirectory())
 			mntmBuildpropRebrand.setEnabled(true);
 		mntmRebootIntoRecoveryT.setEnabled(Devices.getCurrent().canRecovery());
-		mntmRebootDefaultRecovery.setEnabled(Devices.getCurrent().canRecovery());
+		mntmRebootDefaultRecovery.setEnabled(true);
 		mntmSetDefaultRecovery.setEnabled(Devices.getCurrent().canRecovery());
 		mntmSetDefaultKernel.setEnabled(Devices.getCurrent().canKernel());
 		mntmRebootCustomKernel.setEnabled(Devices.getCurrent().canKernel());

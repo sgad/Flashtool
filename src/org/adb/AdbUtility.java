@@ -2,6 +2,7 @@ package org.adb;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
@@ -168,6 +169,16 @@ public class AdbUtility  {
 			OsRun command = new OsRun(new String[] {adbpath,"shell", "getprop "+key});
 			command.run();
 			result = command.getStdOut().replaceAll("\n","");
+			if (result.length()==0) {
+				AdbUtility.pull("/system/build.prop", OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop");
+				Properties props = new Properties();
+				File build = new File(OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop");
+				FileInputStream fis = new FileInputStream(build);
+				props.load(fis);
+				fis.close();
+				build.delete();
+				result=props.getProperty(key);
+			}
 			if (!systemmounted) umount("/system");
 			return result;
 		}

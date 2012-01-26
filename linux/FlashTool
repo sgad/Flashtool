@@ -1,5 +1,6 @@
-export BASEDIR=$(dirname $0)
+#!/bin/sh
 
+export BASEDIR=$(dirname $0)
 export system64=$(uname -a|grep x86_64)
 
 if test -z "${JAVA_HOME}"

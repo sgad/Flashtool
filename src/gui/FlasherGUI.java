@@ -33,6 +33,7 @@ import org.system.CommentedPropertiesFile;
 import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
+import org.system.DeviceProperties;
 import org.system.Devices;
 import org.system.FileDrop;
 import org.system.GlobalConfig;
@@ -1339,7 +1340,7 @@ public class FlasherGUI extends JFrame {
 		        			DeviceEntry current = Devices.getDevice((String)e.nextElement());
 		        			String prop = current.getBuildProp();
 		        			if (!buildprop.containsKey(prop)) {
-		        				String readprop = AdbUtility.getProperty(prop);
+		        				String readprop = DeviceProperties.getProperty(prop);
 		        				buildprop.setProperty(prop,readprop);
 		        			}
 		        			Iterator<String> i = current.getRecognitionList().iterator();
@@ -1368,7 +1369,7 @@ public class FlasherGUI extends JFrame {
 			        			Devices.setCurrent(devid);
 				        		String reply = AskBox.getReplyOf("Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?");
 				        		if (reply.equals("yes")) {
-				        			String prop = AdbUtility.getProperty(Devices.getCurrent().getBuildProp());
+				        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
 				        			Devices.getCurrent().addRecognitionToList(prop);
 				        		}
 				        		if (!Devices.isWaitingForReboot())

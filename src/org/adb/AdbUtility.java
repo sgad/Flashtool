@@ -160,32 +160,6 @@ public class AdbUtility  {
 		}
 		return result;	
 	}
-
-	public static String getProperty(String key) {
-		try {
-			boolean systemmounted = isMounted("/system");
-			String result = "";
-			if (!systemmounted) mount("/system","ro","yaffs2");
-			OsRun command = new OsRun(new String[] {adbpath,"shell", "getprop "+key});
-			command.run();
-			result = command.getStdOut().replaceAll("\n","");
-			if (result.length()==0) {
-				AdbUtility.pull("/system/build.prop", OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop");
-				Properties props = new Properties();
-				File build = new File(OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"build.prop");
-				FileInputStream fis = new FileInputStream(build);
-				props.load(fis);
-				fis.close();
-				build.delete();
-				result=props.getProperty(key);
-			}
-			if (!systemmounted) umount("/system");
-			return result;
-		}
-		catch (Exception e) {
-			return "";
-		}
-	}
 	
 	public static String getFilePerms(String file) {
 		try {
@@ -318,7 +292,14 @@ public class AdbUtility  {
 	}
 	
 	public static void pull(String source, String destination) throws Exception {
-		MyLogger.getLogger().info("Pulling "+source+" to "+destination);
+		pull(source,destination,true);
+	}
+
+	public static void pull(String source, String destination, boolean log) throws Exception {
+		if (log)
+			MyLogger.getLogger().info("Pulling "+source+" to "+destination);
+		else
+			MyLogger.getLogger().debug("Pulling "+source+" to "+destination);
 		OsRun command = new OsRun(new String[] {adbpath,"pull",source, destination});
 		command.run();
 		if (command.getReturnCode()!=0) {

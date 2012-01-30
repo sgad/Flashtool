@@ -1,6 +1,7 @@
+#!/bin/sh
 
-fi
-rt BASEDIR=$(dirname $0)
+export BASEDIR=$(dirname $0)
+export system64=$(uname -a|grep x86_64|wc -l)
 
 show_help() {
 	echo Usage : FlashToolConsole [OPTIONS]
@@ -62,36 +63,35 @@ done
 
 if [ -e $p_file ]
 then
-     if test -z $p_data
-     then
-        p_data=$(echo yes)
-     fi
+    if test -z $p_data
+    then
+       p_data=$(echo yes)
+    fi
+    if test -z $p_cache
+    then
+       p_cache=$(echo yes)
+    fi
+    if test -z $p_system
+    then
+       p_system=$(echo yes)
+    fi
+    if test -z $p_kernel
+    then
+       p_kernel=$(echo yes)
+    fi
+    if test -z $p_baseband
+    then
+       p_baseband=$(echo yes)
+    fi
 
-     if test -z $p_cache
-     then
-        p_cache=$(echo yes)
-     fi
-
-     if test -z $p_system
-     then
-        p_system=$(echo yes)
-     fi
-
-     if test -z $p_kernel
-     then
-        p_kernel=$(echo yes)
-     fi
-
-     if test -z $p_baseband
-     then
-        p_baseband=$(echo yes)
-     fi
-
-	export system64=$(uname -a|grep x86_64)
+    chmod 755 ${BASEDIR}/x10flasher_lib/adb.linux
+    chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.linux
+    chmod 755 ${BASEDIR}/x10flasher_lib/adb.mac
+    chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.mac
 
 	if test -z "${JAVA_HOME}"
 	then
-       		if test -z "${system64}"
+       		if test "${system64}" = "0"
         	then
                 	export JAVA_HOME=${BASEDIR}/x10flasher_lib/linjre32
         	else

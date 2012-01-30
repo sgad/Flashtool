@@ -42,6 +42,7 @@ public class AdbPhoneThread extends Thread {
 			    		  String line = sc.nextLine();
 			    		  if (line.contains("State")) {
 				    		  if (line.contains("device")) {
+				    			  DeviceProperties.reload();
 				    			  id = Device.getLastConnected(first);
 				    			  newid = Device.getLastConnected(first);
 				    			  if (!GlobalState.getState(newid.getSerial(), newid.getPid()).equals("adb")) {

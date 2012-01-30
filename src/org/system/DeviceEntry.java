@@ -157,7 +157,7 @@ public class DeviceEntry {
 	}
 	
 	private void setVersion () {
-		_entry.setProperty("android.release",AdbUtility.getProperty("ro.build.version.release"));
+		_entry.setProperty("android.release",DeviceProperties.getProperty("ro.build.version.release"));
 	}
 	
 	public String getVersion() {

@@ -59,6 +59,7 @@ import java.awt.event.WindowEvent;
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
+import flashsystem.FlasherConsole;
 import flashsystem.SeusSinTool;
 import flashsystem.X10flash;
 import gui.EncDecGUI.MyFile;
@@ -68,6 +69,9 @@ import java.lang.reflect.Constructor;
 import javax.swing.JToolBar;
 import javax.swing.ImageIcon;
 import java.awt.Toolkit;
+
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 
 public class FlasherGUI extends JFrame {
@@ -140,27 +144,52 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		initLogger();
-		setSystemLookAndFeel();
-		runAdb();
-		if (!System.getProperty("java.version").contains("1.6")) {
-			AskBox.showOKbox("Your java version must be 1.6");
-			System.exit(1);
-		}
-		MyLogger.getLogger().info("Flashtool "+About.getVersion());
-		MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
-		String userdir = System.getProperty("user.dir");
-		String pathsep = System.getProperty("path.separator");
-		System.setProperty("java.library.path", OS.getWinDir()+pathsep+OS.getSystem32Dir()+pathsep+userdir+fsep+"x10flasher_lib");
-		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FlasherGUI frame = new FlasherGUI();
-					frame.setVisible(true);					
-				} catch (Exception e) {}
+		OptionParser parser = new OptionParser();
+		OptionSet options;
+        parser.accepts( "console" );
+        try {
+        	options = parser.parse(args);
+        }
+        catch (Exception e) {
+        	parser.accepts("action").withRequiredArg().required();
+        	parser.accepts("file").withOptionalArg().defaultsTo("");
+        	parser.accepts("method").withOptionalArg().defaultsTo("auto");
+        	parser.accepts("wipedata").withOptionalArg().defaultsTo("yes");
+        	parser.accepts("wipecache").withOptionalArg().defaultsTo("yes");
+        	parser.accepts("baseband").withOptionalArg().defaultsTo("yes");
+        	parser.accepts("system").withOptionalArg().defaultsTo("yes");
+        	parser.accepts("kernel").withOptionalArg().defaultsTo("yes");
+            options = parser.parse(args);        	
+        }
+        if (options.has("console")) {
+        	FlasherConsole.init();
+        	String action=(String)options.valueOf("action");
+        	if (action.toLowerCase().equals("flash"))
+        		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
+        }
+        else {
+			initLogger();
+			setSystemLookAndFeel();
+			runAdb();
+			if (!System.getProperty("java.version").contains("1.6")) {
+				AskBox.showOKbox("Your java version must be 1.6");
+				System.exit(1);
 			}
-		});
+			MyLogger.getLogger().info("Flashtool "+About.getVersion());
+			MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
+			String userdir = System.getProperty("user.dir");
+			String pathsep = System.getProperty("path.separator");
+			System.setProperty("java.library.path", OS.getWinDir()+pathsep+OS.getSystem32Dir()+pathsep+userdir+fsep+"x10flasher_lib");
+			Language.Init(GlobalConfig.getProperty("language").toLowerCase());
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						FlasherGUI frame = new FlasherGUI();
+						frame.setVisible(true);					
+					} catch (Exception e) {}
+				}
+			});
+        }
 	}
 
 	public FlasherGUI() {		

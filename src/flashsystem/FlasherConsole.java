@@ -15,6 +15,7 @@ import org.logger.MyLogger;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
+import org.system.DeviceProperties;
 import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;
@@ -186,7 +187,7 @@ public class FlasherConsole {
     			DeviceEntry current = Devices.getDevice((String)e.nextElement());
     			String prop = current.getBuildProp();
     			if (!buildprop.containsKey(prop)) {
-    				String readprop = AdbUtility.getProperty(prop);
+    				String readprop = DeviceProperties.getProperty(prop);
     				buildprop.setProperty(prop,readprop);
     			}
     			Iterator<String> i = current.getRecognitionList().iterator();

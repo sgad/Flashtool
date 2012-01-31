@@ -162,11 +162,17 @@ public class FlasherGUI extends JFrame {
         	parser.accepts("kernel").withOptionalArg().defaultsTo("yes");
             options = parser.parse(args);        	
         }
+        Language.Init(GlobalConfig.getProperty("language").toLowerCase());
         if (options.has("console")) {
         	FlasherConsole.init();
         	String action=(String)options.valueOf("action");
         	if (action.toLowerCase().equals("flash"))
         		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
+        	if (action.toLowerCase().equals("root"))
+        		FlasherConsole.doRoot();
+        	if (action.toLowerCase().equals("blunlock"))
+        		FlasherConsole.doBLUnlock();
+        	FlasherConsole.exit();
         }
         else {
 			initLogger();
@@ -181,7 +187,6 @@ public class FlasherGUI extends JFrame {
 			String userdir = System.getProperty("user.dir");
 			String pathsep = System.getProperty("path.separator");
 			System.setProperty("java.library.path", OS.getWinDir()+pathsep+OS.getSystem32Dir()+pathsep+userdir+fsep+"x10flasher_lib");
-			Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {

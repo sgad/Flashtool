@@ -1,6 +1,9 @@
 package flashsystem;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
@@ -12,7 +15,9 @@ import gui.FlasherGUI;
 
 import org.adb.AdbUtility;
 import org.logger.MyLogger;
+import org.plugins.PluginInterface;
 import org.system.AdbPhoneThread;
+import org.system.ClassPath;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
@@ -28,6 +33,7 @@ public class FlasherConsole {
 	
 	private static AdbPhoneThread phoneWatchdog;
 	private static String fsep = OS.getFileSeparator();
+	private static Properties plugins = new Properties();
 	
 	public static void init() {
 			MyLogger.disableTextArea();
@@ -81,18 +87,21 @@ public class FlasherConsole {
 	}
 	
 	public static void doRoot() {
+		Devices.waitForReboot(false);
 		if (Devices.getCurrent().getVersion().contains("2.3")) {
-			doRootzergRush();
+			if (!Devices.getCurrent().hasRoot())
+				doRootzergRush();
+			else MyLogger.getLogger().error("Your device is already rooted");
 		}
 		else 
-			doRootpsneuter();		
+			if (!Devices.getCurrent().hasRoot())
+				doRootpsneuter();
+			else MyLogger.getLogger().error("Your device is already rooted");
+		exit();
 	}
 
 	public static void doRootzergRush() {
-		Worker.post(new Job() {
-			public Object run() {
 				try {
-					Devices.waitForReboot(false);
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 					Shell shell = new Shell("busyhelper");
 					shell.run(true);
@@ -108,17 +117,12 @@ public class FlasherConsole {
 					MyLogger.getLogger().info("Root should be available after reboot!");		
 				}
 				catch (Exception e) {
-					MyLogger.getLogger().error(e.getMessage());}
-				return null;
-			}
-		});
+					MyLogger.getLogger().error(e.getMessage());
+				}
 	}
 
 	public static void doRootpsneuter() {
-		Worker.post(new Job() {
-			public Object run() {
 				try {
-					Devices.waitForReboot(false);
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 					Shell shell = new Shell("busyhelper");
 					shell.run(true);
@@ -134,12 +138,21 @@ public class FlasherConsole {
 					MyLogger.getLogger().info("Root should be available after reboot!");		
 				}
 				catch (Exception e) {
-					MyLogger.getLogger().error(e.getMessage());}
-				return null;
-			}
-		});
+					MyLogger.getLogger().error(e.getMessage());
+				}
 	}
 
+	public static void doBLUnlock() {
+		try {
+			Devices.waitForReboot(false);
+			PluginInterface po = (PluginInterface)plugins.get("Bootloader Unlock");
+			po.run();
+		}
+		catch (Exception e) {
+			MyLogger.getLogger().error("The BootLoader Unlock plugin is not loaded");
+		}
+	}
+	
 	public static void doFlash(String file,boolean wipedata,boolean wipecache,boolean excludebb,boolean excludekrnl, boolean excludesys) throws Exception {
 		X10flash f=null;
 		try {
@@ -225,11 +238,113 @@ public class FlasherConsole {
     					if (hasRoot) MyLogger.getLogger().info("Root Access Allowed");
     				}
     			}
+    			plugins.clear();
+    			addDevicesPlugins();
+    			addGenericPlugins();
     			MyLogger.getLogger().debug("Stop waiting for device");
     			if (Devices.isWaitingForReboot())
     				Devices.stopWaitForReboot();
     			MyLogger.getLogger().debug("End of identification");
     		}
 	}
+
+	public static void addDevicesPlugins() {
+    	try {
+	    	File dir = new File(Devices.getCurrent().getDeviceDir()+fsep+"features");
+		    File[] chld = dir.listFiles();
+		    MyLogger.getLogger().debug("Found "+chld.length+" device plugins to add");
+		    for(int i = 0; i < chld.length; i++){
+		    	if (chld[i].isDirectory()) {
+		    		try {
+		    			Properties p = new Properties();
+		    			p.load(new FileInputStream(new File(chld[i].getAbsolutePath()+fsep+"feature.properties")));
+		    			MyLogger.getLogger().debug("Registering "+p.getProperty("classname"));
+		    			ClassPath.addFile(chld[i].getAbsolutePath()+fsep+p.getProperty("plugin"));
+		    			registerPlugin("device",p.getProperty("classname"),chld[i].getAbsolutePath());
+		    		}
+		    		catch (IOException ioe) {
+		    		}
+		    	}
+		    }
+    	}
+    	catch (Exception e) {}
+    }
+
+    public static void addGenericPlugins() {
+    	try {
+	    	File dir = new File(OS.getWorkDir()+fsep+"custom"+fsep+"features");
+		    File[] chld = dir.listFiles();
+		    MyLogger.debug("Found "+chld.length+" generic plugins to add");
+		    for(int i = 0; i < chld.length; i++){
+		    	if (chld[i].isDirectory()) {
+		    		try {
+		    			Properties p = new Properties();
+		    			p.load(new FileInputStream(new File(chld[i].getAbsolutePath()+fsep+"feature.properties")));
+		    			ClassPath.addFile(chld[i].getAbsolutePath()+fsep+p.getProperty("plugin"));
+		    			registerPlugin("generic",p.getProperty("classname"),chld[i].getAbsolutePath());
+		    		}
+		    		catch (IOException ioe) {
+		    		}
+		    	}
+		    }
+    	}
+    	catch (Exception e) {
+    		MyLogger.getLogger().debug(e.getMessage());
+    	}
+    }
+
+    public static void registerPlugin(String type, String classname, String workdir) {
+	    try {
+	    	
+	    	Class<?> pluginClass = Class.forName(classname);
+            Constructor<?> constr = pluginClass.getConstructor();
+            PluginInterface pluginObject = (PluginInterface)constr.newInstance();
+            pluginObject.setWorkdir(workdir);
+            boolean aenabled = false;
+            String aversion = Devices.getCurrent().getVersion();
+            Enumeration <String> e1 = pluginObject.getCompatibleAndroidVersions();
+            while (e1.hasMoreElements()) {
+            	String pversion = e1.nextElement();
+            	if (aversion.startsWith(pversion) || pversion.equals("any")) aenabled=true;
+            }
+            
+            boolean kenabled = false;
+            String kversion = Devices.getCurrent().getKernelVersion();
+            Enumeration <String> e2 = pluginObject.getCompatibleKernelVersions();
+            while (e2.hasMoreElements()) {
+            	String pversion = e2.nextElement();
+            	if (kversion.equals(pversion) || pversion.equals("any")) kenabled=true;
+            }
+            
+            boolean denabled = false;
+            if (type.equals("generic")) {
+	            String currdevid = Devices.getCurrent().getId();
+	            Enumeration <String> e3 = pluginObject.getCompatibleDevices();
+	            while (e3.hasMoreElements()) {
+	            	String pversion = e3.nextElement();
+	            	if (currdevid.equals(pversion) || pversion.equals("any")) denabled=true;
+	            }
+            }
+            else
+            	denabled=true;
+
+            boolean hasroot=false;
+            if (pluginObject.isRootNeeded()) hasroot=Devices.getCurrent().hasRoot();
+
+            if (type.equals("device")&&aenabled&&kenabled&&denabled&&hasroot) {
+            	plugins.put(pluginObject.getName(), pluginObject);
+            }
+            else
+            	if (aenabled&&kenabled&&denabled&&hasroot)
+            		plugins.put(pluginObject.getName(), pluginObject);
+            Enumeration e = plugins.keys();
+            while (e.hasMoreElements()) {
+            	String pname = (String)e.nextElement();
+            }
+	    }
+	    catch (Exception e) {
+	    	MyLogger.getLogger().error(e.getMessage());
+	    }
+    }
 
 }

@@ -26,7 +26,7 @@ public class WaitDeviceFlashmodeGUI extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	X10flash _flash;
-	boolean cancel;
+	boolean cancel=false;
 	boolean result = false;
 
 
@@ -130,8 +130,10 @@ public class WaitDeviceFlashmodeGUI extends JDialog {
 	}
 	
 	public boolean deviceFound(JFrame parent) {
-		setLocationRelativeTo(parent);
-		setVisible(true);
+		if (FlasherGUI.guimode==true) {
+			setLocationRelativeTo(parent);
+			setVisible(true);
+		}
 				while (true) {
 					if (_flash.deviceFound()) {
 						_flash.openDevice();
@@ -143,7 +145,9 @@ public class WaitDeviceFlashmodeGUI extends JDialog {
 						break;
 					}
 				}
-		setVisible(false);
+		if (FlasherGUI.guimode==true) {
+			setVisible(false);
+		}
 		return result;
 	}
 }

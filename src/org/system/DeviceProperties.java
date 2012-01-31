@@ -24,7 +24,9 @@ public class DeviceProperties {
 	}
 
 	public static String getProperty(String key) {
-		return devprops.getProperty(key);
+		String read = devprops.getProperty(key);
+		if (read==null) read = "";
+		return read;
 	}
 
 }

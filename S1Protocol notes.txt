@@ -1,5 +1,5 @@
-// PROTOCOL FMT
-// ALL DWORDS ARE BIG ENDIAN
+/* PROTOCOL FMT
+   ALL DWORDS ARE BIG ENDIAN */
 
 [DWORD]  CMD                    (4 bytes)
 [DWORD]  FLAGS ( 1 | 2 | 4 )    (4 bytes)

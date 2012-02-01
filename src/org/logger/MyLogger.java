@@ -68,7 +68,7 @@ public class MyLogger {
 					}
 					else {
 						currentstepconsole++;
-						printProgBar(currentstepconsole/maxstepsconsole*100);
+						printProgBar((int)((double)currentstepconsole*100/maxstepsconsole));
 					}
 	}
 

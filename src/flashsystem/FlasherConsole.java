@@ -161,13 +161,15 @@ public class FlasherConsole {
 				MyLogger.getLogger().error("File "+bf.getAbsolutePath()+" does not exist");
 				exit();
 			}
-			Bundle b = new Bundle(new File(file).getAbsolutePath(),Bundle.JARTYPE);
+			MyLogger.getLogger().info("Choosed "+bf.getAbsolutePath());
+			Bundle b = new Bundle(bf.getAbsolutePath(),Bundle.JARTYPE);
 			b.setSimulate(false);
 			b.setWipeData(wipedata);
 			b.setWipeCache(wipecache);
 			b.setExcludeBB(excludebb);
 			b.setExcludeSystem(excludesys);
 			b.setExcludeKernel(excludekrnl);
+			MyLogger.getLogger().info("Preparing files for flashing");
 			b.open();
 			f = new X10flash(b);
 			MyLogger.getLogger().info("Please connect your phone in flash mode");

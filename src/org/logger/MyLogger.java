@@ -17,6 +17,8 @@ public class MyLogger {
 	static boolean isinit = false;
 	static JProgressBar _bar = null;
 	static boolean hasTextArea = true;
+	static long maxstepsconsole = 0;
+	static long currentstepconsole = 0;
 
 	public static void registerProgressBar(JProgressBar bar) {
 		_bar = bar;
@@ -39,6 +41,10 @@ public class MyLogger {
 						_bar.setValue(0);
 						_bar.setMaximum((int)max);
 					}
+					else {
+						maxstepsconsole=max;
+						currentstepconsole=0;
+					}
 	}
 
 	public static void initProgress(int max) {
@@ -50,11 +56,19 @@ public class MyLogger {
 						_bar.setValue(0);
 						_bar.setMaximum((int)max);
 					}
+					else {
+						maxstepsconsole=max;
+						currentstepconsole=0;
+					}
 	}
 
 	public static void updateProgress() {
 					if (FlasherGUI.guimode) {
 						_bar.setValue(_bar.getValue()+1);
+					}
+					else {
+						currentstepconsole++;
+						printProgBar(currentstepconsole/maxstepsconsole*100);
 					}
 	}
 
@@ -123,6 +137,23 @@ public class MyLogger {
 
 	public static Logger getLogger() {
 		return logger;
+	}
+
+	public static void printProgBar(long percent){
+	    StringBuilder bar = new StringBuilder("[");
+
+	    for(int i = 0; i < 50; i++){
+	        if( i < (percent/2)){
+	            bar.append("=");
+	        }else if( i == (percent/2)){
+	            bar.append(">");
+	        }else{
+	            bar.append(" ");
+	        }
+	    }
+
+	    bar.append("]   " + percent + "%     ");
+	    System.out.print("\r" + bar.toString());
 	}
 
 }

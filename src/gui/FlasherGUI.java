@@ -165,6 +165,10 @@ public class FlasherGUI extends JFrame {
         Language.Init(GlobalConfig.getProperty("language").toLowerCase());
         if (options.has("console")) {
         	FlasherConsole.init();
+			if (!System.getProperty("java.version").contains("1.6")) {
+				MyLogger.getLogger().error("Your java version must be 1.6");
+				FlasherConsole.exit();
+			}
         	String action=(String)options.valueOf("action");
         	if (action.toLowerCase().equals("flash"))
         		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
@@ -178,10 +182,10 @@ public class FlasherGUI extends JFrame {
 			initLogger();
 			setSystemLookAndFeel();
 			runAdb();
-			if (!System.getProperty("java.version").contains("1.6")) {
+			/*if (!System.getProperty("java.version").contains("1.6")) {
 				AskBox.showOKbox("Your java version must be 1.6");
 				System.exit(1);
-			}
+			}*/
 			MyLogger.getLogger().info("Flashtool "+About.getVersion());
 			MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
 			String userdir = System.getProperty("user.dir");
@@ -863,8 +867,8 @@ public class FlasherGUI extends JFrame {
 		//bundle = sel.getBundle();
 		bundle = new Bundle();
 		if (bundle!=null) {
-				Worker.post(new Job() {
-					public Object run() {
+			Worker.post(new Job() {
+				public Object run() {
 						X10flash flash=null;
 						try {
 					    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));

@@ -63,6 +63,7 @@ public class TextAreaAppender extends WriterAppender {
 		TextAreaAppender.jTextArea.setEditorKit(new HTMLEditorKit());
 		TextAreaAppender.jTextArea.setEditable(false);
 	}
+
 	/**
 	 * Format and then append the loggingEvent to the stored
 	 * JTextArea.

@@ -46,7 +46,7 @@ public class FastBootToolboxGUI extends JDialog {
 	public FastBootToolboxGUI(){
 		setResizable(false);
 		
-		MyLogger.info("Launching " + msg1 + " " + version + " " + msg2);
+		MyLogger.getLogger().info("Launching " + msg1 + " " + version + " " + msg2);
 		
 		
 		setTitle("Fastboot Toolbox");
@@ -282,7 +282,7 @@ public class FastBootToolboxGUI extends JDialog {
 			}
 
 		}
-		MyLogger.info("Device Status: " + deviceStatus);
+		MyLogger.getLogger().info("Device Status: " + deviceStatus);
 	}
 	
 	
@@ -291,14 +291,14 @@ public class FastBootToolboxGUI extends JDialog {
 			if (Devices.getCurrent().canFastboot()) {
 				Worker.post(new Job() {
 					public Object run() {
-						MyLogger.info("Please wait device is rebooting into fastboot mode (via ADB)");
+						MyLogger.getLogger().info("Please wait device is rebooting into fastboot mode (via ADB)");
 
 						try {
 							FastbootUtility.adbRebootFastboot();
-							MyLogger.info("Device will soon enter fastboot mode");
+							MyLogger.getLogger().info("Device will soon enter fastboot mode");
 						}
 						catch (Exception e1) {
-							MyLogger.error(e1.getMessage());
+							MyLogger.getLogger().error(e1.getMessage());
 						}
 						return null;
 					}
@@ -318,13 +318,13 @@ public class FastBootToolboxGUI extends JDialog {
 		}
 		Worker.post(new Job() {
 			public Object run() {
-				MyLogger.info("Device will now exit fastboot mode and start booting into system");
+				MyLogger.getLogger().info("Device will now exit fastboot mode and start booting into system");
 
 				try {
 					FastbootUtility.rebootDevice();
 				}
 				catch (Exception e1) {
-					MyLogger.error(e1.getMessage());
+					MyLogger.getLogger().error(e1.getMessage());
 				}
 				return null;
 			}
@@ -360,14 +360,14 @@ public class FastBootToolboxGUI extends JDialog {
 		Worker.post(new Job() {
 			public Object run() {
 
-				MyLogger.info("Fetching connected device info");
+				MyLogger.getLogger().info("Fetching connected device info");
 
 				try {
 					RunOutputs outputsRun = FastbootUtility.getDeviceInfo();
-					MyLogger.info("Connected device info: [ " + outputsRun.getStdOut().split("fastboot")[0].trim() + " ]");
+					MyLogger.getLogger().info("Connected device info: [ " + outputsRun.getStdOut().split("fastboot")[0].trim() + " ]");
 				}
 				catch (Exception e1) {
-					MyLogger.error(e1.getMessage());
+					MyLogger.getLogger().error(e1.getMessage());
 				}
 				return null;
 			}
@@ -382,15 +382,15 @@ public class FastBootToolboxGUI extends JDialog {
 		Worker.post(new Job() {
 			public Object run() {
 
-				MyLogger.info("Fetching fastboot version info from connected device");
+				MyLogger.getLogger().info("Fetching fastboot version info from connected device");
 
 				try {
 					RunOutputs outputsRun = FastbootUtility.getFastbootVerInfo();
-					MyLogger.info("FASTBOOT version info: [ " + outputsRun.getStdErr().split("\n")[0].trim() + " ]");
+					MyLogger.getLogger().info("FASTBOOT version info: [ " + outputsRun.getStdErr().split("\n")[0].trim() + " ]");
 					
 				}
 				catch (Exception e1) {
-					MyLogger.error(e1.getMessage());
+					MyLogger.getLogger().error(e1.getMessage());
 				}
 				return null;
 			}
@@ -413,20 +413,20 @@ public class FastBootToolboxGUI extends JDialog {
 					String kernel = chooseKernel();
 					
 					if(kernel.equals("ERROR")) {
-						MyLogger.error("no kernel (boot.img or kernel.sin) selected!");
+						MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 					} 
 					else {
 						
-						MyLogger.info("Selected kernel (boot.img or kernel.sin): " + kernel);
+						MyLogger.getLogger().info("Selected kernel (boot.img or kernel.sin): " + kernel);
 						// this wont wait for reply and will move on to next command
-						MyLogger.info("HotBooting selected kernel");
+						MyLogger.getLogger().info("HotBooting selected kernel");
 						RunOutputs outputsRun = FastbootUtility.hotBoot(kernel);
-						MyLogger.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
-						MyLogger.info("Device should now start booting with this kernel");
+						MyLogger.getLogger().info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
+						MyLogger.getLogger().info("Device should now start booting with this kernel");
 					}
 				}
 				catch (Exception e1) {
-					MyLogger.error(e1.getMessage());
+					MyLogger.getLogger().error(e1.getMessage());
 				}
 				return null;
 			}
@@ -444,22 +444,22 @@ public class FastBootToolboxGUI extends JDialog {
 					String kernel = chooseKernel();
 
 					if(kernel.equals("ERROR")) {
-						MyLogger.error("no kernel (boot.img or kernel.sin) selected!");
+						MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 					} 
 					else {
 
-						MyLogger.info("Selected kernel (boot.img or kernel.sin): " + kernel);
+						MyLogger.getLogger().info("Selected kernel (boot.img or kernel.sin): " + kernel);
 
 						// this wont wait for reply and will move on to next command
 
-						MyLogger.info("Flashing selected kernel");
+						MyLogger.getLogger().info("Flashing selected kernel");
 						RunOutputs outputsRun = FastbootUtility.flashBoot(kernel);
-						MyLogger.info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
+						MyLogger.getLogger().info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
 						MyLogger.getLogger().info("Please check the log before rebooting into system");
 					}
 				}
 				catch (Exception e1) {
-					MyLogger.error(e1.getMessage());
+					MyLogger.getLogger().error(e1.getMessage());
 				}
 				return null;
 			}

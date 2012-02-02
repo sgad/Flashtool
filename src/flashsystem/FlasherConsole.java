@@ -35,11 +35,12 @@ public class FlasherConsole {
 	private static String fsep = OS.getFileSeparator();
 	private static Properties plugins = new Properties();
 	
-	public static void init() {
+	public static void init(boolean withadb) {
 			MyLogger.disableTextArea();
 			MyLogger.setLevel("info");
 			MyLogger.getLogger().info("Flashtool "+About.getVersion());
 			FlasherGUI.guimode=false;
+			if (withadb) {
 			StatusListener phoneStatus = new StatusListener() {
 				public void statusChanged(StatusEvent e) {
 					if (!e.isDriverOk()) {
@@ -71,6 +72,8 @@ public class FlasherConsole {
 			phoneWatchdog = new AdbPhoneThread();
 			phoneWatchdog.start();
 			phoneWatchdog.addStatusListener(phoneStatus);
+			}
+			else DeviceChangedListener.start();
 	}
 
 	public static void exit() {
@@ -276,7 +279,7 @@ public class FlasherConsole {
     	try {
 	    	File dir = new File(OS.getWorkDir()+fsep+"custom"+fsep+"features");
 		    File[] chld = dir.listFiles();
-		    MyLogger.debug("Found "+chld.length+" generic plugins to add");
+		    MyLogger.getLogger().debug("Found "+chld.length+" generic plugins to add");
 		    for(int i = 0; i < chld.length; i++){
 		    	if (chld[i].isDirectory()) {
 		    		try {

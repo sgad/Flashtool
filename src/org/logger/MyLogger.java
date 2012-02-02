@@ -19,6 +19,7 @@ public class MyLogger {
 	static boolean hasTextArea = true;
 	static long maxstepsconsole = 0;
 	static long currentstepconsole = 0;
+	static String lastaction = "";
 
 	public static void registerProgressBar(JProgressBar bar) {
 		_bar = bar;
@@ -68,8 +69,10 @@ public class MyLogger {
 					}
 					else {
 						currentstepconsole++;
-						printProgBar((int)((double)currentstepconsole*100/maxstepsconsole));
+						double result = (double)currentstepconsole/(double)maxstepsconsole*100.0;
+						printProgBar((int)result);
 					}
+					lastaction="progress";
 	}
 
 	public static void setLevel(String level) {
@@ -114,46 +117,28 @@ public class MyLogger {
 		hasTextArea = false;
 	}
 	
-	public static void info (Object obj) {
-		if (isinit)
-			logger.info(obj);
-	}
-
-	public static void warn (Object obj) {
-		if (isinit)
-			logger.warn(obj);
-	}
-
-	public static void error (Object obj) {
-		if (isinit) {
-			logger.error(obj);
-		}
-	}
-
-	public static void debug (Object obj) {
-		if (isinit)
-			logger.debug(obj);
-	}
 
 	public static Logger getLogger() {
 		return logger;
 	}
 
 	public static void printProgBar(long percent){
-	    StringBuilder bar = new StringBuilder("[");
-
-	    for(int i = 0; i < 50; i++){
-	        if( i < (percent/2)){
-	            bar.append("=");
-	        }else if( i == (percent/2)){
-	            bar.append(">");
-	        }else{
-	            bar.append(" ");
-	        }
-	    }
-
-	    bar.append("]   " + percent + "%     ");
-	    System.out.print("\r" + bar.toString());
+		if (percent <=100) {
+		    StringBuilder bar = new StringBuilder("[");
+	
+		    for(int i = 0; i < 50; i++){
+		        if( i < (percent/2)){
+		            bar.append("=");
+		        }else if( i == (percent/2)){
+		            bar.append(">");
+		        }else{
+		            bar.append(" ");
+		        }
+		    }
+	
+		    bar.append("]   " + percent + "%     ");
+		    System.out.print("\r" + bar.toString());
+		}
 	}
 
 }

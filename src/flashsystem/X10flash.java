@@ -218,7 +218,7 @@ public class X10flash {
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		MyLogger.info("Loader version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+		MyLogger.getLogger().info("Loader version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
         cmd.send(Command.CMD09, Command.VAL2,false);    	
     }
 

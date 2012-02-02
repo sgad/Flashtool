@@ -164,18 +164,27 @@ public class FlasherGUI extends JFrame {
         }
         Language.Init(GlobalConfig.getProperty("language").toLowerCase());
         if (options.has("console")) {
-        	FlasherConsole.init();
 			if (!System.getProperty("java.version").contains("1.6")) {
 				MyLogger.getLogger().error("Your java version must be 1.6");
 				FlasherConsole.exit();
 			}
         	String action=(String)options.valueOf("action");
-        	if (action.toLowerCase().equals("flash"))
+        	
+        	if (action.toLowerCase().equals("flash")) {
+        		FlasherConsole.init(false);
         		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
-        	if (action.toLowerCase().equals("root"))
+        	}
+        		
+        	if (action.toLowerCase().equals("root")) {
+        		FlasherConsole.init(true);
         		FlasherConsole.doRoot();
-        	if (action.toLowerCase().equals("blunlock"))
+        	}
+        	
+        	if (action.toLowerCase().equals("blunlock")) {
+        		FlasherConsole.init(true);
         		FlasherConsole.doBLUnlock();
+        	}
+        	
         	FlasherConsole.exit();
         }
         else {
@@ -1614,7 +1623,7 @@ public class FlasherGUI extends JFrame {
     	try {
 	    	File dir = new File(OS.getWorkDir()+fsep+"custom"+fsep+"features");
 		    File[] chld = dir.listFiles();
-		    MyLogger.debug("Found "+chld.length+" generic plugins to add");
+		    MyLogger.getLogger().debug("Found "+chld.length+" generic plugins to add");
 		    for(int i = 0; i < chld.length; i++){
 		    	if (chld[i].isDirectory()) {
 		    		try {

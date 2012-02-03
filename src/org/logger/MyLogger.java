@@ -26,7 +26,10 @@ public class MyLogger {
 	}
 	
 	public static void writeFile() {
-		org.logger.TextAreaAppender.writeFile();
+		if (FlasherGUI.guimode)
+			org.logger.TextAreaAppender.writeFile();
+		else
+			org.logger.ConsoleAppender.writeFile();
 	}
 
 	public static JProgressBar getProgressBar() {

@@ -86,6 +86,7 @@ public class FlasherConsole {
 			catch (Exception e) {
 			}
 		}
+		MyLogger.writeFile();
 		System.exit(0);
 	}
 	
@@ -234,13 +235,16 @@ public class FlasherConsole {
     			}
     			if (Devices.getCurrent().isRecovery()) {
     				MyLogger.getLogger().info("Phone in recovery mode");
-    				MyLogger.getLogger().info("Root Access Allowed");
+    				if (!Devices.isWaitingForReboot())
+    					MyLogger.getLogger().info("Root Access Allowed");
     			}
     			else {
     				boolean hasSU = Devices.getCurrent().hasSU();
     				if (hasSU) {
     					boolean hasRoot = Devices.getCurrent().hasRoot();
-    					if (hasRoot) MyLogger.getLogger().info("Root Access Allowed");
+    					if (hasRoot)
+    						if (!Devices.isWaitingForReboot())
+    							MyLogger.getLogger().info("Root Access Allowed");
     				}
     			}
     			plugins.clear();

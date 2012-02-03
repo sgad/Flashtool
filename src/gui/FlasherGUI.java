@@ -164,12 +164,6 @@ public class FlasherGUI extends JFrame {
         }
         Language.Init(GlobalConfig.getProperty("language").toLowerCase());
         if (options.has("console")) {
-        	if (!OS.getName().equals("windows")) {
-				if (!System.getProperty("java.version").contains("1.6")) {
-					MyLogger.getLogger().error("Your java version must be 1.6");
-					FlasherConsole.exit();
-				}
-        	}
         	String action=(String)options.valueOf("action");
         	
         	if (action.toLowerCase().equals("flash")) {
@@ -193,12 +187,6 @@ public class FlasherGUI extends JFrame {
 			initLogger();
 			setSystemLookAndFeel();
 			runAdb();
-        	if (!OS.getName().equals("windows")) {
-				if (!System.getProperty("java.version").contains("1.6")) {
-					AskBox.showOKbox("Your java version must be 1.6");
-					System.exit(1);
-				}
-        	}
 			MyLogger.getLogger().info("Flashtool "+About.getVersion());
 			MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
 			String userdir = System.getProperty("user.dir");

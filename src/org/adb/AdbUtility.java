@@ -43,7 +43,7 @@ public class AdbUtility  {
 				char user = command.getStdOut().charAt(3);
 				char group = command.getStdOut().charAt(6);
 				char all = command.getStdOut().charAt(9);
-				if ((user=='x' || user=='s') && (group=='x' || group=='s') && (all=='x' || all=='s'))
+				if (((user=='x' || user=='s') && (group=='x' || group=='s') && (all=='x' || all=='s')) && !command.getStdOut().contains("not found"))
 					shpath = "/system/xbin/sh";
 				else {
 					OsRun command1 = new OsRun(new String[] {adbpath,"shell", "'echo $0'"});

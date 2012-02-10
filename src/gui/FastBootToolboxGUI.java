@@ -82,7 +82,6 @@ public class FastBootToolboxGUI extends JDialog {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				MyLogger.getLogger().info("Finished " + msg1);
-				FastbootUtility.killFastbootWindows();
 				dispose();
 			}
 		});
@@ -218,7 +217,6 @@ public class FastBootToolboxGUI extends JDialog {
 					public void actionPerformed(ActionEvent arg0) {
 						
 						MyLogger.getLogger().info("Finished " + msg1);
-						FastbootUtility.killFastbootWindows();
 						dispose();
 						
 					}

@@ -27,6 +27,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.RowSpec;
+import java.awt.Font;
 
 public class FastBootToolboxGUI extends JDialog {
 
@@ -51,15 +52,15 @@ public class FastBootToolboxGUI extends JDialog {
 		
 		setTitle("Fastboot Toolbox");
 		setAlwaysOnTop(true);
-		setBounds(100, 100, 697, 303);
+		setBounds(100, 100, 754, 299);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("224px"),
+				ColumnSpec.decode("251px"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("186px"),
+				ColumnSpec.decode("190px"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,},
 			new RowSpec[] {
@@ -197,8 +198,8 @@ public class FastBootToolboxGUI extends JDialog {
 		*/
 		
 		JButton btnCheck = new JButton("CHECK Current Device Status");
+		btnCheck.setFont(new Font("Dialog", Font.PLAIN, 11));
 		contentPanel.add(btnCheck, "4, 4, fill, fill");
-		btnCheck.setHorizontalAlignment(SwingConstants.LEFT);		
 		btnCheck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 

@@ -35,20 +35,25 @@ public class AdbUtility  {
 		shellpath = path;
 	}
 	
+	public static boolean exists(String path) {
+		try {
+		OsRun command = new OsRun(new String[] {adbpath,"shell", "ls -l "+path});
+		command.run();
+		return !command.getStdOut().toLowerCase().contains("no such file or directory");
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 	public static String getShPath(boolean force) {
 		if (shpath==null || force) {
 			try {
-				OsRun command = new OsRun(new String[] {adbpath,"shell", "ls -l /system/xbin/sh"});
-				command.run();
-				char user = command.getStdOut().charAt(3);
-				char group = command.getStdOut().charAt(6);
-				char all = command.getStdOut().charAt(9);
-				if (((user=='x' || user=='s') && (group=='x' || group=='s') && (all=='x' || all=='s')) && !command.getStdOut().contains("not found"))
-					shpath = "/system/xbin/sh";
+				if (exists("/system/flashtool/sh"))
+					shpath="/system/flashtool/sh";
 				else {
 					OsRun command1 = new OsRun(new String[] {adbpath,"shell", "'echo $0'"});
-					command.run();
-					shpath = command.getStdOut().trim();
+					command1.run();
+					shpath = command1.getStdOut().trim();
 				}
 			}
 			catch (Exception e) {

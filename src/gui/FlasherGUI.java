@@ -1434,7 +1434,10 @@ public class FlasherGUI extends JFrame {
 		        				btnRoot.setEnabled(!hasSU);
 		        				if (hasSU) {
 		        					boolean hasRoot = Devices.getCurrent().hasRoot();
-		        					if (hasRoot) doGiveRoot();
+		        					if (hasRoot) {
+		        						doInstFlashtool();
+		        						doGiveRoot();
+		        					}
 		        					btnAskRootPerms.setEnabled(!hasRoot);
 		        				}
 		        			}
@@ -1699,6 +1702,24 @@ public class FlasherGUI extends JFrame {
 	    catch (Exception e) {
 	    	MyLogger.getLogger().error(e.getMessage());
 	    }    	
+    }
+
+    public void doInstFlashtool() {
+		try {
+			if (!AdbUtility.exists("/system/flashtool")) {
+				Devices.getCurrent().doBusyboxHelper();
+				if (AdbUtility.Sysremountrw()) {
+					MyLogger.getLogger().info("Installing toolbox to device...");
+					AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
+					Shell shell = new Shell("installftkit");
+					shell.runRoot();
+				}
+				else MyLogger.getLogger().error("Error mounting /system rw");
+			}
+		}
+		catch (Exception e) {
+			MyLogger.getLogger().error(e.getMessage());
+		}
     }
 
 }

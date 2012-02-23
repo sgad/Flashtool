@@ -9,7 +9,7 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.6.7.0
+!define VERSION 0.6.8.0
 !define COMPANY Androxyde
 !define URL http://androxyde.github.com/Flashtool/
 
@@ -115,7 +115,12 @@ Section -un.post UNSEC0001
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${REGKEY}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-    RmDir /REBOOTOK $INSTDIR
+    RmDir /REBOOTOK $INSTDIR\x10flasher_lib
+    RmDir /REBOOTOK $INSTDIR\drivers
+    RmDir /REBOOTOK $INSTDIR\devices
+    RmDir /REBOOTOK $INSTDIR\custom\features
+    RmDir /REBOOTOK $INSTDIR\custom\root
+    RmDir /REBOOTOK $INSTDIR\custom\shells
     Push $R0
     StrCpy $R0 $StartMenuGroup 1
     StrCmp $R0 ">" no_smgroup

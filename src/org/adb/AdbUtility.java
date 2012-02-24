@@ -51,7 +51,7 @@ public class AdbUtility  {
 				if (exists("/system/flashtool/sh"))
 					shpath="/system/flashtool/sh";
 				else {
-					OsRun command1 = new OsRun(new String[] {adbpath,"shell", "'echo $0'"});
+					OsRun command1 = new OsRun(new String[] {adbpath,"shell", "echo $0"});
 					command1.run();
 					shpath = command1.getStdOut().trim();
 				}

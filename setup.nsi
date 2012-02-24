@@ -102,7 +102,18 @@ done${UNSECTION_ID}:
 
 # Uninstaller sections
 Section /o -un.Flashtool UNSEC0000
-    RmDir /r /REBOOTOK $INSTDIR
+    RmDir /r /REBOOTOK $SMPROGRAMS\$StartMenuGroup
+    RmDir /r /REBOOTOK $INSTDIR\x10flasher_lib
+    RmDir /r /REBOOTOK $INSTDIR\drivers
+    RmDir /r /REBOOTOK $INSTDIR\devices
+    RmDir /r /REBOOTOK $INSTDIR\custom\features
+    RmDir /r /REBOOTOK $INSTDIR\custom\root
+    RmDir /r /REBOOTOK $INSTDIR\custom\shells
+    Delete /REBOOTOK $INSTDIR\FlashTool.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool64.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool
+    Delete /REBOOTOK $INSTDIR\FlashToolConsole
+    Delete /REBOOTOK $INSTDIR\x10flasher.jar
     DeleteRegValue HKLM "${REGKEY}\Components" Flashtool
 SectionEnd
 
@@ -121,6 +132,11 @@ Section -un.post UNSEC0001
     RmDir /REBOOTOK $INSTDIR\custom\features
     RmDir /REBOOTOK $INSTDIR\custom\root
     RmDir /REBOOTOK $INSTDIR\custom\shells
+    Delete /REBOOTOK $INSTDIR\FlashTool.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool64.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool
+    Delete /REBOOTOK $INSTDIR\FlashToolConsole
+    Delete /REBOOTOK $INSTDIR\x10flasher.jar
     Push $R0
     StrCpy $R0 $StartMenuGroup 1
     StrCmp $R0 ">" no_smgroup

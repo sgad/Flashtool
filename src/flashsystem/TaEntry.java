@@ -3,24 +3,38 @@ package flashsystem;
 public class TaEntry {
 
 	String _partition="";
-	String _size="";
 	String _data="";
+	String _size="";
 	
 	public TaEntry() {
+	}
+	
+	public void setPartition(int partition) {
+		_partition = HexDump.toHex(partition);
 	}
 	
 	public void setPartition(String partition) {
 		_partition = partition;
 	}
 	
-	public void setSize(String size) {
-		_size = "0000"+size;
-	}
-	
 	public void addData(String data) {
 		_data = _data + " "+data;
 		_data = _data.trim();
-		
+	}
+	
+	public void setData(byte[] d) {
+		_data = "";
+		for (int i = 0;i<d.length;i++) {
+			String dataS = HexDump.toHex(d[i]);
+			addData(dataS.substring(dataS.length()-2));
+		}
+	}
+	
+	public void addData(char[] data) {
+		for (int i = 0;i<data.length;i++) {
+			String dataS = HexDump.toHex(data[i]);
+			addData(dataS.substring(dataS.length()-2));
+		}
 	}
 	
 	public String getPartition() {
@@ -31,16 +45,31 @@ public class TaEntry {
 		return BytesUtil.getBytes(_partition);
 	}
 
-	public String getSize() {
-		return _size;
+	public void setSize(String size) {
+		_size=size;
+	}
+	
+	public String getComputedSize() {
+		String lsize= HexDump.toHex(_data.split(" ").length);
+		lsize=lsize.substring(_size.length()-4);
+		return lsize;
 	}
 
 	public Byte[] getSizeBytes() {
-		return BytesUtil.getBytes(_size);
+		return BytesUtil.getBytes(getComputedSize());
 	}
 	
 	public String getData() {
 		return _data;
+	}
+	
+	public String getDataString() {
+		String[] result = _data.split(" ");
+		byte[] b = new byte[result.length];
+		for (int i=0;i<result.length;i++) {
+			b[i]=BytesUtil.getBytes(result[i])[0];
+		}
+		return new String(b);
 	}
 	
 	public Byte[] getDataBytes() {
@@ -55,7 +84,7 @@ public class TaEntry {
 	public Byte[] getWordByte() {
 		return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes(), getDataBytes());
 	}
-	
+
 	public byte[] getWordbyte() {
 		Byte[] b1 = getWordByte();
 		byte[] b = new byte[b1.length];
@@ -66,11 +95,11 @@ public class TaEntry {
 	}
 
 	public String toString() {
-		return getPartition()+" "+getSize()+" "+getData();
+		return getPartition()+" "+getComputedSize()+" "+getData();
 	}
 	
 	public void close() throws TaParseException {
-		if (Integer.parseInt(getSize(),16)!=getDataBytes().length) {
+		if (Integer.parseInt(getComputedSize(),16)!=Integer.parseInt(_size,16)) {
 			throw new TaParseException("TA entry ("+getPartition()+")parsing error");
 		}
 	}

@@ -15,39 +15,44 @@ public class TaFile {
 	Vector<TaEntry> entries = new Vector<TaEntry>();
 	
 	public TaFile(InputStream in) throws TaParseException {
-		TaEntry entry;
+		TaEntry entry = new TaEntry();
 		_in = (FileInputStream)in;
 	    _scanner = new Scanner (in);
 	    String partition="";
 	    boolean beginentry=false;
 	    while (_scanner.hasNextLine()) {
 	    	String line = _scanner.nextLine().trim();
-	    	if (!line.startsWith("/") && line.length()>=2) {
+	    	if (!line.startsWith("/") && !(line.length()<=4)) {
 	    		Scanner scanline = new Scanner(line);
 	    		scanline.useDelimiter(" ");
 	    		while (scanline.hasNext()) {
 	    			String elem = scanline.next();
 	    			if (elem.length()==8) {
-	    				if (partition.length()>0) {
-	    					MyLogger.getLogger().debug("Closing entry "+partition);
-	    					entries.get(entries.size()-1).close();
+	    				if (entry.getPartition().length()==0) {
+	    					entry.setPartition(elem);
+	    					String size=scanline.next();
+	    					if (size.length()==4) entry.setSize(size);
+	    					else throw new TaParseException("Next to unit should be the size on 4 digits");
 	    				}
-	    				partition = elem;
-	    				beginentry=true;
-	    				entry = new TaEntry();
-	    				entry.setPartition(partition);
-	    				entries.add(entry);
+	    				else {
+	    					entry.close();
+	    					entries.add(entry);
+	    					entry = new TaEntry();
+	    					entry.setPartition(elem);
+	    					String size=scanline.next();
+	    					if (size.length()==4) entry.setSize(size);
+	    					else throw new TaParseException("Next to unit should be the size on 4 digits");
+	    				}
 	    			}
-	    			else if (elem.length()==4 && beginentry) entries.get(entries.size()-1).setSize(elem);
-	    			else if (elem.length()==2 && beginentry) entries.get(entries.size()-1).addData(elem);
-	    			else beginentry=false;
+	    			else {
+	    				if (elem.length()==2)
+	    					entry.addData(elem);
+	    			}
 	    		}
 	    	}
 	    }
-			if (partition.length()>0) {
-				MyLogger.getLogger().debug("Closing entry "+partition);
-				entries.get(entries.size()-1).close();
-			}
+	    entry.close();
+	    entries.add(entry);
 	    try {
 	    	_in.close();
 	    }

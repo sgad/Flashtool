@@ -44,6 +44,12 @@ public class FastbootUtility {
 		command.run();		
 		return command.getOutputs();
 	}
+
+	public static RunOutputs unlock(String key) throws Exception {
+		OsRun command = new OsRun(new String[] {fastbootpath,"-i", "0xfce", "oem", "unlock", "0x"+key});
+		command.run();		
+		return command.getOutputs();
+	}
 	
 	public static void rebootDevice() throws Exception {
 		OsRun command = new OsRun(new String[] {fastbootpath,"reboot"});

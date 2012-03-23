@@ -1,6 +1,6 @@
 package flashsystem;
 
-public class X10FlashException extends Exception{
+public class X10FlashException extends Exception {
     /**
 	 * 
 	 */
@@ -14,4 +14,3 @@ public class X10FlashException extends Exception{
       super(msg,t);
     }
 }
-

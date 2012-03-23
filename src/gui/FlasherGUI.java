@@ -60,8 +60,13 @@ import java.awt.event.WindowEvent;
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
+import flashsystem.Command;
 import flashsystem.FlasherConsole;
+import flashsystem.HexDump;
 import flashsystem.SeusSinTool;
+import flashsystem.TaEntry;
+import flashsystem.TaFile;
+import flashsystem.TaParseException;
 import flashsystem.X10flash;
 import gui.EncDecGUI.MyFile;
 import javax.swing.JProgressBar;
@@ -145,6 +150,7 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
+		
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );
@@ -179,6 +185,7 @@ public class FlasherGUI extends JFrame {
         	if (action.toLowerCase().equals("blunlock")) {
         		FlasherConsole.init(true);
         		FlasherConsole.doBLUnlock();
+        		
         	}
         	
         	FlasherConsole.exit();
@@ -196,7 +203,7 @@ public class FlasherGUI extends JFrame {
 				public void run() {
 					try {
 						FlasherGUI frame = new FlasherGUI();
-						frame.setVisible(true);					
+						frame.setVisible(true);
 					} catch (Exception e) {}
 				}
 			});
@@ -290,7 +297,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
-		mntmDumpProperties = new JMenuItem("Dump Properties");
+		mntmDumpProperties = new JMenuItem("TA Editor");
 		mntmDumpProperties.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -866,6 +873,7 @@ public class FlasherGUI extends JFrame {
 		
 		//firmSelect sel = new firmSelect(config);
 		//bundle = sel.getBundle();
+		
 		bundle = new Bundle();
 		if (bundle!=null) {
 			Worker.post(new Job() {
@@ -876,7 +884,14 @@ public class FlasherGUI extends JFrame {
 							flash = new X10flash(bundle);
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
-								flash.dumpProperties();
+								flash.init();
+								Vector<TaEntry> v=flash.dumpProperties();
+								if (v.size()>0) {
+									TaEditor edit = new TaEditor(flash,v);
+									edit.setVisible(true);
+									DeviceChangedListener.pause(false);
+									flash.closeDevice();
+								}
 							}
 						}
 						catch (Exception e) {
@@ -1639,11 +1654,15 @@ public class FlasherGUI extends JFrame {
 
     public void registerPlugin(String type, String classname, String workdir) {
 	    try {
-	    	
+	    	MyLogger.getLogger().debug("Creating instance of "+classname);
 	    	Class<?> pluginClass = Class.forName(classname);
+	    	MyLogger.getLogger().debug("Getting constructor of "+classname);
             Constructor<?> constr = pluginClass.getConstructor();
+            MyLogger.getLogger().debug("Now instanciating object of class "+classname);
             PluginInterface pluginObject = (PluginInterface)constr.newInstance();
+            MyLogger.getLogger().debug("Setting plugin workdir");
             pluginObject.setWorkdir(workdir);
+            MyLogger.getLogger().debug("Now giving rights to plugin");
             boolean aenabled = false;
             String aversion = Devices.getCurrent().getVersion();
             Enumeration <String> e1 = pluginObject.getCompatibleAndroidVersions();
@@ -1674,6 +1693,7 @@ public class FlasherGUI extends JFrame {
 
             boolean hasroot=false;
             if (pluginObject.isRootNeeded()) hasroot=Devices.getCurrent().hasRoot();
+            else hasroot = true;
             
             JMenu pluginmenu = new JMenu(pluginObject.getName());
 

@@ -49,14 +49,43 @@ public class TaEntry {
 		_size=size;
 	}
 	
+	public void resize(int newsize) {
+		int cursize=0;
+		if (_data.length()==2) {
+			cursize=1;
+		}
+		else {
+			cursize = _data.split(" ").length;
+		}
+		if (newsize > cursize) {
+			for (int i = cursize;i<newsize;i++) {
+				addData("FF");
+			}
+		}
+		else if (newsize<cursize) {
+			_data="";
+			for (int i = 0;i<newsize;i++) {
+				addData("FF");
+			}			
+		}
+	}
+	
 	public String getComputedSize() {
-		String lsize= HexDump.toHex(_data.split(" ").length);
-		lsize=lsize.substring(_size.length()-4);
+		String lsize="";
+		if (_data.length()==2)
+			lsize=HexDump.toHex((int)1);
+		else
+			lsize= HexDump.toHex(_data.split(" ").length);
+		lsize=lsize.substring(lsize.length()-4);
 		return lsize;
 	}
 
 	public Byte[] getSizeBytes() {
 		return BytesUtil.getBytes(getComputedSize());
+	}
+	
+	public String getSize() {
+		return _size;
 	}
 	
 	public String getData() {

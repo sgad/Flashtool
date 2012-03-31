@@ -329,7 +329,7 @@ public class BundleGUI extends JDialog {
 		Language.translate(this);
 	}
 	
-	public Bundle getBundle() {
+	public Bundle getBundle(String mode) {
 		setVisible(true);
 		if (retcode) {
 			Bundle b = new Bundle(folderSource.getText(),Bundle.FOLDERTYPE);

@@ -1262,6 +1262,7 @@ public class FlasherGUI extends JFrame {
 					MyLogger.getLogger().error(e.getMessage());
 				}
 				return null;
+				
 			}
 		});
 	}	
@@ -1283,7 +1284,7 @@ public class FlasherGUI extends JFrame {
     				MyLogger.getLogger().info("Decryption finished");
     				try {
 					BundleGUI bcre = new BundleGUI(folder);
-					Bundle b = bcre.getBundle();
+					Bundle b = bcre.getBundle("flashmode");
 					if (b!=null) {
     					MyLogger.getLogger().info("Starting bundle creation");
     					b.createFTF();
@@ -1291,6 +1292,7 @@ public class FlasherGUI extends JFrame {
 					}
     				}
     				catch (Exception e) {}
+    				
 	        	}
 	 			return null;
 			}
@@ -1520,7 +1522,13 @@ public class FlasherGUI extends JFrame {
 			public Object run() {
 				try {
 					BundleGUI bcre = new BundleGUI();
-					Bundle b = bcre.getBundle();
+					Bundle b = null;
+					BootModeSelectGUI bootmode = new BootModeSelectGUI();
+					String select = bootmode.selectMode();
+					if (select.equals("flashmode"))
+						b = bcre.getBundle("flashmode");
+					if (select.equals("fastboot"))
+						b = bcre.getBundle("fastboot");
 					if (b!=null) {
     					MyLogger.getLogger().info("Starting bundle creation");
     					b.createFTF();

@@ -39,7 +39,7 @@ public class WaitDeviceFastbootGUI extends JDialog {
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setTitle("Fastboot Mode");
-		setBounds(100, 100, 629, 360);
+		setBounds(100, 100, 509, 265);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -59,7 +59,7 @@ public class WaitDeviceFastbootGUI extends JDialog {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					FormFactory.RELATED_GAP_ROWSPEC,
-					RowSpec.decode("max(51dlu;default)"),
+					RowSpec.decode("max(35dlu;default)"),
 					FormFactory.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("max(59dlu;default)"),}));
 			{
@@ -78,8 +78,20 @@ public class WaitDeviceFastbootGUI extends JDialog {
 						FormFactory.RELATED_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,}));
 				{
-					JLabel lblPower = new JLabel("Start your phone in fastboot mode");
+					JLabel lblNewLabel = new JLabel("1 - Unplug the device");
+					panel_1.add(lblNewLabel, "2, 2");
+				}
+				{
+					JLabel lblPower = new JLabel("2 - Power off the device");
 					panel_1.add(lblPower, "2, 4");
+				}
+				{
+					JLabel lblNewLabel_1 = new JLabel("3 - Press and hold the menu button");
+					panel_1.add(lblNewLabel_1, "2, 6");
+				}
+				{
+					JLabel lblNewLabel_2 = new JLabel("4 - Plug the USB cable");
+					panel_1.add(lblNewLabel_2, "2, 8");
 				}
 			}
 		}
@@ -99,7 +111,7 @@ public class WaitDeviceFastbootGUI extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		setLanguage();
+		//setLanguage();
 	}
 
 	public void setLanguage() {
@@ -120,7 +132,6 @@ public class WaitDeviceFastbootGUI extends JDialog {
 					}
 					else {
 						result=false;
-						MyLogger.getLogger().error("Waiting for device in FastBoot Mode");
 					}
 					if (cancel) {
 						result=false;

@@ -3,7 +3,7 @@
 
 	<target name="all" depends="core release,devices,JRE"/>
 
-	<target name="devices" depends="E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,WT19 Device,X10 Device"/>
+	<target name="devices" depends="E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,WT19 Device,X10 Device, LT26 Device"/>
 	
 	<target name="JRE">
         <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
@@ -39,7 +39,7 @@
             <manifest>
                 <attribute name="Main-Class" value="gui.FlasherGUI"/>
                 <attribute name="Class-Path" value=". x10flasher_lib/foxtrot-core-4.0.jar x10flasher_lib/log4j-1.2.16.jar x10flasher_lib/AXMLPrinter2.jar x10flasher_lib/jna.jar x10flasher_lib/platform.jar x10flasher_lib/jdom-1.1.1.jar x10flasher_lib/commons-io-2.0.1.jar x10flasher_lib/rsyntaxtextarea.jar x10flasher_lib/forms-1.4.2.jar x10flasher_lib/win32-amd64.jar x10flasher_lib/win32-x86.jar x10flasher_lib/jgoodies-common-1.2.1.jar x10flasher_lib/com.sonyericsson.cs_ma3_common_2.10.9.13.jar x10flasher_lib/libusb.jar x10flasher_lib/jgoodies-looks-2.4.2.jar x10flasher_lib/jopt-simple-4.3.jar x10flasher_lib/x10flasher-res.jar"/>
-                <attribute name="Implementation-Version" value="Version 0.6.8.0 built on ${TODAY}"/>
+                <attribute name="Implementation-Version" value="Version 0.6.9.0 built on ${TODAY}"/>
             </manifest>
         	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>
         </jar>
@@ -54,12 +54,17 @@
         <mkdir dir ="../Deploy/FlashTool/custom/apps"/>
         <mkdir dir ="../Deploy/FlashTool/custom/clean"/>
     	<mkdir dir ="../Deploy/FlashTool/custom/features"/>
+		<mkdir dir ="../Deploy/FlashTool/custom/ta"/>
     	<mkdir dir="../Deploy/FlashTool/firmwares"/>
         <mkdir dir ="../Deploy/FlashTool/custom/clean"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
         <mkdir dir="../Deploy/FlashTool/drivers"/>
-    	<copy todir="../Deploy/FlashTool/custom/shells">
+        <copy todir="../Deploy/FlashTool/loaders">
+            <fileset dir="./loaders"
+                excludes="**/.svn"/>
+        </copy>
+		<copy todir="../Deploy/FlashTool/custom/shells">
     		<fileset dir="./shells"
 				excludes="**/.svn"/>
     	</copy>
@@ -233,6 +238,21 @@
                        excludes="**/.svn"/>
         </copy>
     </target>
+
+	   <target name="LT26 Device">
+	        <delete dir="../Deploy/FlashTool/devices/LT26"/>
+	        <mkdir dir="../Deploy/FlashTool/devices"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/LT26"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/LT26/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/LT26">
+	              <fileset dir="./devicesConfig/LT26"
+	                       excludes="**/.svn"/>
+	        </copy>
+	        <copy todir="../Deploy/FlashTool/devices/LT26">
+	              <fileset dir="./devicesConfig/generic/"
+	                       excludes="**/.svn"/>
+	        </copy>
+	    </target>
 
 	<target name="SK17 Device">
         <delete dir="../Deploy/FlashTool/devices/SK17"/>

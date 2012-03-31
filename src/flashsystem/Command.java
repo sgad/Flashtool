@@ -66,7 +66,8 @@ public class Command {
     }
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
-	    	if (!_simulate) {
+    	MyLogger.updateProgress();
+    	if (!_simulate) {
 	    		S1Packet p = new S1Packet(command,data,ongoing);
 	    		try {
 	    			USBFlash.write(p);
@@ -80,8 +81,7 @@ public class Command {
 	    			p.release();
 	    			throw new IOException(ioe.getMessage());
 	    		}
-	    	}
-	    	MyLogger.updateProgress();
+	    }	
     }
 
     public void send(int cmd, byte data[], boolean ongoing) throws X10FlashException, IOException

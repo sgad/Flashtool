@@ -2,6 +2,8 @@ package flashsystem;
 
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
+import gui.LoaderRootFilter;
+import gui.LoaderSelectorGUI;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,13 +31,15 @@ public class X10flash {
     	_bundle=bundle;
     }
 
-    private void setFlashState(boolean ongoing) throws IOException,X10FlashException
+    public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {
+	    		MyLogger.getLogger().info("Opening TA for writting");
 	    		cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
 	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);    		
 	    	}
 	    	else {
+	    		MyLogger.getLogger().info("Closing TA");
 	    		cmd.send(Command.CMD13, Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
 	        	cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
 	    	}
@@ -47,7 +51,7 @@ public class X10flash {
     		MyLogger.getLogger().info("Flashing "+name);
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
-				MyLogger.getLogger().info("TA value : "+HexDump.toHex(entries.get(i).getWordbyte()));
+				MyLogger.getLogger().info("Writting TA value : "+HexDump.toHex(entries.get(i).getWordbyte()));
 				if (!_bundle.simulate()) {
 					cmd.send(Command.CMD13, entries.get(i).getWordbyte(),false);  
 				}
@@ -56,6 +60,13 @@ public class X10flash {
     	catch (TaParseException tae) {
     		MyLogger.getLogger().error("Error parsing TA file. Skipping");
     	}
+    }
+
+    public void sendTAUnit(TaEntry ta) throws X10FlashException, IOException {
+		MyLogger.getLogger().info("Writing TA unit : "+HexDump.toHex(ta.getWordbyte()));
+		if (!_bundle.simulate()) {
+			cmd.send(Command.CMD13, ta.getWordbyte(),false);  
+		} 	
     }
 
     public String dumpPropertyHex(int prnumber) throws IOException, X10FlashException
@@ -91,7 +102,7 @@ public class X10flash {
     	Vector<TaEntry> v = new Vector();
     	try {
 		    MyLogger.getLogger().info("Start Dumping properties");
-		    MyLogger.initProgress(4920);
+		    MyLogger.initProgress(9789);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
 	        		cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
@@ -108,7 +119,6 @@ public class X10flash {
 
 	        	}
 	        	catch (X10FlashException e) {
-	        		System.out.println(e.getMessage());
 	        	}
 	        }
 	        MyLogger.initProgress(0);
@@ -186,12 +196,20 @@ public class X10flash {
 		if (_bundle.hasLoader())
 			uploadImage(_bundle.getLoader().getInputStream(), 0x1000);
 		else {
-			File ldr = new File(OS.getWorkDir()+"/loaders/"+phoneprops.getProperty("LOADER_ROOT")+".sin");
-			if (ldr.exists()) {
-			FileInputStream fin = new FileInputStream(ldr);
-			uploadImage(fin, 0x1000);}
+			File dir = new File(OS.getWorkDir()+"/loaders");
+			File[] filelist = dir.listFiles(new LoaderRootFilter(phoneprops.getProperty("LOADER_ROOT")));
+			if (filelist.length>1) {
+				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);
+				String loader = sel.getVersion();
+				if (loader.length()>0) {
+					File f = new File(OS.getWorkDir()+"/loaders/"+loader);
+					FileInputStream fin = new FileInputStream(f);
+					uploadImage(fin, 0x1000);
+				}
+			}
 			else {
-				MyLogger.getLogger().error("Loader File: " + ldr + " not present!");
+				FileInputStream fin = new FileInputStream(filelist[0]);
+				uploadImage(fin, 0x1000);
 			}
 		}
     }
@@ -241,7 +259,7 @@ public class X10flash {
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		MyLogger.getLogger().info("Loader version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+		MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
         cmd.send(Command.CMD09, Command.VAL2,false);    	
     }
 
@@ -316,7 +334,6 @@ public class X10flash {
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		System.out.println(phoneprops.getProperty("LOADER_ROOT"));
     }
     
     public boolean openDevice(boolean simulate) {

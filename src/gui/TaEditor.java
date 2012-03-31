@@ -22,6 +22,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
 import flashsystem.BytesUtil;
+import flashsystem.HexDump;
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
 
@@ -44,8 +45,15 @@ import java.awt.Dialog.ModalityType;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+
+import org.logger.MyLogger;
+import org.system.OS;
+
 import java.awt.Color;
 import java.awt.Component;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 public class TaEditor extends JDialog {
 
@@ -140,38 +148,68 @@ public class TaEditor extends JDialog {
 						catch (Exception e) {}
 					}
 				});
-				JMenuItem mntmResize = new JMenuItem("Resize partition");
+				JMenuItem mntmResize = new JMenuItem("Resize Unit");
 				mntmResize.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						ResizeSelectGUI resize = new ResizeSelectGUI();
+						String newsize=resize.getUnitSize();
+						if (newsize.length()>0) {
+							ta.resize(Integer.parseInt(newsize));
+							hex.setByteContent(ta.getDataString().getBytes());
+						}
 					}
 				});
 				popupMenu.add(mntmResize);
 				JMenuItem mntmLoad = new JMenuItem("Load from file");
 				mntmLoad.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						TaSelectGUI tasel = new TaSelectGUI();
+						String result = tasel.getTa();
+						if (result.length()>0) {
+							String path = OS.getWorkDir()+"/custom/ta/"+result;
+							try {
+								byte[] array = BytesUtil.getBytesFromFile(new File(path));
+								ta.setData(array);
+								hex.setByteContent(array);
+							}
+							catch (Exception e) {
+								MyLogger.getLogger().error(e.getMessage());
+							}
+						}
 					}
 				});
 				popupMenu.add(mntmLoad);
+				JMenuItem mntmWriteFile = new JMenuItem("Write to file");
+				mntmWriteFile.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						String path = OS.getWorkDir()+"/custom/ta/"+_flash.getPhoneProperty("MSN")+"_"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0)+".bin";
+						File f = new File(path);
+						try {
+							FileOutputStream fos = new FileOutputStream(f);
+							fos.write(hex.getByteContent());
+							fos.flush();
+							fos.close();
+							AskBox.showOKbox("Unit saved to \n"+path);
+						}
+						catch (Exception e) {
+						}
+					}
+				});
+				popupMenu.add(mntmWriteFile);
 				JMenuItem mntmWrite = new JMenuItem("Write to phone");
 				mntmWrite.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						try {
-							_flash.endSession();
-							Thread.sleep(2000);
-							_flash.hookDevice();
+							_flash.setFlashState(true);
+							_flash.sendTAUnit(ta);
+							_flash.setFlashState(false);
 						}
-						catch (Exception e) {							
+						catch (Exception e) {
+							MyLogger.getLogger().error(e.getMessage());
 						}
 					}
 				});
 				popupMenu.add(mntmWrite);
-				JMenuItem mntmWriteLoader = new JMenuItem("Write to phone using another loader");
-				mntmWriteLoader.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-					}
-				});
-				popupMenu.add(mntmWriteLoader);
-
 				MouseListener popupListener = new PopupListener();
 				tablePartition.addMouseListener(popupListener);
 				tablePartition.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -195,7 +233,7 @@ public class TaEditor extends JDialog {
 		}
 		Enumeration<TaEntry> e = v.elements();
 		modelPartition = new DefaultTableModel();
-		modelPartition.addColumn("Partition");
+		modelPartition.addColumn("Unit");
 		tablePartition.setModel(modelPartition);
 		contentPanel.add(hex, "4, 2, 1, 7");
 		hex.setColorBorderBackGround(Color.LIGHT_GRAY);

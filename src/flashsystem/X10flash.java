@@ -187,8 +187,12 @@ public class X10flash {
 			uploadImage(_bundle.getLoader().getInputStream(), 0x1000);
 		else {
 			File ldr = new File(OS.getWorkDir()+"/loaders/"+phoneprops.getProperty("LOADER_ROOT")+".sin");
+			if (ldr.exists()) {
 			FileInputStream fin = new FileInputStream(ldr);
-			uploadImage(fin, 0x1000);
+			uploadImage(fin, 0x1000);}
+			else {
+				MyLogger.getLogger().error("Loader File: " + ldr + " not present!");
+			}
 		}
     }
 

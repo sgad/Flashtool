@@ -25,7 +25,7 @@ public class TextAreaAppender extends WriterAppender {
 	static private JTextPane jTextArea = null;
 	static private StringBuilder builder = new StringBuilder();
 	static Font font = new Font("Serif", Font.PLAIN, 12);
-	private static String timestamp=getTimeStamp();
+	public static String timestamp=getTimeStamp();
 
     public static String getTimeStamp() {
     	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");  

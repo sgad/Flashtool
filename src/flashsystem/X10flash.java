@@ -136,7 +136,7 @@ public class X10flash {
 
     public void BackupTA() throws IOException, X10FlashException
     {
-    	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + ".ta","ISO8859-1");
+    	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + "-" + org.logger.TextAreaAppender.timestamp +  ".ta","ISO8859-1");
         tazone.open(false);
     	try {
 		    MyLogger.getLogger().info("Start Dumping TA");
@@ -146,7 +146,6 @@ public class X10flash {
 	        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
 	        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
 	        	String reply = cmd.getLastReplyHex();
-	        	String replyS = cmd.getLastReplyString();
 	        	reply = reply.replace("[", "");
 	        	reply = reply.replace("]", "");
 	        	reply = reply.replace(",", "");

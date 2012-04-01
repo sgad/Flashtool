@@ -426,7 +426,7 @@ public class FlasherGUI extends JFrame {
 		mntmTaBackupRestore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					//BackupRestoreTA();
+					BackupRestore();
 				}
 				catch (Exception e1) {}
 			}
@@ -920,10 +920,39 @@ public class FlasherGUI extends JFrame {
 		TaModeSelectGUI tamode = new TaModeSelectGUI();
 		String select = tamode.selectMode();
 		if (select.equals("backup"))
-			doFlashmode("","");
+			doBackupTa();
 		if (select.equals("restore"))
-			doFastBoot();
+			doRestoreTa();
 	}	
+	
+	public void doBackupTa() throws Exception {
+		bundle = new Bundle();
+		if (bundle!=null) {
+			Worker.post(new Job() {
+				public Object run() {
+						X10flash flash=null;
+						try {
+					    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+							flash = new X10flash(bundle);
+							MyLogger.getLogger().info("Please connect your device into flashmode.");
+							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
+								flash.init();
+								flash.BackupTA();
+							}
+						}
+						catch (Exception e) {
+							MyLogger.getLogger().error(e.getMessage());
+						}
+						bundle.close();
+						return null;
+					}
+				});
+			}
+	}
+	
+	public void doRestoreTa() throws Exception {
+		
+	}
 	
 	public void doFlash() throws Exception {
 		BootModeSelectGUI bootmode = new BootModeSelectGUI();

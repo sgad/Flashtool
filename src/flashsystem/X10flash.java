@@ -72,28 +72,28 @@ public class X10flash {
     public String dumpPropertyHex(int prnumber) throws IOException, X10FlashException
     {
     		MyLogger.getLogger().info("Start Reading property");
-	        MyLogger.getLogger().debug((new StringBuilder("%%% read property id=")).append(prnumber).toString());
+	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(prnumber).toString());
 	        cmd.send(Command.CMD12, BytesUtil.getBytesWord(prnumber, 4),false);
 	        MyLogger.updateProgress();
 	        String reply = cmd.getLastReplyHex();
 	        reply = reply.replace("[", "");
 	        reply = reply.replace("]", "");
 	        reply = reply.replace(",", "");
-			MyLogger.getLogger().info("Reading property finished.");
+			MyLogger.getLogger().info("Reading TA finished.");
 			return reply;
     }
 
     public String dumpPropertyString(int prnumber) throws IOException, X10FlashException
     {
-    		MyLogger.getLogger().info("Start Reading property");
-	        MyLogger.getLogger().debug((new StringBuilder("%%% read property id=")).append(prnumber).toString());
+    		MyLogger.getLogger().info("Start Reading TA");
+	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(prnumber).toString());
 	        cmd.send(Command.CMD12, BytesUtil.getBytesWord(prnumber, 4),false);
 	        MyLogger.updateProgress();
 	        String reply = cmd.getLastReplyString();
 	        reply = reply.replace("[", "");
 	        reply = reply.replace("]", "");
 	        reply = reply.replace(",", "");
-			MyLogger.getLogger().info("Reading property finished.");
+			MyLogger.getLogger().info("Reading TA finished.");
 			return reply;
     }
 
@@ -101,7 +101,7 @@ public class X10flash {
     {
     	Vector<TaEntry> v = new Vector();
     	try {
-		    MyLogger.getLogger().info("Start Dumping properties");
+		    MyLogger.getLogger().info("Start Dumping TA");
 		    MyLogger.initProgress(9789);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
@@ -122,18 +122,57 @@ public class X10flash {
 	        	}
 	        }
 	        MyLogger.initProgress(0);
-	        MyLogger.getLogger().info("Dumping properties finished.");
+	        MyLogger.getLogger().info("Dumping TA finished.");
 	    }
     	catch (Exception ioe) {
     		MyLogger.initProgress(0);
     		MyLogger.getLogger().error(ioe.getMessage());
-    		MyLogger.getLogger().error("Error dumping properties. Aborted");
+    		MyLogger.getLogger().error("Error dumping TA. Aborted");
     		DeviceChangedListener.pause(false);
     		closeDevice();
     	}
     	return v;
     }
 
+    public void BackupTA() throws IOException, X10FlashException
+    {
+    	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + ".ta","ISO8859-1");
+        tazone.open(false);
+    	try {
+		    MyLogger.getLogger().info("Start Dumping TA");
+		    MyLogger.initProgress(9789);
+	        for(int i = 0; i < 4920; i++) {
+	        	try {
+	        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
+	        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
+	        	String reply = cmd.getLastReplyHex();
+	        	String replyS = cmd.getLastReplyString();
+	        	reply = reply.replace("[", "");
+	        	reply = reply.replace("]", "");
+	        	reply = reply.replace(",", "");
+	        	if (cmd.getLastReplyLength()>0) {
+	        		tazone.writeln(HexDump.toHex(i) + " " + HexDump.toHex(cmd.getLastReplyLength()) + " " + reply.trim());
+	        	}
+	        } catch (X10FlashException e) {
+        	}
+	        }
+	        
+	        MyLogger.initProgress(0);
+	        tazone.close();
+			MyLogger.getLogger().info("Dumping TA finished.");
+			DeviceChangedListener.pause(false);
+			closeDevice();
+	    }
+    	catch (Exception ioe) {
+	        tazone.close();
+    		MyLogger.initProgress(0);
+    		MyLogger.getLogger().error(ioe.getMessage());
+    		MyLogger.getLogger().error("Error dumping TA. Aborted");
+    		DeviceChangedListener.pause(false);
+    		closeDevice();
+    	}
+    }    
+    
     private void processHeader(InputStream fileinputstream) throws X10FlashException {
     	try {
 			byte abyte0[] = new byte[6];

@@ -208,10 +208,8 @@ public class X10flash {
 			String LoaderSub = null;
 			for (int x=0; x<LoaderHandler2.length; x++) {
 				File tempf = new File(OS.getWorkDir()+"/loaders/"+LoaderHandler2[x]+".sin");
-				MyLogger.getLogger().info(LoaderHandler2[x]);
 				if (tempf.exists()) {LoaderSub = LoaderHandler2[x]; }
 			}
-			MyLogger.getLogger().info("Using Loader: " + LoaderSub);
 			File[] filelist = dir.listFiles(new LoaderRootFilter(LoaderSub));
 			if (filelist.length>1) {
 				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);

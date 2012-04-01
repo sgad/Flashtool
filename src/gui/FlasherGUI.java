@@ -60,6 +60,7 @@ import java.awt.event.WindowEvent;
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
+import flashsystem.BytesUtil;
 import flashsystem.Command;
 import flashsystem.FlasherConsole;
 import flashsystem.HexDump;
@@ -962,7 +963,12 @@ public class FlasherGUI extends JFrame {
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
 								flash.init();
-								flash.RestoreTA();
+								TaSelectGUI tasel = new TaSelectGUI(".ta");
+								String result = tasel.getTa();
+								if (result.length()>0) {
+									String tafile = OS.getWorkDir()+"/custom/ta/"+result;
+									flash.RestoreTA(tafile);
+								}
 							}
 						}
 						catch (Exception e) {

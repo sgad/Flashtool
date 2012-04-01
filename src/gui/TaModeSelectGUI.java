@@ -58,7 +58,7 @@ public class TaModeSelectGUI extends JDialog {
 			rdbtnNewRadioButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (rdbtnNewRadioButton.isSelected()) result = "backup";
-					else result="restore";
+					else result = "restore";
 				}
 			});
 			rdbtnNewRadioButton.setSelected(true);
@@ -69,8 +69,8 @@ public class TaModeSelectGUI extends JDialog {
 			rdbtnNewRadioButton_1 = new JRadioButton("Restore");
 			rdbtnNewRadioButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (rdbtnNewRadioButton.isSelected()) result = "restore";
-					else result="backup";
+					if (rdbtnNewRadioButton.isSelected()) result = "backup";
+					else result = "restore";
 				}
 			});
 			buttonGroup.add(rdbtnNewRadioButton_1);
@@ -109,7 +109,7 @@ public class TaModeSelectGUI extends JDialog {
 				dispose();
 			}
 		});
-		result = "backup";
+	result = "backup";
 	}
 
 	public String selectMode() {

@@ -173,6 +173,10 @@ public class X10flash {
     	}
     }    
     
+    public void RestoreTA() throws FileNotFoundException, IOException, X10FlashException {
+    	sendTA(new FileInputStream(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + ".ta"),"preset");
+    }
+    
     private void processHeader(InputStream fileinputstream) throws X10FlashException {
     	try {
 			byte abyte0[] = new byte[6];

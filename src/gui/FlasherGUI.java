@@ -420,6 +420,18 @@ public class FlasherGUI extends JFrame {
 				propsEdit.setVisible(true);
 			}
 		});
+		
+		JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
+		mnAdvanced.add(mntmTaBackupRestore);
+		mntmTaBackupRestore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//BackupRestoreTA();
+				}
+				catch (Exception e1) {}
+			}
+		});
+		
 		mnAdvanced.add(mntmBuildpropEditor);
 
 		mntmBuildpropRebrand = new JMenuItem("Rebrand");
@@ -904,6 +916,15 @@ public class FlasherGUI extends JFrame {
 			}
 	}
 
+	public void BackupRestore() throws Exception {
+		TaModeSelectGUI tamode = new TaModeSelectGUI();
+		String select = tamode.selectMode();
+		if (select.equals("backup"))
+			doFlashmode("","");
+		if (select.equals("restore"))
+			doFastBoot();
+	}	
+	
 	public void doFlash() throws Exception {
 		BootModeSelectGUI bootmode = new BootModeSelectGUI();
 		String select = bootmode.selectMode();

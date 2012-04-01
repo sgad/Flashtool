@@ -193,11 +193,26 @@ public class X10flash {
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException {
 		MyLogger.getLogger().info("Flashing loader");
+		String LoaderHandler;
 		if (_bundle.hasLoader())
 			uploadImage(_bundle.getLoader().getInputStream(), 0x1000);
 		else {
 			File dir = new File(OS.getWorkDir()+"/loaders");
-			File[] filelist = dir.listFiles(new LoaderRootFilter(phoneprops.getProperty("LOADER_ROOT")));
+			if (phoneprops.getProperty("LOADER_ROOT") != null ) {
+					LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
+				}
+			else {
+					LoaderHandler = phoneprops.getProperty("S1_ROOT");
+				}
+			String[] LoaderHandler2 = LoaderHandler.split("\\,");
+			String LoaderSub = null;
+			for (int x=0; x<LoaderHandler2.length; x++) {
+				File tempf = new File(OS.getWorkDir()+"/loaders/"+LoaderHandler2[x]+".sin");
+				MyLogger.getLogger().info(LoaderHandler2[x]);
+				if (tempf.exists()) {LoaderSub = LoaderHandler2[x]; }
+			}
+			MyLogger.getLogger().info("Using Loader: " + LoaderSub);
+			File[] filelist = dir.listFiles(new LoaderRootFilter(LoaderSub));
 			if (filelist.length>1) {
 				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);
 				String loader = sel.getVersion();
@@ -253,7 +268,7 @@ public class X10flash {
     public void init() throws X10FlashException,FileNotFoundException, IOException {
 		cmd.send(Command.CMD09, Command.VAL2, false);
         cmd.send(Command.CMD10, Command.VALNULL, false);
-		sendLoader();		
+        sendLoader();		
 		cmd.send(Command.CMD01, Command.VALNULL, false);
 		phoneprops.update(cmd.getLastReplyString());
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
@@ -262,7 +277,7 @@ public class X10flash {
 		MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
         cmd.send(Command.CMD09, Command.VAL2,false);    	
     }
-
+  
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");

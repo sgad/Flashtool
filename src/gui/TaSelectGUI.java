@@ -38,13 +38,14 @@ public class TaSelectGUI extends JDialog {
 	private JButton okButton;
 	private JButton cancelButton;
 	String extension = "bin";
-
+	String MSN = null;
 
 	/**
 	 * Create the dialog.
 	 */
-	public TaSelectGUI(String ext) {
+	public TaSelectGUI(String ext, String msn) {
 		extension = ext;
+		MSN = msn;
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				result="";
@@ -125,6 +126,7 @@ public class TaSelectGUI extends JDialog {
 	private void dirlist() throws Exception{
 		boolean hasElements = false;
 		String extChecker;
+		String msnChecker;
 		modelVersion = new DefaultTableModel();
 		modelVersion.addColumn("Version");
 		table.setModel(modelVersion);
@@ -132,7 +134,9 @@ public class TaSelectGUI extends JDialog {
 		    File[] chld = dir.listFiles();
 		    for(int i = 0; i < chld.length; i++){
 		    	extChecker = chld[i].getName();
-		    	if (chld[i].isFile() && extChecker.endsWith(extension)) {
+				String[] tempMSN = chld[i].getName().split("\\-");
+		    	msnChecker = tempMSN[0];
+		    	if (chld[i].isFile() && extChecker.endsWith(extension) && msnChecker.equals(MSN)) {
 		    			hasElements = true;
 		    			modelVersion.addRow(new String[]{chld[i].getName()});
 		    			MyLogger.getLogger().debug("Adding "+chld[i].getName()+" to list of ta files");

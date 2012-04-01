@@ -163,7 +163,7 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmLoad = new JMenuItem("Load from file");
 				mntmLoad.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						TaSelectGUI tasel = new TaSelectGUI(".bin");
+						TaSelectGUI tasel = new TaSelectGUI(".bin",_flash.getPhoneProperty("MSN"));
 						String result = tasel.getTa();
 						if (result.length()>0) {
 							String path = OS.getWorkDir()+"/custom/ta/"+result;

@@ -963,7 +963,7 @@ public class FlasherGUI extends JFrame {
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
 								flash.init();
-								TaSelectGUI tasel = new TaSelectGUI(".ta");
+								TaSelectGUI tasel = new TaSelectGUI(".ta",flash.getPhoneProperty("MSN"));
 								String result = tasel.getTa();
 								if (result.length()>0) {
 									String tafile = OS.getWorkDir()+"/custom/ta/"+result;

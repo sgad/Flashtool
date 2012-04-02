@@ -64,6 +64,7 @@ import flashsystem.BytesUtil;
 import flashsystem.Command;
 import flashsystem.FlasherConsole;
 import flashsystem.HexDump;
+import flashsystem.S1Packet;
 import flashsystem.SeusSinTool;
 import flashsystem.TaEntry;
 import flashsystem.TaFile;
@@ -151,6 +152,15 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
+		
+		TaFile ta = new TaFile(new FileInputStream(new File("./custom/ta/CB5A1HT4KL-2012-04-01_08-05-02.ta")));
+		Vector<TaEntry> entries = ta.entries();
+		for (int i=0;i<entries.size();i++) {
+			System.out.println("TA Entry : "+entries.get(i));
+			S1Packet p = new S1Packet(13,entries.get(i).getWordbyte(),false);
+			System.out.println("S1 Packet :\n"+p);
+		}
+		System.exit(1);
 		
 		OptionParser parser = new OptionParser();
 		OptionSet options;

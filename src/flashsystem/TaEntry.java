@@ -46,7 +46,7 @@ public class TaEntry {
 	}
 
 	public void setSize(String size) {
-		_size=size;
+		_size="0000"+size;
 	}
 	
 	public void resize(int newsize) {
@@ -76,7 +76,7 @@ public class TaEntry {
 			lsize=HexDump.toHex((int)1);
 		else
 			lsize= HexDump.toHex(_data.split(" ").length);
-		lsize=lsize.substring(lsize.length()-4);
+		lsize="0000" + lsize.substring(lsize.length()-4);
 		return lsize;
 	}
 

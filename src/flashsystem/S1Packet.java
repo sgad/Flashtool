@@ -177,9 +177,8 @@ public class S1Packet {
 	}
 
 	public String toString() {
-
-		String result = "Command : "+HexDump.toHex(cmd) + "\nFlags : " + HexDump.toHex(flags) + "\nData length : "+HexDump.toHex(datalen) + "\nHeader cksum : "+HexDump.toHex(hdr) + "\nData : "+HexDump.toHex(data); 
-		return result + "\nPacket bytearray :" + HexDump.toHex(getByteArray());
+	    if (data == null) return ""; 	
+	    return "Data : \t"+new String(data)+"\n"+"CRC32 : \t"+HexDump.toHex(crc32);
 	}
 	
 	public byte[] calculatedCRC32() {

@@ -22,8 +22,10 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
 import flashsystem.BytesUtil;
+import flashsystem.Command;
 import flashsystem.HexDump;
 import flashsystem.TaEntry;
+import flashsystem.X10FlashException;
 import flashsystem.X10flash;
 
 import javax.swing.JComboBox;
@@ -47,6 +49,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.logger.MyLogger;
+import org.system.DeviceChangedListener;
 import org.system.OS;
 
 import java.awt.Color;
@@ -54,6 +57,7 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class TaEditor extends JDialog {
 
@@ -224,6 +228,13 @@ public class TaEditor extends JDialog {
 				JButton cancelButton = new JButton("Close");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						try {
+							_flash.finishTA();
+						} catch (X10FlashException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						dispose();
 					}
 				});

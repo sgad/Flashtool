@@ -45,6 +45,14 @@ public class X10flash {
 	    	}
     }
 
+    public void finishTA() throws X10FlashException, IOException {
+		cmd.send(Command.CMD10,Command.VALNULL,false);            
+		closeDevice();
+		MyLogger.getLogger().info("TA Operation finished.");
+		MyLogger.initProgress(0);
+	    DeviceChangedListener.pause(false);
+    }
+    
     private void sendTA(InputStream in,String name) throws FileNotFoundException, IOException,X10FlashException {
     	try {
     		TaFile ta = new TaFile(in);
@@ -173,7 +181,10 @@ public class X10flash {
     }    
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
+		setFlashState(true);
     	sendTA(new FileInputStream(tafile),"preset");
+		setFlashState(false);
+		finishTA();
     }
     
     private void processHeader(InputStream fileinputstream) throws X10FlashException {

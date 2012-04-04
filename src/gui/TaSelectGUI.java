@@ -54,7 +54,7 @@ public class TaSelectGUI extends JDialog {
 		});
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
-		setTitle("Kernel Selector");
+		setTitle("TA File Selector");
 		setBounds(100, 100, 232, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -130,7 +130,7 @@ public class TaSelectGUI extends JDialog {
 		modelVersion = new DefaultTableModel();
 		modelVersion.addColumn("Version");
 		table.setModel(modelVersion);
-	    	File dir = new File(OS.getWorkDir()+"./custom/ta/");
+	    	File dir = new File(OS.getWorkDir()+"/custom/ta/");
 		    File[] chld = dir.listFiles();
 		    for(int i = 0; i < chld.length; i++){
 		    	extChecker = chld[i].getName();

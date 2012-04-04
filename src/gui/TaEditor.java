@@ -129,14 +129,7 @@ public class TaEditor extends JDialog {
 				tablePartition.addKeyListener(new KeyAdapter() {
 					@Override
 					public void keyReleased(KeyEvent arg0) {
-						String result=(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0);
-						try {
-							if (ta!=null)
-								ta.setData(hex.getByteContent());
-							ta = (TaEntry)content.get(result);
-							hex.setByteContent(ta.getDataString().getBytes());
-						}
-						catch (Exception e) {}
+						reloadUnit();
 					}
 				});
 				tablePartition.addMouseListener(new MouseAdapter() {
@@ -186,7 +179,7 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmWriteFile = new JMenuItem("Write to file");
 				mntmWriteFile.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						String path = OS.getWorkDir()+"/custom/ta/"+_flash.getPhoneProperty("MSN")+"_"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0)+".bin";
+						String path = OS.getWorkDir()+"/custom/ta/"+_flash.getPhoneProperty("MSN")+"-"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0)+".bin";
 						File f = new File(path);
 						try {
 							FileOutputStream fos = new FileOutputStream(f);
@@ -203,6 +196,7 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmWrite = new JMenuItem("Write to phone");
 				mntmWrite.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
+						reloadUnit();
 						try {
 							_flash.setFlashState(true);
 							_flash.sendTAUnit(ta);
@@ -271,5 +265,13 @@ public class TaEditor extends JDialog {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	
+	private void reloadUnit() {
+		String result=(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0);
+		if (ta!=null)
+			ta.setData(hex.getByteContent());
+		ta = (TaEntry)content.get(result);
+		hex.setByteContent(ta.getDataString().getBytes());
 	}
 }

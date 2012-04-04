@@ -969,6 +969,10 @@ public class FlasherGUI extends JFrame {
 									String tafile = OS.getWorkDir()+"/custom/ta/"+result;
 									flash.RestoreTA(tafile);
 								}
+								else {
+									MyLogger.getLogger().info("Action canceled");
+								}
+								flash.closeDevice();
 							}
 						}
 						catch (Exception e) {

@@ -383,6 +383,7 @@ public class X10flash {
     }
 
     public void endSession() throws X10FlashException,IOException {
+    	MyLogger.getLogger().info("Ending flash session");
     	cmd.send(Command.CMD04,Command.VALNULL,false);
     }
     

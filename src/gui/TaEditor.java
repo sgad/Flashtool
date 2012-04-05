@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -52,6 +53,7 @@ import javax.swing.JMenuItem;
 import org.logger.MyLogger;
 import org.system.DeviceChangedListener;
 import org.system.OS;
+import org.system.TextFile;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -162,7 +164,7 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmLoad = new JMenuItem("Load from file");
 				mntmLoad.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						TaSelectGUI tasel = new TaSelectGUI(".bin",_flash.getPhoneProperty("MSN"));
+						TaSelectGUI tasel = new TaSelectGUI(".bin",_flash.getPhoneProperty("MSN")+"_"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0));
 						String result = tasel.getTa();
 						if (result.length()>0) {
 							String path = OS.getWorkDir()+"/custom/ta/"+result;
@@ -181,8 +183,9 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmWriteFile = new JMenuItem("Write to file");
 				mntmWriteFile.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						String path = OS.getWorkDir()+"/custom/ta/"+_flash.getPhoneProperty("MSN")+"-"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0)+".bin";
-						File f = new File(path);
+			    		String rootpath=OS.getWorkDir()+"/custom/ta/";
+						String path = _flash.getPhoneProperty("MSN")+"_"+(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0) + "-" + org.logger.TextAreaAppender.timestamp + ".bin";
+						File f = new File(rootpath+path);
 						try {
 							FileOutputStream fos = new FileOutputStream(f);
 							fos.write(hex.getByteContent());
@@ -268,6 +271,26 @@ public class TaEditor extends JDialog {
 				}
 				{
 					JMenuItem mntmSave = new JMenuItem("Save");
+					mntmSave.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+					    	try {
+					    		String rootpath=OS.getWorkDir()+"/custom/ta/";
+					    		String path = _flash.getPhoneProperty("MSN") + "-" + org.logger.TextAreaAppender.timestamp +  ".ta"; 
+						    	TextFile tazone = new TextFile(rootpath+path,"ISO8859-1");
+						        tazone.open(false);
+					    		Iterator i = content.values().iterator();
+					    		while (i.hasNext()) {
+					    			tazone.writeln(i.next().toString());
+					    		}
+					    		tazone.close();
+					    		AskBox.showOKbox("TA saved to \n"+path);
+					    	}
+						    catch (Exception e) {
+						    	MyLogger.getLogger().error(e.getMessage());
+					        }
+						    
+						}
+					});
 					mnFile.add(mntmSave);
 				}
 			}

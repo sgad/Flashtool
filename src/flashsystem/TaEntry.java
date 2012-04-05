@@ -124,7 +124,7 @@ public class TaEntry {
 	}
 
 	public String toString() {
-		return getPartition()+" "+getComputedSize()+" "+getData();
+		return getPartition()+" "+getComputedSize().substring(4)+" "+getData();
 	}
 	
 	public void close() throws TaParseException {

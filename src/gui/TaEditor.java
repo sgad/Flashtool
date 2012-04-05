@@ -25,6 +25,7 @@ import flashsystem.BytesUtil;
 import flashsystem.Command;
 import flashsystem.HexDump;
 import flashsystem.TaEntry;
+import flashsystem.TaFile;
 import flashsystem.X10FlashException;
 import flashsystem.X10flash;
 
@@ -55,6 +56,7 @@ import org.system.OS;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -236,19 +238,57 @@ public class TaEditor extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		contentPanel.add(hex, "4, 2, 1, 7");
+		hex.setColorBorderBackGround(Color.LIGHT_GRAY);
+		{
+			JMenuBar menuBar = new JMenuBar();
+			setJMenuBar(menuBar);
+			{
+				JMenu mnFile = new JMenu("File");
+				menuBar.add(mnFile);
+				{
+					JMenuItem mntmLoad_1 = new JMenuItem("Load");
+					mntmLoad_1.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							TaSelectGUI tasel = new TaSelectGUI(".ta",_flash.getPhoneProperty("MSN"));
+							String result = tasel.getTa();
+							if (result.length()>0) {
+								String tafile = OS.getWorkDir()+"/custom/ta/"+result;
+								try {
+									TaFile ta = new TaFile(new FileInputStream(new File(tafile)));
+									Vector<TaEntry> entries = ta.entries();
+									fill(entries);
+								}
+								catch (Exception e1) {
+								}
+							}
+						}
+					});
+					mnFile.add(mntmLoad_1);
+				}
+				{
+					JMenuItem mntmSave = new JMenuItem("Save");
+					mnFile.add(mntmSave);
+				}
+			}
+		}
+		fill(v);
+	}
+
+	private void fill(Vector<TaEntry> v) {
 		Enumeration<TaEntry> e = v.elements();
 		modelPartition = new DefaultTableModel();
 		modelPartition.addColumn("Unit");
 		tablePartition.setModel(modelPartition);
-		contentPanel.add(hex, "4, 2, 1, 7");
-		hex.setColorBorderBackGround(Color.LIGHT_GRAY);
 		while (e.hasMoreElements()) {
 			TaEntry ta = e.nextElement();
 			content.put(ta.getPartition(), ta);
 			modelPartition.addRow(new String[]{ta.getPartition()});
-		}		
+		}
+		tablePartition.setRowSelectionInterval(0, 0);
+		reloadUnit();
 	}
-
+	
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {

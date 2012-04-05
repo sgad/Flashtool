@@ -59,10 +59,7 @@ public class X10flash {
     		MyLogger.getLogger().info("Flashing "+name);
 			Vector<TaEntry> entries = ta.entries();
 			for (int i=0;i<entries.size();i++) {
-				MyLogger.getLogger().info("Writting TA value : "+HexDump.toHex(entries.get(i).getWordbyte()));
-				if (!_bundle.simulate()) {
-					cmd.send(Command.CMD13, entries.get(i).getWordbyte(),false);  
-				}
+				sendTAUnit(entries.get(i));
 			}
     	}
     	catch (TaParseException tae) {
@@ -77,27 +74,17 @@ public class X10flash {
 		} 	
     }
 
-    public String dumpPropertyHex(int prnumber) throws IOException, X10FlashException
+    public String dumpProperty(int prnumber, String format) throws IOException, X10FlashException
     {
     		MyLogger.getLogger().info("Start Reading property");
 	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(prnumber).toString());
 	        cmd.send(Command.CMD12, BytesUtil.getBytesWord(prnumber, 4),false);
 	        MyLogger.updateProgress();
-	        String reply = cmd.getLastReplyHex();
-	        reply = reply.replace("[", "");
-	        reply = reply.replace("]", "");
-	        reply = reply.replace(",", "");
-			MyLogger.getLogger().info("Reading TA finished.");
-			return reply;
-    }
-
-    public String dumpPropertyString(int prnumber) throws IOException, X10FlashException
-    {
-    		MyLogger.getLogger().info("Start Reading TA");
-	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(prnumber).toString());
-	        cmd.send(Command.CMD12, BytesUtil.getBytesWord(prnumber, 4),false);
-	        MyLogger.updateProgress();
-	        String reply = cmd.getLastReplyString();
+	        String reply = "";
+	        if (format.equals("hex"))
+	        	reply = cmd.getLastReplyHex();
+	        if (format.equals("string"))
+	        	reply = cmd.getLastReplyString();
 	        reply = reply.replace("[", "");
 	        reply = reply.replace("]", "");
 	        reply = reply.replace(",", "");

@@ -115,11 +115,18 @@ public class FastBootToolboxGUI extends JDialog {
 			JButton btnFastbootReboot = new JButton("Reboot device into system");
 			btnFastbootReboot.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
 					fastbootReboot();
-
 				}
 				});
+			{
+				JButton btnSelectSystemTo = new JButton("Select system to Flash");
+				btnSelectSystemTo.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						flashSystem();
+					}
+				});
+				contentPanel.add(btnSelectSystemTo, "4, 10");
+			}
 			contentPanel.add(btnFastbootReboot, "4, 16, fill, fill");
 		}
 		
@@ -127,9 +134,7 @@ public class FastBootToolboxGUI extends JDialog {
 			JButton btnRebootIntoFastbootFB = new JButton("Reboot into fastboot mode (via Fastboot)");
 			btnRebootIntoFastbootFB.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
 					rebootBackIntoFastbootMode();
-
 				}
 			});
 			contentPanel.add(btnRebootIntoFastbootFB, "6, 8, fill, top");
@@ -464,6 +469,39 @@ public class FastBootToolboxGUI extends JDialog {
 			}
 		});
 	}
+
+	public void flashSystem() {
+		if (!Devices.HasOneFastbootConnected()) {
+			MyLogger.getLogger().error("This action can only be done in fastboot mode");
+			return;
+		}
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					String system = chooseSystem();
+
+					if(system.equals("ERROR")) {
+						MyLogger.getLogger().error("no system (system.img or system.sin) selected!");
+					} 
+					else {
+
+						MyLogger.getLogger().info("Selected system (system.img or system.sin): " + system);
+
+						// this wont wait for reply and will move on to next command
+
+						MyLogger.getLogger().info("Flashing selected system");
+						RunOutputs outputsRun = FastbootUtility.flashSystem(system);
+						MyLogger.getLogger().info("Please check the log before rebooting into system");
+					}
+				}
+				catch (Exception e1) {
+					MyLogger.getLogger().error(e1.getMessage());
+				}
+				return null;
+			}
+		});
+	}
+
 	
 	public String chooseKernel() {
 		JFileChooser chooser = new JFileChooser(new java.io.File(".")); 
@@ -496,4 +534,37 @@ public class FastBootToolboxGUI extends JDialog {
 	    }
 	    return "ERROR";
 	}
+
+	public String chooseSystem() {
+		JFileChooser chooser = new JFileChooser(new java.io.File(".")); 
+
+		FileFilter ff = new FileFilter(){
+			public boolean accept(File f){
+				if(f.isDirectory()) return true;
+				else if (f.getName().endsWith(".img") && f.getName().contains("system")) return true;
+				else if (f.getName().endsWith(".sin") && f.getName().contains("system")) return true;
+				else return false;
+			}
+			public String getDescription(){
+				return "System IMG file or system.sin";
+			}
+		};
+		 
+		chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+		chooser.setFileFilter(ff);
+		
+	    chooser.setDialogTitle("Choose system file (system.img or system.sin)");
+	    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    //chooser.setFileFilter(newkernelimgFileFilter);
+	    //
+	    // disable the "All files" option.
+	    //
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    //    
+	    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	    	return chooser.getSelectedFile().getAbsolutePath();
+	    }
+	    return "ERROR";
+	}
+
 }

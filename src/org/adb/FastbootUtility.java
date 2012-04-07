@@ -4,8 +4,10 @@ import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.Vector;
 
+import org.logger.MyLogger;
 import org.system.OS;
 import org.system.OsRun;
+import org.system.ProcessBuilderWrapper;
 import org.system.RunOutputs;
 
 public class FastbootUtility {
@@ -40,15 +42,20 @@ public class FastbootUtility {
 	}
 	
 	public static RunOutputs flashBoot(String bootimg) throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"flash", "boot", bootimg});
+		ProcessBuilderWrapper pbd = new ProcessBuilderWrapper(new String[] {fastbootpath,"flash", "boot", bootimg},true);
+		return pbd.getOutputs();
+	}
+
+	public static RunOutputs flashSystem(String systemimg) throws Exception {
+		OsRun command = new OsRun(new String[] {fastbootpath,"flash", "system", systemimg});
 		command.run();		
 		return command.getOutputs();
 	}
 
 	public static RunOutputs unlock(String key) throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"-i", "0xfce", "oem", "unlock", "0x"+key});
-		command.run();		
-		return command.getOutputs();
+		MyLogger.getLogger().info("Unlocking phone using key "+key);
+		ProcessBuilderWrapper pbd = new ProcessBuilderWrapper(new String[] {fastbootpath,"-i", "0xfce","oem", "unlock","0x"+key },true);
+		return pbd.getOutputs();
 	}
 	
 	public static void rebootDevice() throws Exception {

@@ -157,6 +157,25 @@ public class FlasherConsole {
 		}
 	}
 	
+	public static void doGetIMEI() throws Exception {
+		X10flash f=null;
+		try {
+			Bundle b = new Bundle();
+			b.setSimulate(false);
+			f = new X10flash(b);
+			MyLogger.getLogger().info("Please connect your phone in flash mode");
+			while (!f.deviceFound());
+			f.openDevice(false);
+			MyLogger.getLogger().info("IMEI : "+f.getPhoneProperty("IMEI"));
+			f.closeDevice();
+			exit();
+		}
+		catch (Exception e) {
+			if (f!=null) f.closeDevice();
+			throw e;
+		}		
+	}
+	
 	public static void doFlash(String file,boolean wipedata,boolean wipecache,boolean excludebb,boolean excludekrnl, boolean excludesys) throws Exception {
 		X10flash f=null;
 		try {

@@ -177,7 +177,12 @@ public class FlasherGUI extends JFrame {
         		FlasherConsole.init(false);
         		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
         	}
-        		
+
+        	if (action.toLowerCase().equals("imei")) {
+        		FlasherConsole.init(false);
+        		FlasherConsole.doGetIMEI();
+        	}
+
         	if (action.toLowerCase().equals("root")) {
         		FlasherConsole.init(true);
         		FlasherConsole.doRoot();
@@ -986,6 +991,7 @@ public class FlasherGUI extends JFrame {
 	}
 	
 	public void doFlash() throws Exception {
+		
 		BootModeSelectGUI bootmode = new BootModeSelectGUI();
 		String select = bootmode.selectMode();
 		if (select.equals("flashmode"))
@@ -1604,12 +1610,12 @@ public class FlasherGUI extends JFrame {
 				try {
 					BundleGUI bcre = new BundleGUI();
 					Bundle b = null;
-					BootModeSelectGUI bootmode = new BootModeSelectGUI();
-					String select = bootmode.selectMode();
-					if (select.equals("flashmode"))
+					//BootModeSelectGUI bootmode = new BootModeSelectGUI();
+					//String select = bootmode.selectMode();
+					//if (select.equals("flashmode"))
 						b = bcre.getBundle("flashmode");
-					if (select.equals("fastboot"))
-						b = bcre.getBundle("fastboot");
+					//if (select.equals("fastboot"))
+						//b = bcre.getBundle("fastboot");
 					if (b!=null) {
     					MyLogger.getLogger().info("Starting bundle creation");
     					b.createFTF();
@@ -1783,7 +1789,6 @@ public class FlasherGUI extends JFrame {
             boolean hasroot=false;
             if (pluginObject.isRootNeeded()) hasroot=Devices.getCurrent().hasRoot();
             else hasroot = true;
-            
             JMenu pluginmenu = new JMenu(pluginObject.getName());
 
             JMenuItem run = new JMenuItem("Run");

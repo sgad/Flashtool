@@ -79,6 +79,38 @@ public class OsRun {
         returnCode=process.exitValue();
 	}
 
+	public void run1() throws Exception {
+		String longcommand = "";
+		try {
+		for (int i=0;i<command.length;i++)
+			longcommand = longcommand + command[i]+" ";
+		} catch (Exception e) {}
+		MyLogger.getLogger().debug("Running "+longcommand.trim());
+		stdout="";stderr="";
+		process = new ProcessBuilder(command).start();
+        /*Scanner sc_stdout = new Scanner(process.getInputStream());    		
+		while (sc_stdout.hasNext()) {
+			String line = sc_stdout.nextLine();
+			System.out.println(line);
+			if (line.length()>0) {
+				stdout=stdout+line+"\n";
+				MyLogger.getLogger().debug("stdout :" + line);
+			}
+		}
+        Scanner sc_stderr = new Scanner(process.getErrorStream());
+		while (sc_stderr.hasNext()) {
+			String line = sc_stderr.nextLine();
+			System.out.println(line);
+			if (line.length()>0) {
+				stderr=stderr+line+"\n";
+				MyLogger.getLogger().debug("stderr :" + line);
+			}
+		}*/
+        RunStack.removeFromStack(this);
+        process.waitFor();
+        returnCode=process.exitValue();
+	}
+
 	public void destroy() {
 		if (process!=null) {
 			process.destroy();

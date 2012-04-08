@@ -66,12 +66,17 @@ Section /o "X10 MiniPro ADB Drivers" SEC05
   File /r "Drivers\ADB\X10 MiniPro\*"
 SectionEnd
 
-Section /o "Flashmode Drivers" SEC06
+Section /o "Xperia S, NX, acro HD" SEC06
+  SetOutPath "$TEMP\Flashtool\ADB\Signed_lt026_SO-02D"
+  File /r "Drivers\ADB\Signed_lt026_SO-02D\*"
+SectionEnd
+
+Section /o "Flashmode Drivers" SEC07
   SetOutPath "$TEMP\Flashtool\GordonGate"
   File /r "Drivers\GordonGate\*"
 SectionEnd
 
-Section /o "Fastboot Drivers" SEC07
+Section /o "Fastboot Drivers" SEC08
   SetOutPath "$TEMP\Flashtool\Fastboot"
   File /r "Drivers\FASTBOOT\*"
 SectionEnd
@@ -96,6 +101,9 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC03} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC04} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC05} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC06} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC07} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC08} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit

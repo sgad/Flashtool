@@ -7,15 +7,16 @@ show_help() {
 	echo Usage : FlashToolConsole [OPTIONS]
         echo
 	echo MANDATORY :
-        echo '     --file=/path/to/file.ftf'
+	echo '     --action=flash|imei'
+        echo '     --file=/path/to/file.ftf (only when action=flash)'
 	echo
 	echo
 	echo OPTIONAL :
-	echo '    --wipedata=yes|no'
-	echo '    --wipecache=yes|no'
-	echo '    --baseband=yes|no'
-	echo '    --system=yes|no'
-	echo '    --kernel=yes|no'
+	echo '    --wipedata=yes|no (only when action=flash)'
+	echo '    --wipecache=yes|no (only when action=flash)'
+	echo '    --baseband=yes|no (only when action=flash)'
+	echo '    --system=yes|no (only when action=flash)'
+	echo '    --kernel=yes|no (only when action=flash)'
 	exit 0
 }
 
@@ -40,6 +41,8 @@ do
   esac
 
   case $ac_option in
+  -a | --action)
+     export p_action=$ac_optarg;;
   -f | --file)
      export p_file=$ac_optarg;;
   --wipedata)
@@ -60,9 +63,22 @@ do
   shift
 done
 
+case $p_action in
+   flash | imei)
+      ;;
+   *)
+     show_help;;
+esac
 
-if [ -e $p_file ]
+if [ "$p_action" = "flash" ]
 then
+    if test -z "$p_file"
+    then
+        echo --file is mandatory when --action=flash
+        exit 1
+    fi
+    if [ -e $p_file ]
+    then
     if test -z $p_data
     then
        p_data=$(echo yes)
@@ -83,34 +99,42 @@ then
     then
        p_baseband=$(echo yes)
     fi
-
-    chmod 755 ${BASEDIR}/x10flasher_lib/adb.linux
-    chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.linux
-    chmod 755 ${BASEDIR}/x10flasher_lib/adb.mac
-    chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.mac
-
-	if test -z "${JAVA_HOME}"
-	then
-       		if test "${system64}" = "0"
-        	then
-                	export JAVA_HOME=${BASEDIR}/x10flasher_lib/linjre32
-        	else
-                	export JAVA_HOME=${BASEDIR}/x10flasher_lib/linjre64
-        	fi
-        	echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
-	fi
-
-	if test -e ${JAVA_HOME}/bin/java
-	then
-	   for i in $(ls ${BASEDIR}/x10flasher_lib/*jar)
-	   do
-		CLASSPATH=$CLASSPATH$(echo $BASEDIR/$i:)
-	   done
-	   $JAVA_HOME/bin/java -Xms128m -Xmx512m -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
-	else
-        echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
-        echo "Set the variable to a valid Java installation"
+    else
+       echo $p_file does not exist.
+       exit 1
     fi
+fi
+ 
+chmod 755 ${BASEDIR}/x10flasher_lib/adb.linux
+chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.linux
+chmod 755 ${BASEDIR}/x10flasher_lib/adb.mac
+chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.mac
+
+if test -z "${JAVA_HOME}"
+then
+   if test "${system64}" = "0"
+   then
+      export JAVA_HOME=${BASEDIR}/x10flasher_lib/linjre32
+   else
+      export JAVA_HOME=${BASEDIR}/x10flasher_lib/linjre64
+   fi
+   echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
+fi
+
+if test -e ${JAVA_HOME}/bin/java
+then
+   for i in $(ls ${BASEDIR}/x10flasher_lib/*jar)
+   do
+      CLASSPATH=$CLASSPATH$(echo $BASEDIR/$i:)
+   done
+   case $p_action in
+      flash)
+         $JAVA_HOME/bin/java -Xms128m -Xmx512m -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+         ;;
+      imei)
+         $JAVA_HOME/bin/java -Xms128m -Xmx512m -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=imei
+   esac
 else
-   echo $p_file does not exist.
+   echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
+   echo "Set the variable to a valid Java installation"
 fi

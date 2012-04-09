@@ -6,7 +6,9 @@ public class GlobalConfig {
 	public static String getProperty (String property) {
 		if (config==null) {
 			config = new PropertiesFile("gui/ressources/config.properties","./config.properties");
-			config.write("UTF-8");		
+			if (config.getProperty("devfeatures")==null)
+				config.setProperty("devfeatures", "no");
+			config.write("UTF-8");
 		}
 		return config.getProperty(property);
 	}

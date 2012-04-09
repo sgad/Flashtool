@@ -303,15 +303,17 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
-		mntmDumpProperties = new JMenuItem("TA Editor");
-		mntmDumpProperties.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					doDumpProperties();
+		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
+			mntmDumpProperties = new JMenuItem("TA Editor");
+			mntmDumpProperties.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						doDumpProperties();
+					}
+					catch (Exception e1) {}
 				}
-				catch (Exception e1) {}
-			}
-		});
+			});
+		}
 		
 		JMenu mnRoot = new JMenu("Root");
 		mnAdvanced.add(mnRoot);
@@ -416,7 +418,8 @@ public class FlasherGUI extends JFrame {
 		});
 		mnXrecovery.add(mntmInstallOnline);*/
 		mnAdvanced.add(mntmInstallBusybox);
-		mnAdvanced.add(mntmDumpProperties);
+		if (GlobalConfig.getProperty("devfeatures").equals("yes"))
+			mnAdvanced.add(mntmDumpProperties);
 
 		mntmBuildpropEditor = new JMenuItem("Build.prop Editor");
 		mntmBuildpropEditor.setName("mntmBuildpropEditor");
@@ -427,16 +430,18 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 		
-		JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
-		mnAdvanced.add(mntmTaBackupRestore);
-		mntmTaBackupRestore.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					BackupRestore();
+		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
+			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
+			mnAdvanced.add(mntmTaBackupRestore);
+			mntmTaBackupRestore.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						BackupRestore();
+					}
+					catch (Exception e1) {}
 				}
-				catch (Exception e1) {}
-			}
-		});
+			});
+		}
 		
 		mnAdvanced.add(mntmBuildpropEditor);
 

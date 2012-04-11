@@ -38,7 +38,7 @@ public class CustomFlashUI extends JDialog {
 	 */
 	public CustomFlashUI() {
 		setTitle("Raw I/O Module");
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 370);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -84,11 +84,13 @@ public class CustomFlashUI extends JDialog {
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					String packet = textPaneCommand.getText().trim();
-					if (packet.contains(" ")) packet.replaceAll(" ", "");
-					Byte[] b1 = BytesUtil.getBytes(textPaneCommand.getText());
+					if (packet.contains(" ")) packet = packet.replaceAll(" ", "");
+					if (packet.contains(",")) packet = packet.replaceAll(",", "");
+					Byte[] b1 = BytesUtil.getBytes(packet);
 					byte[] b2 = new byte[b1.length];
 					for (int i=0;i<b1.length;i++)
 						b2[i] = b1[i];
+					System.out.println(HexDump.toHex(b2));
 					try {
 						USBFlash.write(b2);
 					}
@@ -135,6 +137,12 @@ public class CustomFlashUI extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("Close");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						USBFlash.close();
+						dispose();
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);

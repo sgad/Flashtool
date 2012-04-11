@@ -946,6 +946,8 @@ public class FlasherGUI extends JFrame {
 								flash.openDevice();
 								flash.sendLoader();
 								flash.BackupTA();
+								flash.closeDevice();
+								MyLogger.getLogger().info("Dumping TA finished.");
 							}
 						}
 						catch (Exception e) {
@@ -976,6 +978,8 @@ public class FlasherGUI extends JFrame {
 								if (result.length()>0) {
 									String tafile = OS.getWorkDir()+"/custom/ta/"+result;
 									flash.RestoreTA(tafile);
+									flash.closeDevice();
+									MyLogger.getLogger().info("TA Operation finished.");
 								}
 								else {
 									MyLogger.getLogger().info("Action canceled");

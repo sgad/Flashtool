@@ -203,9 +203,11 @@ public class TaEditor extends JDialog {
 					public void actionPerformed(ActionEvent arg0) {
 						reloadUnit();
 						try {
+							_flash.openTA(2);
 							_flash.setFlashState(true);
 							_flash.sendTAUnit(ta);
 							_flash.setFlashState(false);
+							_flash.closeTA();
 						}
 						catch (Exception e) {
 							MyLogger.getLogger().error(e.getMessage());
@@ -227,13 +229,7 @@ public class TaEditor extends JDialog {
 				JButton cancelButton = new JButton("Close");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						try {
-							_flash.finishTA();
-						} catch (X10FlashException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						_flash.closeDevice();
 						dispose();
 					}
 				});

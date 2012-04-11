@@ -45,14 +45,6 @@ public class X10flash {
 	    	}
     }
 
-    public void finishTA() throws X10FlashException, IOException {
-		cmd.send(Command.CMD10,Command.VALNULL,false);            
-		closeDevice();
-		MyLogger.getLogger().info("TA Operation finished.");
-		MyLogger.initProgress(0);
-	    DeviceChangedListener.pause(false);
-    }
-    
     private void sendTA(InputStream in,String name) throws FileNotFoundException, IOException,X10FlashException {
     	try {
     		TaFile ta = new TaFile(in);
@@ -123,7 +115,6 @@ public class X10flash {
     		MyLogger.initProgress(0);
     		MyLogger.getLogger().error(ioe.getMessage());
     		MyLogger.getLogger().error("Error dumping TA. Aborted");
-    		DeviceChangedListener.pause(false);
     		closeDevice();
     	}
     	return v;
@@ -153,25 +144,22 @@ public class X10flash {
 	        
 	        MyLogger.initProgress(0);
 	        tazone.close();
-			MyLogger.getLogger().info("Dumping TA finished.");
-			DeviceChangedListener.pause(false);
-			closeDevice();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
     		MyLogger.initProgress(0);
     		MyLogger.getLogger().error(ioe.getMessage());
     		MyLogger.getLogger().error("Error dumping TA. Aborted");
-    		DeviceChangedListener.pause(false);
-    		closeDevice();
     	}
-    }    
+    }
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
+    	openTA(2);
 		setFlashState(true);
     	sendTA(new FileInputStream(tafile),"preset");
 		setFlashState(false);
-		finishTA();
+		closeTA();
+		MyLogger.initProgress(0);	    
     }
     
     private void processHeader(InputStream fileinputstream) throws X10FlashException {
@@ -337,14 +325,12 @@ public class X10flash {
 			MyLogger.getLogger().info("Please wait. Phone will reboot");
 			MyLogger.getLogger().info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
 			MyLogger.initProgress(0);
-		    DeviceChangedListener.pause(false);
     	}
     	catch (Exception ioe) {
     		closeDevice();
     		MyLogger.getLogger().error(ioe.getMessage());
     		MyLogger.getLogger().error("Error flashing. Aborted");
     		MyLogger.initProgress(0);
-    		DeviceChangedListener.pause(false);
     	}
     }
 
@@ -375,6 +361,7 @@ public class X10flash {
     	}
     	catch (Exception e) {}
     	USBFlash.close();
+    	DeviceChangedListener.pause(false);
     }
     
     public void hookDevice() throws X10FlashException,IOException {

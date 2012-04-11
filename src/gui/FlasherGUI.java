@@ -118,6 +118,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRootPsneuter;
 	private JMenuItem mntmRootzergRush;
 	private JMenuItem mntmBackupSystemApps;
+	private JMenuItem mntmRawIO;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -310,6 +311,15 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
+			mntmRawIO = new JMenuItem("Raw I/O Module");
+			mntmRawIO.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						doRawIO();
+					}
+					catch (Exception e1) {}
+				}
+			});
 		}
 		
 		JMenu mnRoot = new JMenu("Root");
@@ -430,6 +440,7 @@ public class FlasherGUI extends JFrame {
 		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
 			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
 			mnAdvanced.add(mntmTaBackupRestore);
+			mnAdvanced.add(mntmRawIO);
 			mntmTaBackupRestore.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -861,6 +872,11 @@ public class FlasherGUI extends JFrame {
 			stopPhoneWatchdog();
 	}
 
+	public void doRawIO() {
+		CustomFlashUI raw = new CustomFlashUI();
+		raw.setVisible(true);
+	}
+	
 	public void doCleanUninstall() {
 		Worker.post(new Job() {
 			public Object run() {
@@ -904,12 +920,14 @@ public class FlasherGUI extends JFrame {
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
 								flash.openDevice();
 								flash.sendLoader();
+								flash.openTA(2);
 								Vector<TaEntry> v=flash.dumpProperties();
+								flash.closeTA();
 								if (v.size()>0) {
 									TaEditor edit = new TaEditor(flash,v);
 									edit.setVisible(true);
-									DeviceChangedListener.pause(false);
 									flash.closeDevice();
+									DeviceChangedListener.pause(false);
 								}
 							}
 						}

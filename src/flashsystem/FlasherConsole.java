@@ -199,7 +199,6 @@ public class FlasherConsole {
 			while (!f.deviceFound());
 			f.openDevice(false);
 			f.flashDevice();
-			f.closeDevice();
 			b.close();
 			exit();
 		}

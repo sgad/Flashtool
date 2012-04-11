@@ -120,8 +120,8 @@ public class X10flash {
     	return v;
     }
 
-    public void BackupTA() throws IOException, X10FlashException
-    {
+    public void BackupTA() throws IOException, X10FlashException {
+    	openTA(2);
     	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + "-" + org.logger.TextAreaAppender.timestamp +  ".ta","ISO8859-1");
         tazone.open(false);
     	try {
@@ -129,24 +129,26 @@ public class X10flash {
 		    MyLogger.initProgress(9789);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
-	        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
-	        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
-	        	String reply = cmd.getLastReplyHex();
-	        	reply = reply.replace("[", "");
-	        	reply = reply.replace("]", "");
-	        	reply = reply.replace(",", "");
-	        	if (cmd.getLastReplyLength()>0) {
-	        		tazone.writeln(HexDump.toHex(i) + " " + HexDump.toHex(cmd.getLastReplyLength()) + " " + reply.trim());
+		        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
+		        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(i, 4),false);
+		        	String reply = cmd.getLastReplyHex();
+		        	reply = reply.replace("[", "");
+		        	reply = reply.replace("]", "");
+		        	reply = reply.replace(",", "");
+		        	if (cmd.getLastReplyLength()>0) {
+		        		tazone.writeln(HexDump.toHex(i) + " " + HexDump.toHex(cmd.getLastReplyLength()) + " " + reply.trim());
+		        	}
 	        	}
-	        } catch (X10FlashException e) {
-        	}
+	        	catch (X10FlashException e) {
+	        	}
 	        }
-	        
 	        MyLogger.initProgress(0);
 	        tazone.close();
+	        closeTA();
 	    }
     	catch (Exception ioe) {
 	        tazone.close();
+	        closeTA();
     		MyLogger.initProgress(0);
     		MyLogger.getLogger().error(ioe.getMessage());
     		MyLogger.getLogger().error("Error dumping TA. Aborted");
@@ -253,6 +255,7 @@ public class X10flash {
 				uploadImage(fin, 0x1000);
 			}
 		}
+		hookDevice(true);
     }
 
     public void sendSystemAndUserData() throws FileNotFoundException,IOException, X10FlashException {
@@ -292,8 +295,7 @@ public class X10flash {
     }
 
     public void openTA(int partition) throws X10FlashException, IOException{
-    	byte[] par = new byte[] {(byte)partition};
-    	cmd.send(Command.CMD09, par, false);
+    	cmd.send(Command.CMD09, BytesUtil.getBytesWord(partition, 1), false);
     }
     
     public void closeTA() throws X10FlashException, IOException{
@@ -364,13 +366,14 @@ public class X10flash {
     	DeviceChangedListener.pause(false);
     }
     
-    public void hookDevice() throws X10FlashException,IOException {
+    public void hookDevice(boolean printProps) throws X10FlashException,IOException {
 		cmd.send(Command.CMD01, Command.VALNULL, false);
 		phoneprops.update(cmd.getLastReplyString());
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+		if (printProps)
+			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
     }
     
     public boolean openDevice(boolean simulate) {
@@ -381,7 +384,7 @@ public class X10flash {
     		MyLogger.getLogger().info("Phone ready for flashmode operations.");
     		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
     	    cmd = new Command(_bundle.simulate());
-    	    hookDevice();
+    	    hookDevice(false);
     		found = true;
     	}
     	catch (Exception e){

@@ -229,7 +229,6 @@ public class TaEditor extends JDialog {
 				JButton cancelButton = new JButton("Close");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						_flash.closeDevice();
 						dispose();
 					}
 				});

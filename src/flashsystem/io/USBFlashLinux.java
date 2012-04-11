@@ -50,7 +50,7 @@ public class USBFlashLinux {
 		JUsb.writeDevice(array);
 	}
 
-    private static  void readS1Reply() throws X10FlashException, IOException
+    public static  void readS1Reply() throws X10FlashException, IOException
     {
     	S1Packet p = JUsb.readS1Device();
     	if (p!=null) {

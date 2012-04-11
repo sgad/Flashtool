@@ -381,8 +381,10 @@ public class X10flash {
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");
-    		MyLogger.getLogger().info("Phone ready for flashmode operations.");
-    		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
+			MyLogger.getLogger().info("Reading device information");
+			USBFlash.readS1Reply();
+			phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
+			MyLogger.getLogger().info("Phone ready for flashmode operations.");
     	    cmd = new Command(_bundle.simulate());
     	    hookDevice(false);
     		found = true;

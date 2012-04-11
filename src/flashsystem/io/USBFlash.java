@@ -10,8 +10,7 @@ import org.system.OS;
 public class USBFlash {
 
 	public static void open(String pid) throws IOException {
-		if (Device.getLastConnected(false).getPid().equals(pid))
-			DeviceChangedListener.pause(true);
+		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.open(pid);
 		}
@@ -37,7 +36,16 @@ public class USBFlash {
 			USBFlashLinux.write(array);
 		}		
 	}
-	
+
+	public static void readS1Reply()  throws IOException,X10FlashException {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.readS1Reply();
+		}
+		else {
+			USBFlashLinux.readS1Reply();
+		}
+	}
+
 	public static void readReply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.readReply();
@@ -71,5 +79,6 @@ public class USBFlash {
     	}
     	else
     		USBFlashLinux.close();
+    	DeviceChangedListener.pause(false);
     }
 }

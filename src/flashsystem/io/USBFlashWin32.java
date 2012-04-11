@@ -17,10 +17,6 @@ public class USBFlashWin32 {
 		try {
     		MyLogger.getLogger().info("Opening device for R/W");
 			JKernel32.openDevice();
-			if (pid.equals("ADDE")) {
-				MyLogger.getLogger().info("Reading device information");
-				readS1Reply();
-			}
 		}catch (Exception e) {
 			if (lastreply == null) throw new IOException("Unable to read from device");
 		}
@@ -48,7 +44,7 @@ public class USBFlashWin32 {
 		return true;
 	}
 	
-    private static  void readS1Reply() throws X10FlashException, IOException
+    public static  void readS1Reply() throws X10FlashException, IOException
     {
     	S1Packet p=null;
 		boolean finished = false;

@@ -908,7 +908,6 @@ public class FlasherGUI extends JFrame {
 								if (v.size()>0) {
 									TaEditor edit = new TaEditor(flash,v);
 									edit.setVisible(true);
-									DeviceChangedListener.pause(false);
 									flash.closeDevice();
 								}
 							}

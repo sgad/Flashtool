@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import org.logger.MyLogger;
 import org.system.OS;
-import org.system.OsRun;
 import org.system.ProcessBuilderWrapper;
 import org.system.RunOutputs;
 
@@ -16,15 +15,13 @@ public class FastbootUtility {
 	private static String fastbootpath = OS.getFastBootPath();
 	
 	public static void adbRebootFastboot() throws Exception {
-		OsRun command = new OsRun(new String[] {adbpath,"reboot", "bootloader"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"reboot", "bootloader"},false);
 	}
 	
 	public static Enumeration<String> getDevices() {
 		Vector<String>  v = new Vector<String>();
 		try {
-			OsRun command = new OsRun(new String[] {fastbootpath, "devices"});
-			command.run();
+			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath, "devices"},false);
 			Scanner sc = new Scanner(command.getStdOut());
 			while (sc.hasNextLine()) {
 				v.add(sc.nextLine());
@@ -36,8 +33,7 @@ public class FastbootUtility {
 	}
 
 	public static RunOutputs hotBoot(String bootimg) throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"boot", bootimg});
-		command.run();	
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"boot", bootimg},false);
 		return command.getOutputs();
 	}
 	
@@ -47,8 +43,7 @@ public class FastbootUtility {
 	}
 
 	public static RunOutputs flashSystem(String systemimg) throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"flash", "system", systemimg});
-		command.run();		
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"flash", "system", systemimg},false);
 		return command.getOutputs();
 	}
 
@@ -59,40 +54,34 @@ public class FastbootUtility {
 	}
 	
 	public static void rebootDevice() throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"reboot"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"reboot"},false);
 	}
 	
 	public static void rebootFastboot() throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"reboot-bootloader"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"reboot-bootloader"},false);
 	}
 	
 	public static void wipeDataCache() throws Exception {
 		// currently there seems to be some issue executing this
-		OsRun command = new OsRun(new String[] {fastbootpath,"-w"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"-w"},false);
 	}
 	
 	public static RunOutputs getDeviceInfo() throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"devices"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"devices"},false);
 		return command.getOutputs();
 	}
 	
 	public static RunOutputs getFastbootVerInfo() throws Exception {
-		OsRun command = new OsRun(new String[] {fastbootpath,"-i", "0x0fce", "getvar", "version"});
-		command.run();
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {fastbootpath,"-i", "0x0fce", "getvar", "version"},false);
 		return command.getOutputs();
 	}
 
 	public static void killFastbootWindows() {
 		try {
-			OsRun fastboot = new OsRun(new String[] {"taskkill", "/F", "/T", "/IM", "fastboot*"});
-			fastboot.run();
+			ProcessBuilderWrapper fastboot = new ProcessBuilderWrapper(new String[] {"taskkill", "/F", "/T", "/IM", "fastboot*"},false);
 		}
 		catch (Exception e) {
-		}		
+		}
 	}
 
 }

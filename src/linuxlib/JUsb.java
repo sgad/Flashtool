@@ -83,7 +83,21 @@ public class JUsb {
 		}
 	}
 	
-	  public static S1Packet readDevice() throws IOException,X10FlashException {
+	public static byte[] readDevice() throws IOException,X10FlashException {
+		  int read1=0;
+		  try {
+			  read1 = device.bulk_read(0x81, data1, 0);
+		  }
+		  catch (Exception e) {
+			  throw new IOException("readReply : First data read request failed");
+		  }
+		  if (read1>0) {
+			  return data1;
+		  }
+		  return null;
+	}
+	
+	  public static S1Packet readS1Device() throws IOException,X10FlashException {
 		  S1Packet p=null;
 			  boolean finished = false;
 			  int read1=0;
@@ -116,9 +130,9 @@ public class JUsb {
 		  return p;
 	  }
 
-	  public static void writeDevice(S1Packet p) throws IOException {
+	  public static void writeDevice(byte[] array) throws IOException {
 		  try {
-			  device.bulk_write(0x01, p.getByteArray(), 500);
+			  device.bulk_write(0x01, array, 500);
 		  }
 		  catch (Exception e) {
 			  throw new IOException(e.getMessage());

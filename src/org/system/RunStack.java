@@ -5,19 +5,19 @@ import java.util.Iterator;
 
 public class RunStack {
 
-	static HashSet<OsRun> set = new HashSet<OsRun>();
+	static HashSet<ProcessBuilderWrapper> set = new HashSet<ProcessBuilderWrapper>();
 	
-	public static void addToStack(OsRun p) {
+	public static void addToStack(ProcessBuilderWrapper p) {
 		set.add(p);
 	}
 	
-	public static void removeFromStack(OsRun p) {
+	public static void removeFromStack(ProcessBuilderWrapper p) {
 		set.remove(p);
 	}
 	
 	public static void killAll() {
-		Iterator<OsRun> i = set.iterator();
+		Iterator<ProcessBuilderWrapper> i = set.iterator();
 		while (i.hasNext())
-			i.next().destroy();
+			i.next().kill();
 	}
 }

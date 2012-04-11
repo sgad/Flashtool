@@ -3,7 +3,7 @@ package flashsystem;
 import java.io.*;
 
 import org.system.OS;
-import org.system.OsRun;
+import org.system.ProcessBuilderWrapper;
 
 public class SeusSinTool {
 
@@ -27,16 +27,12 @@ public class SeusSinTool {
 		        File fxml = new File(folder+"\\update.xml");
 		        if (fxml.isFile()) fxml.renameTo(new File(folder+"\\update1.xml"));
 		        if (OS.getName().equals("windows")) {
-		        	OsRun run = new OsRun(new String[] {OS.get7z(),"e", "-y", basefile+".zip.gz", "-o"+folder});
-		        	run.run();
-		        	OsRun run1 = new OsRun(new String[] {OS.get7z(), "e", "-y", basefile+".zip", "-o"+folder});
-		        	run1.run();
+		        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {OS.get7z(),"e", "-y", basefile+".zip.gz", "-o"+folder},false);
+		        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {OS.get7z(), "e", "-y", basefile+".zip", "-o"+folder},false);
 		        }
 		        else {
-		        	OsRun run = new OsRun(new String[] {"gunzip", basefile+".zip.gz"});
-		        	run.run();
-		        	OsRun run1 = new OsRun(new String[] {"unzip", "-o", basefile+".zip","-d",folder});
-		        	run1.run();
+		        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {"gunzip", basefile+".zip.gz"},false);
+		        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {"unzip", "-o", basefile+".zip","-d",folder},false);
 		        }
 		        File fdek = new File(basefile+".zip.gz");
 		        fdek.delete();

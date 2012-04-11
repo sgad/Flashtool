@@ -136,7 +136,6 @@ public class WaitDeviceFlashmodeGUI extends JDialog {
 		}
 				while (true) {
 					if (_flash.deviceFound()) {
-						_flash.openDevice();
 						result=true;
 						break;
 					}

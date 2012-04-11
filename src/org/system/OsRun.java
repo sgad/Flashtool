@@ -14,7 +14,7 @@ public class OsRun {
 
 	public OsRun(String[] pcommand) {
 		command = pcommand;
-		RunStack.addToStack(this);
+		//RunStack.addToStack(this);
 	}
 
 	/*public OsRun(String pcommand) {
@@ -74,7 +74,7 @@ public class OsRun {
 				MyLogger.getLogger().debug("stderr :" + line);
 			}
 		}
-        RunStack.removeFromStack(this);
+        //RunStack.removeFromStack(this);
         process.waitFor();
         returnCode=process.exitValue();
 	}
@@ -106,7 +106,7 @@ public class OsRun {
 				MyLogger.getLogger().debug("stderr :" + line);
 			}
 		}*/
-        RunStack.removeFromStack(this);
+        //RunStack.removeFromStack(this);
         process.waitFor();
         returnCode=process.exitValue();
 	}

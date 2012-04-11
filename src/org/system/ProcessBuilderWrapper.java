@@ -85,6 +85,8 @@ public class ProcessBuilderWrapper {
                 while ( (line = br.readLine()) != null) {
                 	if (print)
                 		MyLogger.getLogger().info(line);
+                	else
+                		MyLogger.getLogger().debug(line);
                     pw.println(line);
                 }
             }
@@ -98,4 +100,7 @@ public class ProcessBuilderWrapper {
 
     }
 
+    public void kill() {
+    	
+    }
 }

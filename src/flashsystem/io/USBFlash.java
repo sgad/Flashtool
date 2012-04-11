@@ -9,27 +9,45 @@ import org.system.OS;
 
 public class USBFlash {
 
-	public static void open() throws IOException {
-		if (Device.getLastConnected(false).getPid().equals("ADDE"))
+	public static void open(String pid) throws IOException {
+		if (Device.getLastConnected(false).getPid().equals(pid))
 			DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.open();
+			USBFlashWin32.open(pid);
 		}
 		else {
-			USBFlashLinux.open();
+			USBFlashLinux.open(pid);
 		}
 	}
 
-	public static void write(S1Packet p) throws IOException,X10FlashException {
+	public static void writeS1(S1Packet p) throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.write(p);
+			USBFlashWin32.writeS1(p);
 		}
 		else {
-			USBFlashLinux.write(p);
+			USBFlashLinux.writeS1(p);
 		}
 	}
 
-   public static int getLastFlags() {
+	public static void write(byte[] array) throws IOException,X10FlashException {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.write(array);
+		}
+		else {
+			USBFlashLinux.write(array);
+		}		
+	}
+	
+	public static void readReply()  throws IOException,X10FlashException {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.readReply();
+		}
+		else {
+			USBFlashLinux.readReply();
+		}
+	}
+
+	public static int getLastFlags() {
 		if (OS.getName().equals("windows")) {
 			return USBFlashWin32.getLastFlags();
 		}

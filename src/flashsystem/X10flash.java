@@ -303,40 +303,35 @@ public class X10flash {
     	return phoneprops.getProperty(property);
     }
 
-    public void init() throws X10FlashException,FileNotFoundException, IOException {
-		cmd.send(Command.CMD09, Command.VAL2, false);
-        cmd.send(Command.CMD10, Command.VALNULL, false);
-        sendLoader();		
-		cmd.send(Command.CMD01, Command.VALNULL, false);
-		phoneprops.update(cmd.getLastReplyString());
-		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
-		if (phoneprops.getProperty("VER").startsWith("r"))
-			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
-        cmd.send(Command.CMD09, Command.VAL2,false);    	
+    public void openTA(int partition) throws X10FlashException, IOException{
+    	byte[] par = new byte[] {(byte)partition};
+    	cmd.send(Command.CMD09, par, false);
     }
-  
+    
+    public void closeTA() throws X10FlashException, IOException{
+    	cmd.send(Command.CMD10, Command.VALNULL, false);
+    }
+   
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
 		    MyLogger.initProgress(getNumberPasses());
 
-		    init();
+		    sendLoader();
 
 			sendImages();
         	sendSystemAndUserData();
     
         	if (_bundle.hasTA()) {
+        		openTA(2);
         		setFlashState(true);
         		if (_bundle.hasPreset()) sendTA(_bundle.getPreset().getInputStream(),"preset");
         		//if (_bundle.hasSimlock()) sendTA(_bundle.getSimlock().getInputStream(),"simlock");
         		setFlashState(false);
+        		closeTA();
         	}
-            
-			cmd.send(Command.CMD10,Command.VALNULL,false);            
 			
-	
-			closeDevice();
+        	closeDevice();
 			
 			MyLogger.getLogger().info("Flashing finished.");
 			MyLogger.getLogger().info("Please wait. Phone will reboot");
@@ -384,17 +379,18 @@ public class X10flash {
     
     public void hookDevice() throws X10FlashException,IOException {
 		cmd.send(Command.CMD01, Command.VALNULL, false);
-		phoneprops.update(new String (USBFlash.getLastReply()));
+		phoneprops.update(cmd.getLastReplyString());
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
+		MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
     }
     
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
     	boolean found=false;
     	try {
-    		USBFlash.open();
+    		USBFlash.open("ADDE");
     		MyLogger.getLogger().info("Phone ready for flashmode operations.");
     		phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
     	    cmd = new Command(_bundle.simulate());

@@ -24,8 +24,8 @@ COMMANDS:
 0x05 - write SIN header
 0x06 - write SIN
 0x07 - Get last error
-0x09 - 
-0x0A - 
+0x09 - open TA (takes the partition number as parameter)
+0x0A - close TA
 0x0C - read TA
 0x0D - write TA
 
@@ -63,3 +63,10 @@ The last read request is a 4 bytes representing the CRC32 of the data section.
 To validate a reply :
   - calculate the header checksum and compare with the one received.
   - caclulate the data CRC32 and compare with the one received.
+  
+  TA Data format :
+  
+[DWORD]  PARTITION              (4 bytes)
+[DWORD]  LEN                    (4 bytes)
+[BYTE[LEN]]  DATA               (n bytes depending on the LEN value)
+  

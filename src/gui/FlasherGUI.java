@@ -38,7 +38,7 @@ import org.system.Devices;
 import org.system.FileDrop;
 import org.system.GlobalConfig;
 import org.system.OS;
-import org.system.OsRun;
+import org.system.ProcessBuilderWrapper;
 import org.system.PropertiesFile;
 import org.system.RunStack;
 import org.system.Shell;
@@ -138,10 +138,8 @@ public class FlasherGUI extends JFrame {
 
 	static public void runAdb() throws Exception {
 		if (!OS.getName().equals("windows")) {
-			OsRun giveRights = new OsRun(new String[] {"chmod", "755", OS.getAdbPath()});
-			giveRights.run();
-			giveRights = new OsRun(new String[] {"chmod", "755", OS.getFastBootPath()});
-			giveRights.run();
+			ProcessBuilderWrapper giveRights = new ProcessBuilderWrapper(new String[] {"chmod", "755", OS.getAdbPath()},false);
+			giveRights = new ProcessBuilderWrapper(new String[] {"chmod", "755", OS.getFastBootPath()},false);
 		}
 		killAdbandFastboot();
 	}
@@ -151,7 +149,6 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );
@@ -834,8 +831,7 @@ public class FlasherGUI extends JFrame {
 
 	public static void killAdbLinux() {
 		try {
-			OsRun cmd = new OsRun(new String[] {"/usr/bin/killall", "adb"});
-			cmd.run();				
+			ProcessBuilderWrapper cmd = new ProcessBuilderWrapper(new String[] {"/usr/bin/killall", "adb"},false);
 		}
 		catch (Exception e) {
 		}
@@ -843,8 +839,7 @@ public class FlasherGUI extends JFrame {
 	
 	public static void killAdbWindows() {
 		try {
-			OsRun adb = new OsRun(new String[] {"taskkill", "/F", "/T", "/IM", "adb*"});
-			adb.run();
+			ProcessBuilderWrapper adb = new ProcessBuilderWrapper(new String[] {"taskkill", "/F", "/T", "/IM", "adb*"},false);
 		}
 		catch (Exception e) {
 		}
@@ -907,7 +902,8 @@ public class FlasherGUI extends JFrame {
 							flash = new X10flash(bundle);
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
-								flash.init();
+								flash.openDevice();
+								flash.sendLoader();
 								Vector<TaEntry> v=flash.dumpProperties();
 								if (v.size()>0) {
 									TaEditor edit = new TaEditor(flash,v);
@@ -947,7 +943,8 @@ public class FlasherGUI extends JFrame {
 							flash = new X10flash(bundle);
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
-								flash.init();
+								flash.openDevice();
+								flash.sendLoader();
 								flash.BackupTA();
 							}
 						}
@@ -972,7 +969,8 @@ public class FlasherGUI extends JFrame {
 							flash = new X10flash(bundle);
 							MyLogger.getLogger().info("Please connect your device into flashmode.");
 							if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
-								flash.init();
+								flash.openDevice();
+								flash.sendLoader();
 								TaSelectGUI tasel = new TaSelectGUI(".ta",flash.getPhoneProperty("MSN"));
 								String result = tasel.getTa();
 								if (result.length()>0) {
@@ -1033,6 +1031,7 @@ public class FlasherGUI extends JFrame {
 						flash = new X10flash(bundle);
 						MyLogger.getLogger().info("Please connect your device into flashmode.");
 						if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
+							flash.openDevice();
 							flash.flashDevice();
 						}
 						else MyLogger.getLogger().info("Flash canceled");

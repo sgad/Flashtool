@@ -11,13 +11,13 @@ public class Command {
 
     private boolean _simulate;
 
-	static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
+	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
 		   0, 0, 8, -77, 0, 0, 0, 4, -96, 0, 0, 0 }; 
-	static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
+	public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
 		   0, 0, 39, 116, 0, 0, 0, 1, 1 };
-	static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
+	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
 		   0, 0, 8, -77, 0, 0, 0, 4, -86, 0, 0, 0 };
-	static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED = {
+	public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED = {
 		   0, 0, 39, 116, 0, 0, 0, 1, 0 };
 	
 	static final int CMD01 = 1;
@@ -70,7 +70,7 @@ public class Command {
     	if (!_simulate) {
 	    		S1Packet p = new S1Packet(command,data,ongoing);
 	    		try {
-	    			USBFlash.write(p);
+	    			USBFlash.writeS1(p);
 	    			p.release();
 	    		}
 	    		catch (X10FlashException xe) {

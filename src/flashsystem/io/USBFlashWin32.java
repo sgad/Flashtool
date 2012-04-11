@@ -13,12 +13,14 @@ public class USBFlashWin32 {
 	private static int lastflags;
 	private static byte[] lastreply;
 	
-	public static void open() throws IOException {
+	public static void open(String pid) throws IOException {
 		try {
     		MyLogger.getLogger().info("Opening device for R/W");
 			JKernel32.openDevice();
-			MyLogger.getLogger().info("Reading device information");
-			readReply();
+			if (pid.equals("ADDE")) {
+				MyLogger.getLogger().info("Reading device information");
+				readS1Reply();
+			}
 		}catch (Exception e) {
 			if (lastreply == null) throw new IOException("Unable to read from device");
 		}
@@ -35,13 +37,18 @@ public class USBFlashWin32 {
 		catch (Exception e) {}
 	}
 
-	public static boolean write(S1Packet p) throws IOException,X10FlashException {
+	public static boolean writeS1(S1Packet p) throws IOException,X10FlashException {
 		JKernel32.writeBytes(p.getByteArray());
-		readReply();
+		readS1Reply();
 		return true;
 	}
 
-    private static  void readReply() throws X10FlashException, IOException
+	public static boolean write(byte[] array) throws IOException,X10FlashException {
+		JKernel32.writeBytes(array);
+		return true;
+	}
+	
+    private static  void readS1Reply() throws X10FlashException, IOException
     {
     	S1Packet p=null;
 		boolean finished = false;
@@ -60,6 +67,10 @@ public class USBFlashWin32 {
 		lastflags = p.getFlags();
     }
 
+    public static void readReply() throws X10FlashException, IOException {
+    	lastreply = JKernel32.readBytes(0x10000);
+    }
+    
     public static int getLastFlags() {
     	return lastflags;
     }

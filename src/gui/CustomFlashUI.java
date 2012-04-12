@@ -90,7 +90,6 @@ public class CustomFlashUI extends JDialog {
 					byte[] b2 = new byte[b1.length];
 					for (int i=0;i<b1.length;i++)
 						b2[i] = b1[i];
-					System.out.println(HexDump.toHex(b2));
 					try {
 						USBFlash.write(b2);
 					}

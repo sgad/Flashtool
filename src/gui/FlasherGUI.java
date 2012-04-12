@@ -64,6 +64,7 @@ import flashsystem.BytesUtil;
 import flashsystem.Command;
 import flashsystem.FlasherConsole;
 import flashsystem.HexDump;
+import flashsystem.S1Packet;
 import flashsystem.SeusSinTool;
 import flashsystem.TaEntry;
 import flashsystem.TaFile;
@@ -922,12 +923,11 @@ public class FlasherGUI extends JFrame {
 								flash.sendLoader();
 								flash.openTA(2);
 								Vector<TaEntry> v=flash.dumpProperties();
-								flash.closeTA();
 								if (v.size()>0) {
 									TaEditor edit = new TaEditor(flash,v);
 									edit.setVisible(true);
+									flash.closeTA();
 									flash.closeDevice();
-									DeviceChangedListener.pause(false);
 								}
 							}
 						}

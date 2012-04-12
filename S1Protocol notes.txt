@@ -1,12 +1,12 @@
 /* PROTOCOL FMT
    ALL DWORDS ARE BIG ENDIAN */
 
-[DWORD]  CMD                    (4 bytes)
-[DWORD]  FLAGS ( 1 | 2 | 4 )    (4 bytes)
-[DWORD]  LEN                    (4 bytes)
-[BYTE]   HDR CHECKSUM           (1 byte)
-[BYTE[LEN]]  DATA               (n bytes depending on the LEN value)
-[DWORD]  DATA CHECKSUM (CRC32)  (4 bytes)
+[DWORD]      CMD                    (4 bytes)
+[DWORD]      FLAGS ( 1 | 2 | 4 )    (4 bytes)
+[DWORD]      LEN                    (4 bytes)
+[BYTE]       HDR CHECKSUM           (1 byte)
+[BYTE[LEN]]  DATA                   (n bytes depending on the LEN value)
+[DWORD]      DATA CHECKSUM (CRC32)  (4 bytes)
 
 
 
@@ -66,7 +66,7 @@ To validate a reply :
   
   TA Data format :
   
-[DWORD]  PARTITION              (4 bytes)
-[DWORD]  LEN                    (4 bytes)
+[DWORD]      UNIT               (4 bytes)
+[DWORD]      LEN                (4 bytes)
 [BYTE[LEN]]  DATA               (n bytes depending on the LEN value)
   

@@ -34,14 +34,12 @@ public class X10flash {
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {
-	    		MyLogger.getLogger().info("Opening TA for writting");
 	    		cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
 	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);    		
 	    	}
 	    	else {
-	    		MyLogger.getLogger().info("Closing TA");
+	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
 	    		cmd.send(Command.CMD13, Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
-	        	cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
 	    	}
     }
 
@@ -157,9 +155,7 @@ public class X10flash {
     
     public void RestoreTA(String tafile) throws FileNotFoundException, IOException, X10FlashException {
     	openTA(2);
-		setFlashState(true);
     	sendTA(new FileInputStream(tafile),"preset");
-		setFlashState(false);
 		closeTA();
 		MyLogger.initProgress(0);	    
     }
@@ -255,6 +251,7 @@ public class X10flash {
 				uploadImage(fin, 0x1000);
 			}
 		}
+		USBFlash.readS1Reply();
 		hookDevice(true);
     }
 
@@ -309,18 +306,23 @@ public class X10flash {
 
 		    sendLoader();
 
-			sendImages();
-        	sendSystemAndUserData();
-    
-        	if (_bundle.hasTA()) {
-        		openTA(2);
-        		setFlashState(true);
+		    openTA(2);
+		    
+		    setFlashState(true);
+
+		    if (_bundle.hasTA()) {	
         		if (_bundle.hasPreset()) sendTA(_bundle.getPreset().getInputStream(),"preset");
         		//if (_bundle.hasSimlock()) sendTA(_bundle.getSimlock().getInputStream(),"simlock");
-        		setFlashState(false);
-        		closeTA();
         	}
+		    
+			sendImages();
 			
+        	sendSystemAndUserData();
+
+        	setFlashState(false);
+        	
+        	closeTA();
+        	
         	closeDevice();
 			
 			MyLogger.getLogger().info("Flashing finished.");

@@ -11,22 +11,31 @@ public class Command {
 
     private boolean _simulate;
 
-	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
+	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
 		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
 		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
-		(byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00}; 
-	public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
-		0x00, 0x00, 0x27, 0x74,
-		0x00, 0x00, 0x00, 0x01,
-		0x01 };
+		(byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00};*/ 
+	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
+	    (byte)0x00, (byte)0x00, (byte)0x09, (byte)0x62,
+	    (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
+	    (byte)0x00}; 
+    public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
+    	(byte)0x00, (byte)0x00, (byte)0x27, (byte)0x74,
+    	(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
+    	(byte)0x01};
+	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
+		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
+		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
+		(byte)0xAA, (byte)0x00, (byte)0x00, (byte)0x00};*/ 
 	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
 		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
-		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
-		(byte)0xAA, (byte)0x00, (byte)0x00, (byte)0x00}; 
+		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
+		(byte)0xAA}; 
+
 	public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED = {
-		0x00, 0x00, 0x27, 0x74,
-		0x00, 0x00, 0x00, 0x01,
-		0x00 };
+		(byte)0x00, (byte)0x00, (byte)0x27, (byte)0x74,
+		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
+		(byte)0x00};
 
 	
 	static final int CMD01 = 1;

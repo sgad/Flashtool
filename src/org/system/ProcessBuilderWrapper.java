@@ -83,11 +83,14 @@ public class ProcessBuilderWrapper {
                 br = new BufferedReader(new InputStreamReader(in));
                 String line = null;
                 while ( (line = br.readLine()) != null) {
-                	if (print)
-                		MyLogger.getLogger().info(line);
-                	else
-                		MyLogger.getLogger().debug(line);
-                    pw.println(line);
+                	if (line.trim().replaceAll("\n", "").length()>0) {
+                		line = line.replaceAll("\n", "");
+	                	if (print)
+	                		MyLogger.getLogger().info(line);
+	                	else
+	                		MyLogger.getLogger().debug(line);
+	                    pw.println(line);
+                	}
                 }
             }
             catch (Exception e) {}

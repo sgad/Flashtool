@@ -323,7 +323,7 @@ public class X10flash {
         	
         	closeTA();
         	
-        	closeDevice();
+        	closeDevice(0x01);
 			
 			MyLogger.getLogger().info("Flashing finished.");
 			MyLogger.getLogger().info("Please wait. Phone will reboot");
@@ -358,7 +358,12 @@ public class X10flash {
     	MyLogger.getLogger().info("Ending flash session");
     	cmd.send(Command.CMD04,Command.VALNULL,false);
     }
-    
+
+    public void endSession(int param) throws X10FlashException,IOException {
+    	MyLogger.getLogger().info("Ending flash session");
+    	cmd.send(Command.CMD04,BytesUtil.getBytesWord(param, 1),false);
+    }
+
     public void closeDevice() {
     	try {
     		endSession();
@@ -367,7 +372,16 @@ public class X10flash {
     	USBFlash.close();
     	DeviceChangedListener.pause(false);
     }
-    
+
+    public void closeDevice(int par) {
+    	try {
+    		endSession(par);
+    	}
+    	catch (Exception e) {}
+    	USBFlash.close();
+    	DeviceChangedListener.pause(false);
+    }
+
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {
 		cmd.send(Command.CMD01, Command.VALNULL, false);
 		phoneprops.update(cmd.getLastReplyString());

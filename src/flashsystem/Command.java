@@ -15,10 +15,10 @@ public class Command {
 		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
 		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
 		(byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00};*/ 
-	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
+	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
 	    (byte)0x00, (byte)0x00, (byte)0x09, (byte)0x62,
 	    (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
-	    (byte)0x00}; 
+	    (byte)0x00};*/ 
     public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
     	(byte)0x00, (byte)0x00, (byte)0x27, (byte)0x74,
     	(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,

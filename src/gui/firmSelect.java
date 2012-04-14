@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.jar.JarFile;
 
 import javax.swing.ListSelectionModel;
@@ -66,9 +67,13 @@ public class firmSelect extends JDialog {
 	private JTable table_1;
 	private JTextField folderSource;
 	private String filename="";
+	private Properties hasCmd25 = new Properties();
+	private JPanel panel_1;
+	private JCheckBox chckbxFinalCheck;
 
 	private void dirlist() throws Exception{
 		boolean hasElements = false;
+		hasCmd25.clear();
 		modelFirm = new DefaultTableModel();
 		modelFirm.addColumn("File");
 		modelFirm.addColumn("Device");
@@ -78,40 +83,20 @@ public class firmSelect extends JDialog {
 		tableFirm.setColumnModel(tableColumnModel);
 		tableFirm.createDefaultColumnsFromModel();
 		tableColumnModel.setColumnVisible(tableColumnModel.getColumnByModelIndex(0), false);
-		if (GlobalConfig.getProperty("bundle").equals("file")) {
-	    	File dir = new File(folderSource.getText());
-		    File[] chld = dir.listFiles();
-		    for(int i = 0; i < chld.length; i++){
-		    	if (filename.length()==0) {
-		    		if (chld[i].isFile() && chld[i].getName().toUpperCase().endsWith("FTF")) {
-		    			hasElements = true;
-		    			JarFile jf = new JarFile(chld[i]);
-		    			modelFirm.addRow(new String[]{chld[i].getName(),jf.getManifest().getMainAttributes().getValue("device"),jf.getManifest().getMainAttributes().getValue("version"),jf.getManifest().getMainAttributes().getValue("branding")});
-		    			MyLogger.getLogger().debug("Adding "+chld[i].getName()+" to list of firmwares");
-		    		}
-		    	}
-		    	else {
-		    		if (chld[i].getName().equals(filename)) {
-		    			hasElements = true;
-		    			JarFile jf = new JarFile(chld[i]);
-		    			modelFirm.addRow(new String[]{chld[i].getName(),jf.getManifest().getMainAttributes().getValue("device"),jf.getManifest().getMainAttributes().getValue("version"),jf.getManifest().getMainAttributes().getValue("branding")});
-		    			MyLogger.getLogger().debug("Adding "+chld[i].getName()+" to list of firmwares");
-		    		}
-		    	}
-		    }
-	    }
-	    else {
-	    	File dir = new File(folderSource.getText());
-		    File[] chld = dir.listFiles();
-		    for(int i = 0; i < chld.length; i++){
-		    	if (chld[i].isDirectory()) {
-		    			PropertiesFile content = new PropertiesFile("",chld[i].getPath()+fsep+"/content.properties");		    			
-		    			if (content.getProperty("device")!=null && content.getProperty("version")!=null || content.getProperty("branding")!=null) {
-		    				hasElements = true;
-		    				modelFirm.addRow(new String[]{chld[i].getPath(),content.getProperty("device"),content.getProperty("version"),content.getProperty("branding")});
-		    			}
-		    	}
-		    }	    	
+    	File dir = new File(folderSource.getText());
+	    File[] chld = dir.listFiles(new FtfFilter(filename));
+	    for(int i = 0; i < chld.length; i++) {
+	    	try {
+				hasElements = true;
+				JarFile jf = new JarFile(chld[i]);
+				modelFirm.addRow(new String[]{chld[i].getName(),jf.getManifest().getMainAttributes().getValue("device"),jf.getManifest().getMainAttributes().getValue("version"),jf.getManifest().getMainAttributes().getValue("branding")});
+				String cmd25 = jf.getManifest().getMainAttributes().getValue("cmd25");
+				if (cmd25==null) cmd25="false";
+				hasCmd25.setProperty(chld[i].getName(), cmd25);
+				MyLogger.getLogger().debug("Adding "+chld[i].getName()+" to list of firmwares");
+	    	}
+	    	catch (Exception e) {
+	    	}
 	    }
 	    if (!hasElements) {
 	    	okButton.setEnabled(false);
@@ -135,70 +120,56 @@ public class firmSelect extends JDialog {
 		boolean hasCache = false;
 		boolean hasKernel = false;
 		if (result!=null) {
-			if (GlobalConfig.getProperty("bundle").equals("file")) {
-				selected=new Bundle(folderSource.getText()+fsep+result,Bundle.JARTYPE);
+			selected=new Bundle(folderSource.getText()+fsep+result,Bundle.JARTYPE);
 				selected.setDevice((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 1));
 				selected.setVersion((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 2));
 				selected.setBranding((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 3));
+				selected.setCmd25(hasCmd25.getProperty((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0)));
 				Enumeration<BundleEntry> e = selected.allEntries();
 				while (e.hasMoreElements()) {
-			    	hasElements = true;
-			    	BundleEntry el = e.nextElement();
-			    	if (el.getName().toUpperCase().startsWith("USERDATA")) {
-			    		if (chckbxWipeUserdata.isSelected()) model_1.addRow(new String[]{el.getName()});
-			    		hasUserData=true;
-			    	}
-				    if (el.getName().toUpperCase().startsWith("CACHE")) {
-				    	if (chckbxWipeCache.isSelected()) model_1.addRow(new String[]{el.getName()});
-				    	hasCache=true;
-				    }
-			    	if (el.getName().toUpperCase().startsWith("SYSTEM")) {
-				    	if (!chckbxExcludeSystem.isSelected()) model_1.addRow(new String[]{el.getName()});
-				    	hasSystem=true;
-				    }
-			    	if (el.getName().toUpperCase().startsWith("KERNEL")) {
-				    	if (!chckbxExcludeKernel.isSelected()) model_1.addRow(new String[]{el.getName()});
-				    	hasKernel=true;
-			    	}
-				    if (!el.getName().toUpperCase().startsWith("KERNEL") &&
-				    	!el.getName().toUpperCase().startsWith("LOADER") &&
-				    	!el.getName().toUpperCase().startsWith("USERDATA") &&
-				    	!el.getName().toUpperCase().startsWith("CACHE") &&
-				    	!el.getName().toUpperCase().startsWith("SYSTEM")) {
-				    	if (!chckbxExcludeBB.isSelected()) model_1.addRow(new String[]{el.getName()});
-				    	hasBB=true;
-				    }
-				    if (el.getName().toUpperCase().startsWith("LOADER"))
-				    	model_1.addRow(new String[]{el.getName()});
-			    	MyLogger.getLogger().debug("Adding "+el.getName()+" to the content of "+result);
+		    	hasElements = true;
+		    	BundleEntry el = e.nextElement();
+		    	if (el.getName().toUpperCase().startsWith("USERDATA")) {
+		    		if (chckbxWipeUserdata.isSelected()) model_1.addRow(new String[]{el.getName()});
+		    		hasUserData=true;
+		    	}
+			    if (el.getName().toUpperCase().startsWith("CACHE")) {
+			    	if (chckbxWipeCache.isSelected()) model_1.addRow(new String[]{el.getName()});
+			    	hasCache=true;
 			    }
-			}
-			else {
-				String[] list = (new File(result)).list();
-				for (int i=0;i<list.length;i++) {
-					if (list[i].toUpperCase().endsWith("SIN")||list[i].toUpperCase().endsWith("TA")) {
-						hasElements=true;
-			    		if (list[i].toUpperCase().startsWith("USERDATA")) {
-			    			if (chckbxWipeUserdata.isSelected()) model_1.addRow(new String[]{list[i]});
-			    			hasUserData=true;
-			    		}
-				    	else
-					    	if (list[i].toUpperCase().startsWith("SYSTEM")) {
-					    		if (!chckbxExcludeSystem.isSelected()) model_1.addRow(new String[]{list[i]});
-					    		hasSystem=true;
-					    	}
-					    	else
-					    		model_1.addRow(new String[]{list[i]});
-					}
-				}
-			}
+		    	if (el.getName().toUpperCase().startsWith("SYSTEM")) {
+			    	if (!chckbxExcludeSystem.isSelected()) model_1.addRow(new String[]{el.getName()});
+			    	hasSystem=true;
+			    }
+		    	if (el.getName().toUpperCase().startsWith("KERNEL")) {
+			    	if (!chckbxExcludeKernel.isSelected()) model_1.addRow(new String[]{el.getName()});
+			    	hasKernel=true;
+		    	}
+			    if (!el.getName().toUpperCase().startsWith("KERNEL") &&
+			    	!el.getName().toUpperCase().startsWith("LOADER") &&
+			    	!el.getName().toUpperCase().startsWith("USERDATA") &&
+			    	!el.getName().toUpperCase().startsWith("CACHE") &&
+			    	!el.getName().toUpperCase().startsWith("SYSTEM")) {
+			    	if (!chckbxExcludeBB.isSelected()) model_1.addRow(new String[]{el.getName()});
+			    	hasBB=true;
+			    }
+			    if (el.getName().toUpperCase().startsWith("LOADER"))
+			    	model_1.addRow(new String[]{el.getName()});
+		    	MyLogger.getLogger().debug("Adding "+el.getName()+" to the content of "+result);
+		    }
 		    if (hasElements)
 		    	table_1.setRowSelectionInterval(0, 0);
-		    chckbxWipeUserdata.setVisible(hasUserData);
-		    chckbxWipeCache.setVisible(hasCache);
-		    chckbxExcludeSystem.setVisible(hasSystem);
-		    chckbxExcludeKernel.setVisible(hasKernel);
+		    
+		    chckbxWipeUserdata.setEnabled(hasUserData);
+		    if (!hasUserData)
+		    	chckbxWipeUserdata.setSelected(false);		    
+		    chckbxWipeCache.setEnabled(hasCache);
+		    if (!hasCache)
+		    	chckbxWipeCache.setSelected(false);
+		    chckbxExcludeSystem.setEnabled(hasSystem);
+		    chckbxExcludeKernel.setEnabled(hasKernel);
 		    chckbxExcludeBB.setVisible(hasBB);
+		    chckbxFinalCheck.setSelected(selected.hasCmd25());
 		}
 	}
 	
@@ -221,7 +192,7 @@ public class firmSelect extends JDialog {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("left:max(78dlu;default)"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("left:max(81dlu;default)"),},
+				ColumnSpec.decode("left:max(81dlu;default):grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("29dlu"),
@@ -296,20 +267,6 @@ public class firmSelect extends JDialog {
 			lblFilesInThis.setName(getName()+"_"+"lblFilesInThis");
 			contentPanel.add(lblFilesInThis, "4, 4, left, fill");
 		}
-		{
-			chckbxWipeUserdata = new JCheckBox("Wipe userdata");
-			chckbxWipeUserdata.setName(getName()+"_chckbxWipeUserdata");
-			chckbxWipeUserdata.setSelected(true);
-			chckbxWipeUserdata.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					try {
-						filelist();
-					}
-					catch (Exception e) {}
-				}
-			});
-			contentPanel.add(chckbxWipeUserdata, "6, 4, left, fill");
-		}
 		JScrollPane scrollPane = new JScrollPane();
 		contentPanel.add(scrollPane, "2, 6, 1, 9, left, fill");
 		tableFirm = new JTable() {
@@ -326,6 +283,12 @@ public class firmSelect extends JDialog {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+			    chckbxWipeUserdata.setSelected(true);
+			    chckbxWipeCache.setSelected(true);
+			    chckbxExcludeSystem.setSelected(false);
+			    chckbxExcludeKernel.setSelected(false);
+			    chckbxExcludeBB.setSelected(false);
+			    chckbxFinalCheck.setSelected(false);
 				try {
 					filelist();
 				}
@@ -336,6 +299,12 @@ public class firmSelect extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+			    chckbxWipeUserdata.setSelected(true);
+			    chckbxWipeCache.setSelected(true);
+			    chckbxExcludeSystem.setSelected(false);
+			    chckbxExcludeKernel.setSelected(false);
+			    chckbxExcludeBB.setSelected(false);
+			    chckbxFinalCheck.setSelected(false);
 				try {
 					filelist();
 				}
@@ -353,27 +322,34 @@ public class firmSelect extends JDialog {
 			}
 		}
 		{
-			chckbxExcludeBB = new JCheckBox("Exclude Baseband");
-			chckbxExcludeBB.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					try {
-						filelist();
-					}
-					catch (Exception e) {}
-				}
-			});
+		}
+		{
+			panel_1 = new JPanel();
+			contentPanel.add(panel_1, "6, 6, 1, 9, fill, fill");
+			panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+					FormFactory.RELATED_GAP_COLSPEC,
+					FormFactory.DEFAULT_COLSPEC,},
+				new RowSpec[] {
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,}));
 			{
-				chckbxExcludeSystem = new JCheckBox("Exclude system");
-				chckbxExcludeSystem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						try {
-							filelist();
-						}
-						catch (Exception e) {}
-					}
-				});
+				chckbxWipeUserdata = new JCheckBox("Wipe userdata");
+				panel_1.add(chckbxWipeUserdata, "2, 2");
+				chckbxWipeUserdata.setName(getName()+"_chckbxWipeUserdata");
+				chckbxWipeUserdata.setSelected(true);
 				{
 					chckbxWipeCache = new JCheckBox("Wipe Cache");
+					panel_1.add(chckbxWipeCache, "2, 4");
 					chckbxWipeCache.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							try {
@@ -383,24 +359,61 @@ public class firmSelect extends JDialog {
 						}
 					});
 					chckbxWipeCache.setSelected(true);
-					contentPanel.add(chckbxWipeCache, "6, 6");
 				}
-
-				contentPanel.add(chckbxExcludeSystem, "6, 8, left, top");
-			}
-			contentPanel.add(chckbxExcludeBB, "6, 10");
-		}
-		{
-			chckbxExcludeKernel = new JCheckBox("Exclude Kernel");
-			chckbxExcludeKernel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					try {
-						filelist();
+				{
+					chckbxExcludeSystem = new JCheckBox("Exclude system");
+					panel_1.add(chckbxExcludeSystem, "2, 6");
+					chckbxExcludeKernel = new JCheckBox("Exclude Kernel");
+					panel_1.add(chckbxExcludeKernel, "2, 8");
+					{
+						chckbxExcludeBB = new JCheckBox("Exclude Baseband");
+						panel_1.add(chckbxExcludeBB, "2, 10");
+						{
+							chckbxFinalCheck = new JCheckBox("No Final Verification Check");
+							chckbxFinalCheck.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									if (selected!=null) {
+										selected.setCmd25(chckbxFinalCheck.isSelected()?"true":"false");
+									}
+								}
+							});
+							panel_1.add(chckbxFinalCheck, "2, 12");
+						}
+						chckbxExcludeBB.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								try {
+									filelist();
+								}
+								catch (Exception e) {}
+							}
+						});
 					}
-					catch (Exception e) {}
+					chckbxExcludeKernel.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							try {
+								filelist();
+							}
+							catch (Exception e) {}
+						}
+					});
+					chckbxExcludeSystem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							try {
+								filelist();
+							}
+							catch (Exception e) {}
+						}
+					});
 				}
-			});
-			contentPanel.add(chckbxExcludeKernel, "6, 12");
+				chckbxWipeUserdata.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						try {
+							filelist();
+						}
+						catch (Exception e) {}
+					}
+				});
+			}
 		}
 		{
 			JPanel buttonPane = new JPanel();

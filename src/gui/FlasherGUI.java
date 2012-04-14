@@ -1638,7 +1638,7 @@ public class FlasherGUI extends JFrame {
 					Bundle b = null;
 					//BootModeSelectGUI bootmode = new BootModeSelectGUI();
 					//String select = bootmode.selectMode();
-					//if (select.equals("flashmode"))
+					//if (select.equals("flashmode"))g
 						b = bcre.getBundle("flashmode");
 					//if (select.equals("fastboot"))
 						//b = bcre.getBundle("fastboot");

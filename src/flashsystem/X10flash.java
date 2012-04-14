@@ -34,7 +34,7 @@ public class X10flash {
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {
-	    		cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
+	    		//cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
 	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);    		
 	    	}
 	    	else {
@@ -305,7 +305,10 @@ public class X10flash {
 		    MyLogger.initProgress(getNumberPasses());
 
 		    sendLoader();
-
+		    
+		    if (_bundle.hasCmd25())
+		    	cmd.send((byte)0x19, new byte[] {0x00, 0x01, 0x00, 0x00, 0x00, 0x01}, false);
+		    
 		    openTA(2);
 		    
 		    setFlashState(true);

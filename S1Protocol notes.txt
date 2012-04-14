@@ -28,6 +28,7 @@ COMMANDS:
 0x0A - close TA
 0x0C - read TA
 0x0D - write TA
+0x19 - Disable Final Verification check ?
 
 Generally, a writeBytes is followed by 2 or 3 readBytes, depending on the length of data in the first readBytes (if LEN = 0 then only 2...)
 

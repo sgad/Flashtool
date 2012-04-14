@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JTextField;
 import javax.swing.JList;
+import javax.swing.JCheckBox;
 
 
 public class BundleGUI extends JDialog {
@@ -44,6 +45,7 @@ public class BundleGUI extends JDialog {
 	private JTextField branding;
 	private JList listFolder;
 	private JList listFirmware;
+	private JCheckBox chckbxICS;
 	DefaultListModel listFolderModel = new DefaultListModel();
 	DefaultListModel listFirmwareModel = new DefaultListModel();
 	SortedNameListModel sortedListFolderModel = new SortedNameListModel(listFolderModel);
@@ -79,7 +81,7 @@ public class BundleGUI extends JDialog {
 		setName("BundleGUI");
 		setTitle("Bundle Creation");
 		setModal(true);
-		setBounds(100, 100, 687, 357);
+		setBounds(100, 100, 687, 380);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -94,7 +96,9 @@ public class BundleGUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(59dlu;default)"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
+				RowSpec.decode("max(9dlu;default)"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(15dlu;default)"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -139,7 +143,7 @@ public class BundleGUI extends JDialog {
 		}
 		{
 			JPanel panel = new JPanel();
-			contentPanel.add(panel, "6, 2, fill, fill");
+			contentPanel.add(panel, "6, 2, 1, 3, fill, fill");
 			panel.setLayout(new FormLayout(new ColumnSpec[] {
 					FormFactory.RELATED_GAP_COLSPEC,
 					FormFactory.DEFAULT_COLSPEC,
@@ -151,7 +155,9 @@ public class BundleGUI extends JDialog {
 					FormFactory.RELATED_GAP_ROWSPEC,
 					FormFactory.DEFAULT_ROWSPEC,
 					FormFactory.RELATED_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,}));
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("default:grow"),}));
 			{
 				JLabel lblDevice = new JLabel("Device :");
 				lblDevice.setName("lblDevice");
@@ -182,20 +188,28 @@ public class BundleGUI extends JDialog {
 				panel.add(branding, "4, 6");
 				branding.setColumns(10);
 			}
+			{
+				JPanel panel_1 = new JPanel();
+				panel.add(panel_1, "2, 8, 3, 1, left, fill");
+				{
+					chckbxICS = new JCheckBox("Disable Final Verification Check");
+					panel_1.add(chckbxICS);
+				}
+			}
 		}
 		{
 			JLabel lblFirmwareList = new JLabel("Folder list :");
 			lblFirmwareList.setName("lblFirmwareList");
-			contentPanel.add(lblFirmwareList, "2, 4");
+			contentPanel.add(lblFirmwareList, "2, 6");
 		}
 		{
 			JLabel lblFirmwareContent = new JLabel("Firmware content :");
 			lblFirmwareContent.setName("lblFirmwareContent");
-			contentPanel.add(lblFirmwareContent, "6, 4");
+			contentPanel.add(lblFirmwareContent, "6, 6");
 		}
 		{
 			JScrollPane scrollPane = new JScrollPane();
-			contentPanel.add(scrollPane, "2, 6, 1, 5, fill, fill");
+			contentPanel.add(scrollPane, "2, 8, 1, 5, fill, fill");
 			{
 				listFolder = new JList();
 				listFolder.setModel(sortedListFolderModel);
@@ -213,11 +227,11 @@ public class BundleGUI extends JDialog {
 					}
 				}
 			});
-			contentPanel.add(button, "4, 6, center, default");
+			contentPanel.add(button, "4, 8, center, default");
 		}
 		{
 			JScrollPane scrollPane = new JScrollPane();
-			contentPanel.add(scrollPane, "6, 6, 1, 5, fill, fill");
+			contentPanel.add(scrollPane, "6, 8, 1, 5, fill, fill");
 			{
 				listFirmware = new JList();
 				listFirmware.setModel(sortedListFirmwareModel);
@@ -235,7 +249,7 @@ public class BundleGUI extends JDialog {
 					}
 				}
 			});
-			contentPanel.add(button, "4, 8, center, default");
+			contentPanel.add(button, "4, 10, center, default");
 		}
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -340,6 +354,7 @@ public class BundleGUI extends JDialog {
 			b.setDevice(device.getText());
 			b.setVersion(version.getText());
 			b.setBranding(branding.getText());
+			b.setCmd25(chckbxICS.isSelected()?"true":"flase");
 			return b;
 		}
 		return null;

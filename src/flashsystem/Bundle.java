@@ -28,6 +28,7 @@ public final class Bundle {
     private String _version;
     private String _branding;
     private String _device;
+    private String _cmd25;
     public final static int JARTYPE=1;
     public final static int FOLDERTYPE=2;
 
@@ -229,6 +230,15 @@ public final class Bundle {
 		_device=device;
 	}
 	
+	public void setCmd25(String value) {
+		_cmd25 = value;
+		if (_cmd25==null) _cmd25="false";
+	}
+	
+	public boolean hasCmd25() {
+		return _cmd25.equals("true");
+	}
+	
 	public void createFTF() throws Exception {
 		File ftf = new File("./firmwares/"+_device+"_"+_version+"_"+_branding+".ftf");
 		byte buffer[] = new byte[10240];
@@ -238,6 +248,7 @@ public final class Bundle {
 		sbuf.append("version: "+_version+"\n");
 		sbuf.append("branding: "+_branding+"\n");
 		sbuf.append("device: "+_device+"\n");
+		sbuf.append("cmd25: "+_cmd25+"\n");
 		Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes("UTF-8")));
 	    FileOutputStream stream = new FileOutputStream(ftf);
 	    JarOutputStream out = new JarOutputStream(stream, manifest);

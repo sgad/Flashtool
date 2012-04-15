@@ -255,6 +255,15 @@ public class X10flash {
 		hookDevice(true);
     }
 
+    public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
+		if (_bundle.hasPartition()) {
+			MyLogger.getLogger().info("Flashing partition mbr");
+			closeTA();
+			uploadImage(_bundle.getPartition().getInputStream(),0x10000);
+			openTA(2);
+		}
+    }
+
     public void sendSystemAndUserData() throws FileNotFoundException,IOException, X10FlashException {
         Enumeration<BundleEntry> e = _bundle.systemdataEntries();
     	while (e.hasMoreElements()) {
@@ -313,6 +322,8 @@ public class X10flash {
 		    
 		    setFlashState(true);
 
+		    sendPartition();
+		    
 		    if (_bundle.hasTA()) {	
         		if (_bundle.hasPreset()) sendTA(_bundle.getPreset().getInputStream(),"preset");
         		//if (_bundle.hasSimlock()) sendTA(_bundle.getSimlock().getInputStream(),"simlock");

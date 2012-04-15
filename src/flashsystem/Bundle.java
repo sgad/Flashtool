@@ -102,6 +102,7 @@ public final class Bundle {
 				    	!key.toUpperCase().startsWith("LOADER") &&
 				    	!key.toUpperCase().startsWith("USERDATA") &&
 				    	!key.toUpperCase().startsWith("CACHE") &&
+				    	!key.toUpperCase().startsWith("PARTITION") &&
 				    	!key.toUpperCase().startsWith("SYSTEM")) {
 			    	bundleList.remove(key);
 			    }
@@ -118,7 +119,7 @@ public final class Bundle {
 		Enumeration<Object> e = bundleList.keys();
 		while (e.hasMoreElements()) {
 			String key = (String)e.nextElement();
-			if (!key.toUpperCase().contains("LOADER") && !key.toUpperCase().contains("SYSTEM") && !key.toUpperCase().contains("USERDATA") && !key.toUpperCase().endsWith("TA"))
+			if (!key.toUpperCase().contains("LOADER") && !key.toUpperCase().contains("PARTITION") && !key.toUpperCase().contains("SYSTEM") && !key.toUpperCase().contains("USERDATA") && !key.toUpperCase().endsWith("TA"))
 				v.add((BundleEntry)bundleList.get(key));
 		}
 		return v.elements();
@@ -209,6 +210,19 @@ public final class Bundle {
 		while (e.hasMoreElements()) {
 			String key = (String)e.nextElement();
 			if (key.toUpperCase().startsWith("LOADER")) return true;
+		}
+		return false;
+	}
+
+	public BundleEntry getPartition() throws IOException, FileNotFoundException {
+		return (BundleEntry)bundleList.get("partition.sin");
+	}
+
+	public boolean hasPartition() {
+		Enumeration<Object> e =bundleList.keys();
+		while (e.hasMoreElements()) {
+			String key = (String)e.nextElement();
+			if (key.toUpperCase().contains("PARTITION")) return true;
 		}
 		return false;
 	}

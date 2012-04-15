@@ -215,7 +215,7 @@ public final class Bundle {
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("partition.sin");
+		return (BundleEntry)bundleList.get("partition-image.sin");
 	}
 
 	public boolean hasPartition() {

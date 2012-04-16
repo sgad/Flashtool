@@ -257,9 +257,10 @@ public class X10flash {
 
     public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
 		if (_bundle.hasPartition()) {
-			MyLogger.getLogger().info("Flashing partition mbr");
+			BundleEntry entry = _bundle.getPartition();
+			MyLogger.getLogger().info("Flashing "+entry.getName());
 			closeTA();
-			uploadImage(_bundle.getPartition().getInputStream(),0x10000);
+			uploadImage(entry.getInputStream(),0x10000);
 			openTA(2);
 		}
     }

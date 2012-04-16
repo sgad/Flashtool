@@ -98,7 +98,7 @@ public final class Bundle {
 			Enumeration<Object> keys = bundleList.keys();
 			while (keys.hasMoreElements()) {
 				String key = (String)keys.nextElement();
-			    if (!key.toUpperCase().startsWith("KERNEL") &&
+			    if (!key.toUpperCase().contains("KERNEL") &&
 				    	!key.toUpperCase().startsWith("LOADER") &&
 				    	!key.toUpperCase().startsWith("USERDATA") &&
 				    	!key.toUpperCase().startsWith("CACHE") &&

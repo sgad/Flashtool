@@ -121,41 +121,46 @@ public class firmSelect extends JDialog {
 		boolean hasKernel = false;
 		if (result!=null) {
 			selected=new Bundle(folderSource.getText()+fsep+result,Bundle.JARTYPE);
-				selected.setDevice((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 1));
-				selected.setVersion((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 2));
-				selected.setBranding((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 3));
-				selected.setCmd25(hasCmd25.getProperty((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0)));
-				Enumeration<BundleEntry> e = selected.allEntries();
-				while (e.hasMoreElements()) {
+			selected.setDevice((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 1));
+			selected.setVersion((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 2));
+			selected.setBranding((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 3));
+			selected.setCmd25(hasCmd25.getProperty((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0)));
+			Enumeration<BundleEntry> e = selected.allEntries();
+			while (e.hasMoreElements()) {
 		    	hasElements = true;
 		    	BundleEntry el = e.nextElement();
 		    	if (el.getName().toUpperCase().startsWith("USERDATA")) {
 		    		if (chckbxWipeUserdata.isSelected()) model_1.addRow(new String[]{el.getName()});
 		    		hasUserData=true;
 		    	}
-			    if (el.getName().toUpperCase().startsWith("CACHE")) {
+		    	else if (el.getName().toUpperCase().startsWith("CACHE")) {
 			    	if (chckbxWipeCache.isSelected()) model_1.addRow(new String[]{el.getName()});
 			    	hasCache=true;
 			    }
-		    	if (el.getName().toUpperCase().startsWith("SYSTEM")) {
+		    	else if (el.getName().toUpperCase().startsWith("SYSTEM")) {
 			    	if (!chckbxExcludeSystem.isSelected()) model_1.addRow(new String[]{el.getName()});
 			    	hasSystem=true;
 			    }
-		    	if (el.getName().toUpperCase().startsWith("KERNEL")) {
+		    	else if (el.getName().toUpperCase().contains("KERNEL")) {
 			    	if (!chckbxExcludeKernel.isSelected()) model_1.addRow(new String[]{el.getName()});
 			    	hasKernel=true;
 		    	}
-			    if (!el.getName().toUpperCase().startsWith("KERNEL") &&
+		    	else if (!el.getName().toUpperCase().startsWith("KERNEL") &&
 			    	!el.getName().toUpperCase().startsWith("LOADER") &&
 			    	!el.getName().toUpperCase().startsWith("USERDATA") &&
+			    	!el.getName().toUpperCase().startsWith("PARTITION") &&
 			    	!el.getName().toUpperCase().startsWith("CACHE") &&
 			    	!el.getName().toUpperCase().startsWith("SYSTEM")) {
 			    	if (!chckbxExcludeBB.isSelected()) model_1.addRow(new String[]{el.getName()});
 			    	hasBB=true;
 			    }
-			    if (el.getName().toUpperCase().startsWith("LOADER"))
+		    	else if (el.getName().toUpperCase().startsWith("LOADER"))
 			    	model_1.addRow(new String[]{el.getName()});
-		    	MyLogger.getLogger().debug("Adding "+el.getName()+" to the content of "+result);
+		    	else if (el.getName().toUpperCase().startsWith("PARTITION"))
+			    	model_1.addRow(new String[]{el.getName()});
+		    	else
+		    		model_1.addRow(new String[]{el.getName()});
+			    MyLogger.getLogger().debug("Adding "+el.getName()+" to the content of "+result);
 		    }
 		    if (hasElements)
 		    	table_1.setRowSelectionInterval(0, 0);

@@ -29,6 +29,8 @@ COMMANDS:
 0x0C - read TA
 0x0D - write TA
 0x19 - Disable Final Verification check ?
+this data is sent to flash ICS on Arc S using this 0x19 command : 0x00 0x01 0x00 0x00 0x00 0x01
+sent just after loader is sent. (between loader and openTA)
 
 Generally, a writeBytes is followed by 2 or 3 readBytes, depending on the length of data in the first readBytes (if LEN = 0 then only 2...)
 

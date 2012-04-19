@@ -31,14 +31,28 @@ public final class Bundle {
     private String _cmd25;
     public final static int JARTYPE=1;
     public final static int FOLDERTYPE=2;
+    private BundleMetaData _meta;
 
     public Bundle() {
-    	
     }
     
     public Bundle(String path, int type) {
+    	feed(path,type);
+    }
+
+    public void setMeta(BundleMetaData meta) {
+    	_meta = meta;
+    	feedFromMeta();
+    }
+    
+    public Bundle(String path, int type, BundleMetaData meta) {
+    	_meta = meta;
+    	feed(path,type);
+    }
+    
+    private void feed(String path, int type) {
     	if (type==JARTYPE) feedFromJar(path);
-    	if (type==FOLDERTYPE) feedFromFolder(path);
+    	if (type==FOLDERTYPE) feedFromFolder(path);    	
     }
     
 	private void feedFromJar(String path) {
@@ -68,7 +82,24 @@ public final class Bundle {
 		}
 	}
 
+	private void feedFromMeta() {
+		bundleList.clear();
+		Enumeration<String> all = _meta.getAllEntries();
+		while (all.hasMoreElements()) {
+			String name = all.nextElement();
+			BundleEntry entry = new BundleEntry(new File(_meta.getPath(name)),name);
+			bundleList.put(entry.getName(), entry);
+			MyLogger.getLogger().debug("Added this entry to the bundle list : "+entry.getName());
+		}
+	}
+
 	public void setLoader(File loader) {
+		try {
+			if (_meta!=null)
+				_meta.process("loader.sin", loader.getAbsolutePath());
+		}
+		catch (Exception e) {
+		}
 		BundleEntry entry = new BundleEntry(loader,"loader.sin");
 		bundleList.put("loader.sin", entry);
 	}
@@ -162,13 +193,7 @@ public final class Bundle {
 	}
 	
 	public boolean hasTA() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().endsWith(".TA"))
-				return true;
-		}
-		return false;		
+		return _meta.hasCategorie("ta");
 	}
 	
 	public BundleEntry getPreset() {
@@ -206,12 +231,7 @@ public final class Bundle {
 	}
 
 	public boolean hasLoader() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().startsWith("LOADER")) return true;
-		}
-		return false;
+		return _meta.hasCategorie("loader");
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
@@ -219,12 +239,7 @@ public final class Bundle {
 	}
 
 	public boolean hasPartition() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("PARTITION")) return true;
-		}
-		return false;
+		return _meta.hasCategorie("partition");
 	}
 	
 	public boolean simulate() {
@@ -273,7 +288,7 @@ public final class Bundle {
 			String name = entry.getName();
 			int S1pos = name.toUpperCase().indexOf("_S1");
 			if (S1pos > 0) name = name.substring(0,S1pos)+".sin";
-			MyLogger.getLogger().info("Adding "+entry.getName()+" renamed as "+name+" to the bundle");
+			MyLogger.getLogger().info("Adding "+entry.getName()+" to the bundle");
 		    JarEntry jarAdd = new JarEntry(name);
 	        out.putNextEntry(jarAdd);
 	        InputStream in = entry.getInputStream();

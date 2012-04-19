@@ -60,6 +60,7 @@ import java.awt.event.WindowEvent;
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
+import flashsystem.BundleMetaData;
 import flashsystem.BytesUtil;
 import flashsystem.Command;
 import flashsystem.FlasherConsole;
@@ -1649,6 +1650,7 @@ public class FlasherGUI extends JFrame {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 					MyLogger.getLogger().error(e.getMessage());}
 				return null;
 			}

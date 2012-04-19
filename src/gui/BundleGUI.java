@@ -9,15 +9,24 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import flashsystem.Bundle;
+import flashsystem.BundleMetaData;
+
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Properties;
+
 import org.lang.Language;
 import org.system.DeviceEntry;
 import org.system.Devices;
@@ -29,6 +38,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JTextField;
 import javax.swing.JList;
 import javax.swing.JCheckBox;
+import javax.swing.JTree;
 
 
 public class BundleGUI extends JDialog {
@@ -44,22 +54,36 @@ public class BundleGUI extends JDialog {
 	private JTextField version;
 	private JTextField branding;
 	private JList listFolder;
-	private JList listFirmware;
 	private JCheckBox chckbxICS;
+	JScrollPane scrollPane;
 	DefaultListModel listFolderModel = new DefaultListModel();
-	DefaultListModel listFirmwareModel = new DefaultListModel();
 	SortedNameListModel sortedListFolderModel = new SortedNameListModel(listFolderModel);
-	SortedNameListModel sortedListFirmwareModel = new SortedNameListModel(listFirmwareModel);
+	DefaultMutableTreeNode root;
+	DefaultTreeModel listFirmwareModel;
 	boolean retcode=false;
+	BundleMetaData meta = new BundleMetaData();
+	JTree listFirmware;
+	private Properties categoryNodes = new Properties();
 
 	/**
 	 * A class that implements the Java FileFilter interface.
 	 */
 	private void dirlist() {
 		listFolderModel.removeAllElements();
-		listFirmwareModel.removeAllElements();
+		root = new DefaultMutableTreeNode("Content");
+		listFirmware = new JTree(root);
+		listFirmware.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		scrollPane.setViewportView(listFirmware);
+		listFirmwareModel=(DefaultTreeModel)listFirmware.getModel();
+		listFirmwareModel.reload(root);
+		//listFirmwareModel.removeNodeFromParent(root);
 		File[] list = (new File(folderSource.getText())).listFiles(new FirmwareFileFilter());
 		for (int i=0;i<list.length;i++) {
+			try {
+				meta.process(list[i].getName(),list[i].getAbsolutePath());
+			}
+			catch (Exception e) {
+			}
 			listFolderModel.addElement(list[i].getName());
 		}
 	}
@@ -222,7 +246,16 @@ public class BundleGUI extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					Object[] values = listFolder.getSelectedValues();
 					for (int i=0;i<values.length;i++) {
-						listFirmwareModel.addElement(values[i]);
+						String categ = meta.getCategorie(meta.getInternal((String)values[i]));
+						DefaultMutableTreeNode newnode = (DefaultMutableTreeNode) categoryNodes.get(categ);
+						if (newnode == null) {
+							newnode = new DefaultMutableTreeNode(categ);
+							categoryNodes.put(categ,newnode);
+							root.add(newnode);
+						}
+						DefaultMutableTreeNode newchild = new DefaultMutableTreeNode(meta.getInternal((String)values[i]));
+						newnode.add(newchild);
+						listFirmwareModel.reload(root);
 						listFolderModel.removeElement(values[i]);
 					}
 				}
@@ -230,22 +263,38 @@ public class BundleGUI extends JDialog {
 			contentPanel.add(button, "4, 8, center, default");
 		}
 		{
-			JScrollPane scrollPane = new JScrollPane();
+			scrollPane = new JScrollPane();
 			contentPanel.add(scrollPane, "6, 8, 1, 5, fill, fill");
-			{
-				listFirmware = new JList();
-				listFirmware.setModel(sortedListFirmwareModel);
-				scrollPane.setViewportView(listFirmware);
-			}
 		}
 		{
 			JButton button = new JButton("<-");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					Object[] values = listFirmware.getSelectedValues();
-					for (int i=0;i<values.length;i++) {
-						listFirmwareModel.removeElement(values[i]);
-						listFolderModel.addElement(values[i]);
+					TreePath[] path = listFirmware.getSelectionPaths();
+					for (int i=0;i<path.length;i++) {
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode)path[i].getLastPathComponent();
+						if (!node.isLeaf()) {
+							Enumeration<DefaultMutableTreeNode> list = node.children();
+							while (list.hasMoreElements()) {
+								DefaultMutableTreeNode lnode = list.nextElement();
+								node.remove(lnode);
+								listFolderModel.addElement(meta.getExternal(lnode.toString()));
+							}
+							DefaultMutableTreeNode parent = (DefaultMutableTreeNode)node.getParent();
+							parent.remove(node);
+							categoryNodes.remove(node.toString());
+						}
+						else {
+							listFolderModel.addElement(meta.getExternal(node.toString()));
+							DefaultMutableTreeNode parent = (DefaultMutableTreeNode)node.getParent();
+							parent.remove(node);
+							if (parent.getChildCount()==0) {
+								DefaultMutableTreeNode parentparent = (DefaultMutableTreeNode)parent.getParent();
+								parentparent.remove(parent);
+								categoryNodes.remove(parent.toString());
+							}
+						}
+						listFirmwareModel.reload(root);
 					}
 				}
 			});
@@ -266,13 +315,13 @@ public class BundleGUI extends JDialog {
 				okButton.setName("okButton");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						retcode=(version.getText().length()>0&&device.getText().length()>0&&branding.getText().length()>0 && listFirmwareModel.getSize()>0);
+						retcode=(version.getText().length()>0&&device.getText().length()>0&&branding.getText().length()>0 && root.getChildCount()>=1);
 						if (retcode)
 							if ((new File("./firmwares/"+device.getText()+"_"+version.getText()+"_"+branding.getText()+".ftf")).exists())
 								JOptionPane.showMessageDialog(null, "You already used this device/version/branding for another bundle");
 							else {
-								if (listFirmwareModel.getSize()==1) {
-									String md5 = OS.getMD5(new File(folderSource.getText()+OS.getFileSeparator()+(String)listFirmwareModel.getElementAt(0))).toUpperCase();
+								if (root.getChildAt(0).getChildCount()==1) {
+									String md5 = OS.getMD5(new File(folderSource.getText()+OS.getFileSeparator()+meta.getExternal(root.getChildAt(0).getChildAt(0).toString()))).toUpperCase();
 									Enumeration e = Devices.listDevices(false);
 									boolean found = false;
 									while (e.hasMoreElements() && !found) {
@@ -293,7 +342,6 @@ public class BundleGUI extends JDialog {
 						else {
 							JOptionPane.showMessageDialog(null, "You must fill all fields and have at least one file in the firmware list");
 						}
-
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -346,9 +394,10 @@ public class BundleGUI extends JDialog {
 	public Bundle getBundle(String mode) {
 		setVisible(true);
 		if (retcode) {
-			Bundle b = new Bundle(folderSource.getText(),Bundle.FOLDERTYPE);
+			Bundle b = new Bundle();
 			Enumeration e = listFolderModel.elements();
-			while (e.hasMoreElements()) b.removeEntry((String)e.nextElement());
+			while (e.hasMoreElements()) meta.remove(meta.getInternal((String)e.nextElement()));
+			b.setMeta(meta);
 			deviceSelectGui devsel = new deviceSelectGui(b);
 			devsel.isSelected();
 			b.setDevice(device.getText());

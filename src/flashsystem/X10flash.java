@@ -224,12 +224,7 @@ public class X10flash {
 			uploadImage(_bundle.getLoader().getInputStream(), 0x1000);
 		else {
 			File dir = new File(OS.getWorkDir()+"/loaders");
-			if (phoneprops.getProperty("LOADER_ROOT") != null ) {
-					LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
-				}
-			else {
-					LoaderHandler = phoneprops.getProperty("S1_ROOT");
-				}
+			LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
 			String[] LoaderHandler2 = LoaderHandler.split("\\,");
 			String LoaderSub = null;
 			for (int x=0; x<LoaderHandler2.length; x++) {

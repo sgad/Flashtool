@@ -16,6 +16,7 @@ public class BundleEntry {
 	private JarEntry jarentry=null;
 	private Bundle _bundle;
 	private String _name;
+	private String _categorie;
 	
 	public BundleEntry(File f,String name) {
 		fileentry = f;
@@ -56,4 +57,13 @@ public class BundleEntry {
 		if (fileentry!=null) return fileentry.length();
 		else return jarentry.getSize();
 	}
+	
+	public void setCategorie(String categorie) {
+		_categorie=categorie;
+	}
+	
+	public String getCategorie() {
+		return _categorie;
+	}
+
 }

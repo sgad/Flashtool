@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exe4j version="4.4.2" transformSequenceNumber="1">
+<exe4j version="4.4.4" transformSequenceNumber="1">
   <directoryPresets config="C:/Users/Manu/git/Deploy/FlashTool/x10flasher_lib" />
-  <application name="FlashTool" distributionSourceDir="C:/Users/Manu/Documents/FlashTool">
+  <application name="FlashTool" distributionSourceDir="C:/Users/Xperia/Documents/FlashTool">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
     </languages>
   </application>
-  <executable name="FlashTool64" type="1" iconSet="true" iconFile="C:/Users/Manu/git/Flashtool/ProgramExe/flash_32.ico" executableDir="" redirectStderr="true" stderrFile="stderr.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="stdout.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" globalSingleInstance="false" amd64="true">
+  <executable name="FlashTool64" type="1" iconSet="true" iconFile="C:/Users/Xperia/git/Flashtool/ProgramExe/flash_32.ico" executableDir="" redirectStderr="true" stderrFile="stderr.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="stdout.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" globalSingleInstance="false" amd64="true">
     <messageSet />
     <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" companyName="" productVersion="" />
   </executable>
@@ -16,7 +16,7 @@
       <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
     </text>
   </splashScreen>
-  <java mainClass="gui.FlasherGUI" vmParameters="-Xms128m -Xmx256m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.6" maxVersion="1.6" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="gui.FlasherGUI" vmParameters="-Xms128m -Xmx256m" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
       <directory location="./x10flasher_lib/winjre64" />
       <registry />

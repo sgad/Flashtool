@@ -58,11 +58,17 @@ public final class Bundle {
 	private void feedFromJar(String path) {
 		try {
 			_firmware = new JarFile(path);
+			_meta = new BundleMetaData();
 			MyLogger.getLogger().debug("Creating bundle from ftf file : "+_firmware.getName());
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
 				BundleEntry entry = new BundleEntry(this,e.nextElement());
 				if (entry.getName().toUpperCase().endsWith("SIN") || entry.getName().toUpperCase().endsWith("TA")) {
+					try {
+						_meta.process(entry.getName(), "");
+					}
+					catch (Exception e1) {
+					}
 					bundleList.put(entry.getName(), entry);
 					MyLogger.getLogger().debug("Added this entry to the bundle list : "+entry.getName());
 				}
@@ -102,43 +108,6 @@ public final class Bundle {
 		}
 		BundleEntry entry = new BundleEntry(loader,"loader.sin");
 		bundleList.put("loader.sin", entry);
-	}
-
-	public void setWipeData(boolean wipedata) {
-		if (!wipedata)
-			bundleList.remove("userdata.sin");
-	}
-
-	public void setWipeCache(boolean wipecache) {
-		if (!wipecache)
-			bundleList.remove("cache.sin");
-	}
-
-	public void setExcludeSystem(boolean excludesystem) {
-		if (excludesystem)
-			bundleList.remove("system.sin");
-	}
-
-	public void setExcludeKernel(boolean excludekernel) {
-		if (excludekernel)
-			bundleList.remove("kernel.sin");
-	}
-
-	public void setExcludeBB(boolean excludeBB) {
-		if (excludeBB) {
-			Enumeration<Object> keys = bundleList.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String)keys.nextElement();
-			    if (!key.toUpperCase().contains("KERNEL") &&
-				    	!key.toUpperCase().startsWith("LOADER") &&
-				    	!key.toUpperCase().startsWith("USERDATA") &&
-				    	!key.toUpperCase().startsWith("CACHE") &&
-				    	!key.toUpperCase().startsWith("PARTITION") &&
-				    	!key.toUpperCase().startsWith("SYSTEM")) {
-			    	bundleList.remove(key);
-			    }
-			}
-		}
 	}
 
 	public void setSimulate(boolean simulate) {
@@ -235,7 +204,7 @@ public final class Bundle {
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get("partition-image.sin");
+		return (BundleEntry)bundleList.get(_meta.getEntriesOf("PARTITION").nextElement());
 	}
 
 	public boolean hasPartition() {
@@ -360,6 +329,10 @@ public final class Bundle {
 	
 	public void removeEntry(String name) {
 		bundleList.remove(name);
+	}
+	
+	public BundleMetaData getMeta() {
+		return _meta;
 	}
 
 }

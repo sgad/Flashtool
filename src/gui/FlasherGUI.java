@@ -152,6 +152,8 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
+		BundleMetaData meta = new BundleMetaData();
+		meta.createXML();
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );

@@ -187,11 +187,11 @@ public class FlasherConsole {
 			MyLogger.getLogger().info("Choosed "+bf.getAbsolutePath());
 			Bundle b = new Bundle(bf.getAbsolutePath(),Bundle.JARTYPE);
 			b.setSimulate(false);
-			b.setWipeData(wipedata);
-			b.setWipeCache(wipecache);
-			b.setExcludeBB(excludebb);
-			b.setExcludeSystem(excludesys);
-			b.setExcludeKernel(excludekrnl);
+			b.getMeta().setCategEnabled("DATA", wipedata);
+			b.getMeta().setCategEnabled("CACHE", wipecache);
+			b.getMeta().setCategEnabled("BASEBAND", excludebb);
+			b.getMeta().setCategEnabled("SYSTEM", excludesys);
+			b.getMeta().setCategEnabled("KERNEL", excludekrnl);
 			MyLogger.getLogger().info("Preparing files for flashing");
 			b.open();
 			f = new X10flash(b);

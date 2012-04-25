@@ -70,12 +70,14 @@ public class BundleGUI extends JDialog {
 	 */
 	private void dirlist() {
 		listFolderModel.removeAllElements();
-		root = new DefaultMutableTreeNode("Content");
-		listFirmware = new JTree(root);
-		listFirmware.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		scrollPane.setViewportView(listFirmware);
-		listFirmwareModel=(DefaultTreeModel)listFirmware.getModel();
+		root.removeAllChildren();
 		listFirmwareModel.reload(root);
+		meta.clear();
+		categoryNodes.clear();
+		for(int i=0;i<listFirmware.getRowCount();i++)  
+        {  
+			listFirmware.expandRow(i);
+        }  
 		//listFirmwareModel.removeNodeFromParent(root);
 		File[] list = (new File(folderSource.getText())).listFiles(new FirmwareFileFilter());
 		for (int i=0;i<list.length;i++) {
@@ -256,6 +258,10 @@ public class BundleGUI extends JDialog {
 						DefaultMutableTreeNode newchild = new DefaultMutableTreeNode(meta.getInternal((String)values[i]));
 						newnode.add(newchild);
 						listFirmwareModel.reload(root);
+						for(int j=0;j<listFirmware.getRowCount();j++)  
+				        {  
+							listFirmware.expandRow(j);
+				        }  
 						listFolderModel.removeElement(values[i]);
 					}
 				}
@@ -265,6 +271,11 @@ public class BundleGUI extends JDialog {
 		{
 			scrollPane = new JScrollPane();
 			contentPanel.add(scrollPane, "6, 8, 1, 5, fill, fill");
+			root = new DefaultMutableTreeNode("Content");
+			listFirmware = new JTree(root);
+			listFirmware.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			listFirmwareModel=(DefaultTreeModel)listFirmware.getModel();
+			scrollPane.setViewportView(listFirmware);
 		}
 		{
 			JButton button = new JButton("<-");
@@ -295,6 +306,10 @@ public class BundleGUI extends JDialog {
 							}
 						}
 						listFirmwareModel.reload(root);
+						for(int j=0;j<listFirmware.getRowCount();j++)  
+				        {  
+							listFirmware.expandRow(j);
+				        }  
 					}
 				}
 			});

@@ -34,6 +34,7 @@ public final class Bundle {
     private BundleMetaData _meta;
 
     public Bundle() {
+    	_meta = new BundleMetaData();
     }
     
     public Bundle(String path, int type) {

@@ -408,7 +408,6 @@ public class X10flash {
     		USBFlash.open("ADDE");
 			MyLogger.getLogger().info("Reading device information");
 			USBFlash.readS1Reply();
-			System.out.println("read reply OK");
 			phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
 			MyLogger.getLogger().info("Phone ready for flashmode operations.");
     	    cmd = new Command(_bundle.simulate());

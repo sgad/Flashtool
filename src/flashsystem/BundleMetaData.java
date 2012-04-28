@@ -17,6 +17,7 @@ public class BundleMetaData {
 	Properties _categex = new Properties();
 	Properties _categwipe = new Properties();
 	Properties _enabled = new Properties();
+	Properties _catorders = new Properties();
 	
 	public BundleMetaData() {
 		_categex.setProperty("SYSTEM", "Exclude system");
@@ -28,6 +29,21 @@ public class BundleMetaData {
 		_categex.setProperty("TA", "Exclude TA");
 		_categwipe.setProperty("DATA", "Wipe data");
 		_categwipe.setProperty("CACHE", "Wipe cache");
+		_catorders.setProperty("1", "KERNEL");
+		_catorders.setProperty("2", "FOTA");
+		_catorders.setProperty("3", "BASEBAND");
+		_catorders.setProperty("4", "NONE");
+		_catorders.setProperty("5", "SYSTEM");
+		_catorders.setProperty("6", "DATA");
+		_catorders.setProperty("7", "CACHE");
+	}
+	
+	public int getNbCategs() {
+		return _catorders.size();
+	}
+	
+	public String getCagorie(int order) {
+		return _catorders.getProperty(Integer.toString(order));
 	}
 	
 	public Enumeration getCategories() {
@@ -232,6 +248,11 @@ public class BundleMetaData {
 	    catch (IOException e) {
 	      System.err.println(e);
 	    }
+	}
+	
+	public boolean isCategEnabled(String categ) {
+		if (_enabled.getProperty(categ)==null) return false;
+		return _enabled.getProperty(categ).equals("true");
 	}
 	
 	public void clear() {

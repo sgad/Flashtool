@@ -17,6 +17,9 @@ public class LoaderInfo extends Properties {
 			}
 			catch (Exception e) {}
 		}
-		if (getProperty("LOADER_ROOT")==null) setProperty("LOADER_ROOT",getProperty("S1_ROOT"));
+		if (getProperty("LOADER_ROOT")==null) {
+			if (getProperty("S1_ROOT")!=null)
+				setProperty("LOADER_ROOT",getProperty("S1_ROOT"));
+		}
 	}
 }

@@ -75,6 +75,7 @@ public class firmSelect extends JDialog {
 	private Properties hasCmd25 = new Properties();
 	private JPanel panelWipe;
 	private JPanel panelExclude;
+	private JPanel panelMisc;
 
 	private void dirlist() throws Exception{
 		boolean hasElements = false;
@@ -221,6 +222,7 @@ public class firmSelect extends JDialog {
 			JLabel lblFilesInThis = new JLabel("Firmware Content :");
 			lblFilesInThis.setName(getName()+"_"+"lblFilesInThis");
 			contentPanel.add(lblFilesInThis, "4, 4, left, fill");
+		
 		JScrollPane scrollPaneFolderContent = new JScrollPane();
 		contentPanel.add(scrollPaneFolderContent, "2, 6, 1, 11, left, fill");
 		tableFirm = new JTable() {
@@ -241,20 +243,36 @@ public class firmSelect extends JDialog {
 					filelist();
 					addCheckBoxesWipe();
 					addCheckBoxesExclupde();
+					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							selected.setCmd25(selected.hasCmd25()?"false":"true");
+						}
+					});
 				}
-				catch (Exception e) {}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		tableFirm.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+				System.out.println(result);
 				try {
 					filelist();
 					addCheckBoxesWipe();
 					addCheckBoxesExclupde();
+					initMiscCheckBoxes();
+					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							selected.setCmd25(selected.hasCmd25()?"false":"true");
+						}
+					});
 				}
-				catch (Exception e) {}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		tableFirm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -272,26 +290,43 @@ public class firmSelect extends JDialog {
 									FormFactory.RELATED_GAP_COLSPEC,},
 								new RowSpec[] {
 									FormFactory.RELATED_GAP_ROWSPEC,
+									FormFactory.DEFAULT_ROWSPEC,
+									FormFactory.RELATED_GAP_ROWSPEC,
 									RowSpec.decode("top:47dlu"),
 									FormFactory.RELATED_GAP_ROWSPEC,
-									RowSpec.decode("max(149dlu;default):grow"),
+									FormFactory.DEFAULT_ROWSPEC,
+									FormFactory.RELATED_GAP_ROWSPEC,
+									RowSpec.decode("max(71dlu;default)"),
+									FormFactory.RELATED_GAP_ROWSPEC,
+									FormFactory.DEFAULT_ROWSPEC,
+									FormFactory.RELATED_GAP_ROWSPEC,
+									RowSpec.decode("default:grow"),
 									FormFactory.RELATED_GAP_ROWSPEC,}));
 							
+							JLabel lblNewLabel = new JLabel("Wipe :");
+							panel.add(lblNewLabel, "2, 2, left, center");
+							
 							JScrollPane scrollPaneWipe = new JScrollPane();
-							panel.add(scrollPaneWipe, "2, 2, fill, fill");
+							panel.add(scrollPaneWipe, "2, 4, fill, fill");
 							
 							panelWipe = new JPanel();
 							scrollPaneWipe.setViewportView(panelWipe);
-							panelWipe.setLayout(new GridLayout(1, 0, 0, 0));
 							
-							
+							JLabel lblNewLabel_1 = new JLabel("Exclude :");
+							panel.add(lblNewLabel_1, "2, 6");
 							JScrollPane scrollPaneExclude = new JScrollPane();
-							panel.add(scrollPaneExclude, "2, 4, fill, fill");
-							
+							panel.add(scrollPaneExclude, "2, 8, fill, fill");
 							panelExclude = new JPanel();
-							//panelExclude.setPreferredSize(new java.awt.Dimension(300, 250));
-							panelExclude.setLayout(new java.awt.GridLayout(0, 2, 10, 10)); 
 							scrollPaneExclude.setViewportView(panelExclude);							
+							
+							JLabel lblNewLabel_2 = new JLabel("Misc :");
+							panel.add(lblNewLabel_2, "2, 10");
+							
+							JScrollPane scrollPaneMisc = new JScrollPane();
+							panel.add(scrollPaneMisc, "2, 12, fill, fill");
+							
+							panelMisc = new JPanel();
+							scrollPaneMisc.setViewportView(panelMisc);
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -356,6 +391,16 @@ public class firmSelect extends JDialog {
 		try {
 			dirlist();
 			filelist();
+			if (modelFirm.getRowCount()>0) {
+				addCheckBoxesWipe();
+				addCheckBoxesExclupde();
+				initMiscCheckBoxes();
+				addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						selected.setCmd25(selected.hasCmd25()?"false":"true");
+					}
+				});
+			}
 		}
 		catch (Exception e) {}		
 	}
@@ -367,13 +412,21 @@ public class firmSelect extends JDialog {
 	
 	public void addCheckBoxesWipe() {
 		panelWipe.removeAll();
+		FormLayout layout =new FormLayout(
+				new ColumnSpec[] {FormFactory.RELATED_GAP_COLSPEC,
+						          FormFactory.DEFAULT_COLSPEC,
+						          FormFactory.RELATED_GAP_COLSPEC,},
+				new RowSpec[] {FormFactory.RELATED_GAP_ROWSPEC});
+		panelWipe.setLayout(layout);
 		Enumeration<String> wipe = selected.getMeta().getWipe();
 		while (wipe.hasMoreElements()) {
 			String categ = wipe.nextElement();
 			JCheckBox box = new JCheckBox(selected.getMeta().getWipeLabel(categ));
 			box.setSelected(true);			
 			box.addActionListener(new WipeActionListener(this,box,categ));
-			panelWipe.add(box);
+			layout.appendRow(FormFactory.DEFAULT_ROWSPEC);
+			layout.appendRow(FormFactory.RELATED_GAP_ROWSPEC);
+			panelWipe.add(box,"2, "+Integer.toString(layout.getRowCount()-1)+", fill, fill");
 		}
 		panelWipe.repaint();
 		panelWipe.revalidate();
@@ -381,15 +434,46 @@ public class firmSelect extends JDialog {
 
 	public void addCheckBoxesExclupde() {
 		panelExclude.removeAll();
+		FormLayout layout =new FormLayout(
+				new ColumnSpec[] {FormFactory.RELATED_GAP_COLSPEC,
+						          FormFactory.DEFAULT_COLSPEC,
+						          FormFactory.RELATED_GAP_COLSPEC,},
+				new RowSpec[] {FormFactory.RELATED_GAP_ROWSPEC});
+		panelExclude.setLayout(layout);
 		Enumeration<String> exclude = selected.getMeta().getExclude();
 		while (exclude.hasMoreElements()) {
 			String categ = exclude.nextElement();
 			JCheckBox box = new JCheckBox(selected.getMeta().getExcludeLabel(categ));
 			box.addActionListener(new ExcludeActionListener(this,box,categ));
-			panelExclude.add(box);
+			layout.appendRow(FormFactory.DEFAULT_ROWSPEC);
+			layout.appendRow(FormFactory.RELATED_GAP_ROWSPEC);
+			panelExclude.add(box,"2, "+Integer.toString(layout.getRowCount()-1)+", fill, fill");
 		}
 		panelExclude.repaint();
 		panelExclude.revalidate();
+	}
+
+	public void initMiscCheckBoxes() {
+		panelMisc.removeAll();
+		FormLayout layout =new FormLayout(
+				new ColumnSpec[] {FormFactory.RELATED_GAP_COLSPEC,
+						          FormFactory.DEFAULT_COLSPEC,
+						          FormFactory.RELATED_GAP_COLSPEC,},
+				new RowSpec[] {FormFactory.RELATED_GAP_ROWSPEC});
+		panelMisc.setLayout(layout);		
+	}
+	
+	public void addCheckBoxesMisc(String label, boolean isSelected, ActionListener al) {
+		FormLayout layout = (FormLayout)panelMisc.getLayout();
+		JCheckBox box = new JCheckBox(label);
+		box.setSelected(isSelected);
+		box.addActionListener(al);
+		//box.addActionListener(new ExcludeActionListener(this,box,categ));
+		layout.appendRow(FormFactory.DEFAULT_ROWSPEC);
+		layout.appendRow(FormFactory.RELATED_GAP_ROWSPEC);
+		panelMisc.add(box,"2, "+Integer.toString(layout.getRowCount()-1)+", fill, fill");
+		panelMisc.repaint();
+		panelMisc.revalidate();
 	}
 
 }

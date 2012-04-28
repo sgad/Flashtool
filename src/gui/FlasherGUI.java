@@ -152,8 +152,6 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		BundleMetaData meta = new BundleMetaData();
-		meta.createXML();
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );
@@ -1056,8 +1054,13 @@ public class FlasherGUI extends JFrame {
 						flash = new X10flash(bundle);
 						MyLogger.getLogger().info("Please connect your device into flashmode.");
 						if ((new WaitDeviceFlashmodeGUI(flash)).deviceFound(_root)) {
-							flash.openDevice();
-							flash.flashDevice();
+				    		try {
+								flash.openDevice();
+								flash.flashDevice();
+				    		}
+				    		catch (Exception e) {
+				    			e.printStackTrace();
+				    		}
 						}
 						else MyLogger.getLogger().info("Flash canceled");
 					}

@@ -212,6 +212,7 @@ public class X10flash {
 				getLastError();
     	}
     	catch (Exception e) {
+    		e.printStackTrace();
     		try {fileinputstream.close();}catch(Exception cl) {}
     		throw new X10FlashException (e.getMessage());
     	}
@@ -259,24 +260,21 @@ public class X10flash {
 			openTA(2);
 		}
     }
-
-    public void sendSystemAndUserData() throws FileNotFoundException,IOException, X10FlashException {
-        Enumeration<BundleEntry> e = _bundle.systemdataEntries();
-    	while (e.hasMoreElements()) {
-    		BundleEntry entry = e.nextElement();
-    		MyLogger.getLogger().info("Flashing "+entry.getName());
-    		uploadImage(entry.getInputStream(),0x10000);
-    	}    	
-    }
     
-    public void sendImages() throws FileNotFoundException, IOException,X10FlashException {            
-    		Enumeration<BundleEntry> e = _bundle.entries();
-        	while (e.hasMoreElements()) {
-        		BundleEntry entry = e.nextElement();
-        		MyLogger.getLogger().info("Flashing "+entry.getName());
-        		uploadImage(entry.getInputStream(),0x10000);
-        		MyLogger.getLogger().debug("Flashing "+entry.getName()+" finished");
-        	}
+    public void sendImages() throws FileNotFoundException, IOException,X10FlashException {
+		for (int i = 1;i<=_bundle.getMeta().getNbCategs();i++) {
+			String categ = _bundle.getMeta().getCagorie(i);
+			if (_bundle.getMeta().isCategEnabled(categ)) {
+				Enumeration entries = _bundle.getMeta().getEntriesOf(categ);
+				while (entries.hasMoreElements()) {
+					String entry = (String)entries.nextElement();
+					BundleEntry bent = _bundle.getEntry(entry);
+					MyLogger.getLogger().info("Flashing "+bent.getName());
+					uploadImage(bent.getInputStream(),0x10000);
+					MyLogger.getLogger().debug("Flashing "+bent.getName()+" finished");
+				}
+			}
+		}
     }
 
     public long getNumberPasses() {
@@ -304,43 +302,44 @@ public class X10flash {
     	cmd.send(Command.CMD10, Command.VALNULL, false);
     }
    
+    public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {
+		Enumeration entries = _bundle.getMeta().getEntriesOf("TA");
+		while (entries.hasMoreElements()) {
+			String entry = (String)entries.nextElement();
+			BundleEntry bent = _bundle.getEntry(entry);
+			if (!bent.getName().toUpperCase().contains("SIM"))
+				sendTA(bent.getInputStream(),bent.getName());
+			else {
+				MyLogger.getLogger().warn("This file is ignored : "+bent.getName());
+			}
+			MyLogger.getLogger().debug("Flashing "+bent.getName()+" finished");
+		}
+    }
+    
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
 		    MyLogger.initProgress(getNumberPasses());
-
 		    sendLoader();
-		    
-		    if (_bundle.hasCmd25())
+		    if (_bundle.hasCmd25()) {
+		    	MyLogger.getLogger().info("Disabling final data verification check");
 		    	cmd.send((byte)0x19, new byte[] {0x00, 0x01, 0x00, 0x00, 0x00, 0x01}, false);
-		    
+		    }
 		    openTA(2);
-		    
 		    setFlashState(true);
-
 		    sendPartition();
-		    
-		    if (_bundle.hasTA()) {	
-        		if (_bundle.hasPreset()) sendTA(_bundle.getPreset().getInputStream(),"preset");
-        		//if (_bundle.hasSimlock()) sendTA(_bundle.getSimlock().getInputStream(),"simlock");
-        	}
-		    
+		    sendTAFiles();
 			sendImages();
-			
-        	sendSystemAndUserData();
-
         	setFlashState(false);
-        	
         	closeTA();
-        	
         	closeDevice(0x01);
-			
 			MyLogger.getLogger().info("Flashing finished.");
 			MyLogger.getLogger().info("Please wait. Phone will reboot");
 			MyLogger.getLogger().info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
 			MyLogger.initProgress(0);
     	}
     	catch (Exception ioe) {
+    		ioe.printStackTrace();
     		closeDevice();
     		MyLogger.getLogger().error(ioe.getMessage());
     		MyLogger.getLogger().error("Error flashing. Aborted");
@@ -409,6 +408,7 @@ public class X10flash {
     		USBFlash.open("ADDE");
 			MyLogger.getLogger().info("Reading device information");
 			USBFlash.readS1Reply();
+			System.out.println("read reply OK");
 			phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
 			MyLogger.getLogger().info("Phone ready for flashmode operations.");
     	    cmd = new Command(_bundle.simulate());
@@ -416,6 +416,7 @@ public class X10flash {
     		found = true;
     	}
     	catch (Exception e){
+    		e.printStackTrace();
     		found=false;
     	}
     	return found;

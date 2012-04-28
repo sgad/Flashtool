@@ -114,26 +114,8 @@ public final class Bundle {
 		_simulate = simulate;
 	}
 
-	public Enumeration <BundleEntry> entries() {
-		Vector<BundleEntry> v = new Vector<BundleEntry>();
-		Enumeration<Object> e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (!key.toUpperCase().contains("LOADER") && !key.toUpperCase().contains("PARTITION") && !key.toUpperCase().contains("SYSTEM") && !key.toUpperCase().contains("USERDATA") && !key.toUpperCase().endsWith("TA"))
-				v.add((BundleEntry)bundleList.get(key));
-		}
-		return v.elements();
-	}
-
-	public Enumeration <BundleEntry> systemdataEntries() {
-		Vector<BundleEntry> v = new Vector<BundleEntry>();
-		Enumeration<Object> e = bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("SYSTEM") || key.toUpperCase().contains("USERDATA"))
-				v.add((BundleEntry)bundleList.get(key));
-		}
-		return v.elements();		
+	public BundleEntry getEntry(String name) {
+		return (BundleEntry)bundleList.get(name);
 	}
 	
 	public Enumeration <BundleEntry> allEntries() {
@@ -150,49 +132,9 @@ public final class Bundle {
 	public InputStream getImageStream(JarEntry j) throws IOException {
 		return _firmware.getInputStream(j);
 	}
-	
-	public boolean hasPreset() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("PRESET")&&key.toUpperCase().endsWith("TA"))
-				return true;
-		}
-		return false;
-	}
-	
+		
 	public boolean hasTA() {
-		return _meta.hasCategorie("ta");
-	}
-	
-	public BundleEntry getPreset() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("PRESET")&&key.toUpperCase().endsWith("TA"))
-				return (BundleEntry)bundleList.get(key);
-		}
-		return null;	
-	}
-
-	public boolean hasSimlock() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("SIMLOCK")&&key.toUpperCase().endsWith("TA"))
-				return true;
-		}
-		return false;
-	}
-	
-	public BundleEntry getSimlock() {
-		Enumeration<Object> e =bundleList.keys();
-		while (e.hasMoreElements()) {
-			String key = (String)e.nextElement();
-			if (key.toUpperCase().contains("SIMLOCK")&&key.toUpperCase().endsWith("TA"))
-				return (BundleEntry)bundleList.get(key);
-		}
-		return null;	
+		return _meta.hasCategorie("TA");
 	}
 
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
@@ -200,7 +142,7 @@ public final class Bundle {
 	}
 
 	public boolean hasLoader() {
-		return _meta.hasCategorie("loader");
+		return _meta.hasCategorie("LOADER");
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
@@ -208,7 +150,7 @@ public final class Bundle {
 	}
 
 	public boolean hasPartition() {
-		return _meta.hasCategorie("partition");
+		return _meta.hasCategorie("PARTITION");
 	}
 	
 	public boolean simulate() {
@@ -295,10 +237,9 @@ public final class Bundle {
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
 			f.mkdir();
 			MyLogger.getLogger().debug("Created the "+f.getName()+" folder");
-			Enumeration<BundleEntry> e = allEntries();
-			while (e.hasMoreElements()) {
-				BundleEntry entry = e.nextElement();
-				saveEntry(entry);
+			Enumeration<String> entries = _meta.getAllEntries();
+			while (entries.hasMoreElements()) {
+				saveEntry(getEntry(entries.nextElement()));
 			}
 			saveEntry(getLoader());
 		}

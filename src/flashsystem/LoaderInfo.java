@@ -13,13 +13,18 @@ public class LoaderInfo extends Properties {
 		String[] result = ident.split(";");
 		for (int i=0;i<result.length;i++) {
 			try {
-				setProperty(result[i].split("=")[0], result[i].split("=")[1].replaceAll("\"", ""));
+				String key = result[i].split("=")[0];
+				String value = result[i].split("=")[1].replaceAll("\"", "");
+				if (key.equals("S1_ROOT")) {
+					if  (value.split(",").length>1)
+						setProperty("LOADER_ROOT",value.split(",")[0]);
+					else
+						setProperty("LOADER_ROOT",value);
+				}
+				else
+					setProperty(key, value);
 			}
 			catch (Exception e) {}
-		}
-		if (getProperty("LOADER_ROOT")==null) {
-			if (getProperty("S1_ROOT")!=null)
-				setProperty("LOADER_ROOT",getProperty("S1_ROOT"));
 		}
 	}
 }

@@ -226,13 +226,7 @@ public class X10flash {
 		else {
 			File dir = new File(OS.getWorkDir()+"/loaders");
 			LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
-			String[] LoaderHandler2 = LoaderHandler.split("\\,");
-			String LoaderSub = null;
-			for (int x=0; x<LoaderHandler2.length; x++) {
-				File tempf = new File(OS.getWorkDir()+"/loaders/"+LoaderHandler2[x]+".sin");
-				if (tempf.exists()) {LoaderSub = LoaderHandler2[x]; }
-			}
-			File[] filelist = dir.listFiles(new LoaderRootFilter(LoaderSub));
+			File[] filelist = dir.listFiles(new LoaderRootFilter(LoaderHandler));
 			if (filelist.length>1) {
 				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);
 				String loader = sel.getVersion();
@@ -398,7 +392,7 @@ public class X10flash {
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
 		if (printProps)
-			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS")+" / IMEI : "+phoneprops.getProperty("IMEI"));
     }
     
     public boolean openDevice(boolean simulate) {

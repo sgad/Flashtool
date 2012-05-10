@@ -29,13 +29,15 @@ public class BundleMetaData {
 		_categex.setProperty("TA", "Exclude TA");
 		_categwipe.setProperty("DATA", "Wipe data");
 		_categwipe.setProperty("CACHE", "Wipe cache");
+		_categwipe.setProperty("LOG", "Wipe apps log");
 		_catorders.setProperty("1", "KERNEL");
 		_catorders.setProperty("2", "FOTA");
 		_catorders.setProperty("3", "BASEBAND");
 		_catorders.setProperty("4", "NONE");
-		_catorders.setProperty("5", "SYSTEM");
-		_catorders.setProperty("6", "DATA");
-		_catorders.setProperty("7", "CACHE");
+		_catorders.setProperty("5", "LOG");
+		_catorders.setProperty("6", "SYSTEM");
+		_catorders.setProperty("7", "DATA");
+		_catorders.setProperty("8", "CACHE");
 	}
 	
 	public int getNbCategs() {
@@ -100,7 +102,7 @@ public class BundleMetaData {
 		else if (intname.toUpperCase().contains("FOTA"))
 			add(intname,"fota".toUpperCase());
 		else if (intname.toUpperCase().contains("APPS_LOG"))
-			add(intname,"baseband".toUpperCase());
+			add(intname,"log".toUpperCase());
 		else if (intname.toUpperCase().contains("CACHE"))
 			add(intname,"cache".toUpperCase());
 		else if (intname.toUpperCase().contains("KERNEL"))

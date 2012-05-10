@@ -67,6 +67,7 @@ import flashsystem.FlasherConsole;
 import flashsystem.HexDump;
 import flashsystem.S1Packet;
 import flashsystem.SeusSinTool;
+import flashsystem.SinFile;
 import flashsystem.TaEntry;
 import flashsystem.TaFile;
 import flashsystem.TaParseException;
@@ -121,6 +122,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRootzergRush;
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
+	private JMenuItem mntmSinEdit;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -322,6 +324,15 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
+			mntmSinEdit = new JMenuItem("SIN Editor");
+			mntmSinEdit.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						doSinEdit();
+					}
+					catch (Exception e1) {}
+				}
+			});
 		}
 		
 		JMenu mnRoot = new JMenu("Root");
@@ -443,6 +454,7 @@ public class FlasherGUI extends JFrame {
 			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
 			mnAdvanced.add(mntmTaBackupRestore);
 			mnAdvanced.add(mntmRawIO);
+			mnAdvanced.add(mntmSinEdit);
 			mntmTaBackupRestore.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -878,7 +890,12 @@ public class FlasherGUI extends JFrame {
 		CustomFlashUI raw = new CustomFlashUI();
 		raw.setVisible(true);
 	}
-	
+
+	public void doSinEdit() {
+		SinEditorUI sinui = new SinEditorUI();
+		sinui.setVisible(true);
+	}
+
 	public void doCleanUninstall() {
 		Worker.post(new Job() {
 			public Object run() {

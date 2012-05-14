@@ -22,27 +22,27 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.logger.MyLogger;
+import org.system.ElfParser;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-public class SinEditorUI extends JDialog {
+public class ElfUnpacker extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField textSin;
-	private JTextField textPartition;
-	private JTextField textSpare;
-	private SinFile sin;
+	private JTextField textElf;
+	private JTextField textParts;
+	private ElfParser elf;
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public SinEditorUI() {
-		setTitle("Sin Editor");
+	public ElfUnpacker() {
+		setTitle("ELF Unpacker");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 259);
+		setBounds(100, 100, 450, 220);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -63,74 +63,64 @@ public class SinEditorUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		{
-			JLabel lblSinFil = new JLabel("Sin File :");
-			contentPanel.add(lblSinFil, "2, 2, 3, 1");
+			JLabel lblElfFile = new JLabel("Elf File :");
+			contentPanel.add(lblElfFile, "2, 2, 3, 1");
 		}
 		{
-			textSin = new JTextField();
-			contentPanel.add(textSin, "2, 4, 3, 1, fill, default");
-			textSin.setColumns(10);
+			textElf = new JTextField();
+			contentPanel.add(textElf, "2, 4, 3, 1, fill, default");
+			textElf.setColumns(10);
 		}
 		{
 			JButton button = new JButton("...");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					String file=chooseSin();
+					String file=chooseElf();
 					if (!file.equals("ERROR")) {
 						try {
-						sin = new SinFile(file);
-						textSin.setText(file);
-						String p = HexDump.toHex(sin.getPartitionInfo()).replaceAll(", ", "");
-						textPartition.setText(p.substring(1, p.length()-1));
-						textSpare.setText(HexDump.toHex(sin.getSpare()));
+							if (file.toLowerCase().endsWith("sin")) {
+								SinFile sin = new SinFile(file);
+								sin.dumpImage();
+								file = sin.getImage();
+								elf = new ElfParser(sin.getImage());
+							}
+							else
+								elf = new ElfParser(file);
+							textElf.setText(file);
+							textParts.setText(Integer.toString(elf.getNbParts()));
 						}
-						catch (Exception e) {}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			});
 			contentPanel.add(button, "6, 4");
 		}
 		{
-			JLabel lblPartitionInfo = new JLabel("Partition Info :");
+			JLabel lblPartitionInfo = new JLabel("Number of parts :");
 			contentPanel.add(lblPartitionInfo, "2, 6, 3, 1");
 		}
 		{
-			textPartition = new JTextField();
-			contentPanel.add(textPartition, "2, 8, 3, 1, fill, default");
-			textPartition.setColumns(10);
+			textParts = new JTextField();
+			contentPanel.add(textParts, "2, 8, 3, 1, fill, default");
+			textParts.setColumns(10);
 		}
 		{
-			JLabel lblSpareInfo = new JLabel("Spare Info :");
-			contentPanel.add(lblSpareInfo, "2, 10, 3, 1");
-		}
-		{
-			textSpare = new JTextField();
-			contentPanel.add(textSpare, "2, 12, 3, 1, fill, default");
-			textSpare.setColumns(10);
-		}
-		{
-			JButton btnDumpData = new JButton("Dump data");
+			JButton btnDumpData = new JButton("Unpack");
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						sin.dumpImage();
+						elf.unpack();
 					}
 					catch (Exception e) {
 						MyLogger.getLogger().error(e.getMessage());
 					}
 				}
 			});
-			contentPanel.add(btnDumpData, "2, 14, center, center");
-		}
-		{
-			JButton btnNewButton = new JButton("Unpack data");
-			contentPanel.add(btnNewButton, "4, 14, center, default");
+			contentPanel.add(btnDumpData, "2, 10, center, center");
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -150,17 +140,18 @@ public class SinEditorUI extends JDialog {
 		}
 	}
 
-	public String chooseSin() {
+	public String chooseElf() {
 		JFileChooser chooser = new JFileChooser(new java.io.File(".")); 
 
 		FileFilter ff = new FileFilter(){
 			public boolean accept(File f){
 				if(f.isDirectory()) return true;
+				else if(f.getName().endsWith(".elf")) return true;
 				else if(f.getName().endsWith(".sin")) return true;
 				else return false;
 			}
 			public String getDescription(){
-				return "*.sin";
+				return "*.elf *.sin";
 			}
 		};
 		 

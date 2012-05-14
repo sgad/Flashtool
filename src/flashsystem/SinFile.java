@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.logger.MyLogger;
+
 public class SinFile {
 
 	int headersize;
@@ -30,6 +32,7 @@ public class SinFile {
 		return sinfile.getAbsolutePath().replaceAll(".sin",".data");
 	}
 	public void dumpImage() throws IOException {
+		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
 		FileInputStream fin = new FileInputStream(sinfile);
 		int read; 
 		read = fin.read(header);
@@ -42,7 +45,7 @@ public class SinFile {
 			fin.close();
 			throw new IOException("Error in retrieving partinfo");
 		}
-		FileOutputStream fout = new FileOutputStream(new File(sinfile.getAbsolutePath()+".data"));
+		FileOutputStream fout = new FileOutputStream(new File(getImage()));
 		try {
 			while (true) {
 				read = fin.read(parts);
@@ -54,6 +57,7 @@ public class SinFile {
 		fout.flush();
 		fout.close();
 		fin.close();
+		MyLogger.getLogger().info("SIN Extraction finished");
 	}
 
 	private void processHeader() throws IOException {

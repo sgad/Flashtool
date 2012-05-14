@@ -35,6 +35,7 @@ import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
 import org.system.Devices;
+import org.system.ElfParser;
 import org.system.FileDrop;
 import org.system.GlobalConfig;
 import org.system.OS;
@@ -123,6 +124,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
+	private JMenuItem mntmElfUnpack;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -333,6 +335,15 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
+			mntmElfUnpack = new JMenuItem("ELF Extractor");
+			mntmElfUnpack.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						doElfUnpack();
+					}
+					catch (Exception e1) {}
+				}
+			});
 		}
 		
 		JMenu mnRoot = new JMenu("Root");
@@ -455,6 +466,7 @@ public class FlasherGUI extends JFrame {
 			mnAdvanced.add(mntmTaBackupRestore);
 			mnAdvanced.add(mntmRawIO);
 			mnAdvanced.add(mntmSinEdit);
+			mnAdvanced.add(mntmElfUnpack);
 			mntmTaBackupRestore.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -894,6 +906,11 @@ public class FlasherGUI extends JFrame {
 	public void doSinEdit() {
 		SinEditorUI sinui = new SinEditorUI();
 		sinui.setVisible(true);
+	}
+
+	public void doElfUnpack() {
+		ElfUnpacker unpack = new ElfUnpacker();
+		unpack.setVisible(true);
 	}
 
 	public void doCleanUninstall() {

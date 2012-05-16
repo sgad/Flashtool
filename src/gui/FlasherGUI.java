@@ -1696,7 +1696,6 @@ public class FlasherGUI extends JFrame {
 		});
     }
 
-
     public void doBackupSystem() {
 		Worker.post(new Job() {
 			public Object run() {

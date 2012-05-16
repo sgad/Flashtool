@@ -245,6 +245,14 @@ public class X10flash {
 		hookDevice(true);
     }
 
+    public void sendLoader(File loader) throws FileNotFoundException, IOException, X10FlashException {
+		MyLogger.getLogger().info("Flashing loader");
+		FileInputStream fin = new FileInputStream(loader);
+		uploadImage(fin, 0x1000);
+		USBFlash.readS1Reply();
+		hookDevice(true);
+    }
+
     public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
 		if (_bundle.hasPartition()) {
 			BundleEntry entry = _bundle.getPartition();
@@ -392,7 +400,7 @@ public class X10flash {
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
 		if (printProps)
-			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS")+" / IMEI : "+phoneprops.getProperty("IMEI"));
+			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
     }
     
     public boolean openDevice(boolean simulate) {

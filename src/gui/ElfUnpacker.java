@@ -33,6 +33,7 @@ public class ElfUnpacker extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textElf;
 	private JTextField textParts;
+	private JButton btnDumpData;
 	private ElfParser elf;
 
 
@@ -82,14 +83,27 @@ public class ElfUnpacker extends JDialog {
 						try {
 							if (file.toLowerCase().endsWith("sin")) {
 								SinFile sin = new SinFile(file);
-								sin.dumpImage();
-								file = sin.getImage();
-								elf = new ElfParser(sin.getImage());
+								if (sin.getIdent().equals("elf")) {
+									sin.dumpImage();
+									file = sin.getImage();
+									elf = new ElfParser(sin.getImage());
+									textElf.setText(file);
+									textParts.setText(Integer.toString(elf.getNbParts()));
+									btnDumpData.setEnabled(true);
+								}
+								else {
+									textElf.setText("");
+									textParts.setText("");
+									btnDumpData.setEnabled(false);
+									MyLogger.getLogger().error(sin.getFile()+" does not contain elf data");
+								}
 							}
-							else
+							else {
 								elf = new ElfParser(file);
-							textElf.setText(file);
-							textParts.setText(Integer.toString(elf.getNbParts()));
+								textElf.setText(file);
+								textParts.setText(Integer.toString(elf.getNbParts()));
+								btnDumpData.setEnabled(true);
+							}
 						}
 						catch (Exception e) {
 							e.printStackTrace();
@@ -109,7 +123,7 @@ public class ElfUnpacker extends JDialog {
 			textParts.setColumns(10);
 		}
 		{
-			JButton btnDumpData = new JButton("Unpack");
+			btnDumpData = new JButton("Unpack");
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -120,6 +134,7 @@ public class ElfUnpacker extends JDialog {
 					}
 				}
 			});
+			btnDumpData.setEnabled(false);
 			contentPanel.add(btnDumpData, "2, 10, center, center");
 		}
 		{

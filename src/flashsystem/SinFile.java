@@ -15,9 +15,11 @@ public class SinFile {
 	int partitioninfosize=0x10;
 	byte[] header;
 	byte[] partinfo = new byte[0x10];
+	byte[] ident = new byte[16];
 	byte[] parts = new byte[65535];
 	byte spare;
 	File sinfile;
+	byte[] yaffs2 = {0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xFF, (byte)0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
 	public SinFile(String file) throws FileNotFoundException,IOException {
 		sinfile = new File(file);
@@ -28,9 +30,10 @@ public class SinFile {
 		return sinfile.getAbsolutePath();
 	}
 	
-	public String getImage() {
-		return sinfile.getAbsolutePath().replaceAll(".sin",".data");
+	public String getImage() throws IOException {
+		return sinfile.getAbsolutePath().replaceAll(".sin","."+getIdent());
 	}
+	
 	public void dumpImage() throws IOException {
 		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
 		FileInputStream fin = new FileInputStream(sinfile);
@@ -95,7 +98,34 @@ public class SinFile {
 		fin.close();
 		return partinfo;
 	}
-	
+
+	public String getIdent() throws IOException {
+		FileInputStream fin = new FileInputStream(sinfile);
+		int read = fin.read(header);
+		read = fin.read(partinfo);
+		if (read!=partinfo.length) {
+			fin.close();
+			throw new IOException("Error in retrieving partinfo");
+		}
+		try {
+			read = fin.read(ident);
+			if (read!=ident.length) {
+				fin.close();
+				throw new IOException("Error in retrieving data type");
+			}
+			String result = new String(ident);
+			String yaffs = new String(yaffs2);
+			if (result.equals(yaffs)) return "yaffs2";
+			if (result.contains("ELF")) return "elf";
+			fin.close();
+			return "";
+		} catch (IOException e) {
+			fin.close();
+			return "";
+		}
+		
+	}
+
 	public byte getSpare() {
 		return spare;
 	}

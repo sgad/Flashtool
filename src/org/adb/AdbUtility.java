@@ -82,7 +82,8 @@ public class AdbUtility  {
 		String[] result = command.getStdOut().split("\n");
 		HashSet<String> set = new HashSet<String>();
 		for (int i=0;i<result.length;i++) {
-			set.add(result[i].substring(result[i].lastIndexOf('/')+1));
+			String apk = result[i].substring(result[i].lastIndexOf('/')+1);
+			set.add(apk.substring(0,apk.lastIndexOf(".apk")+4));
 		}
 		return set;
 	}

@@ -85,6 +85,7 @@ public class SinEditorUI extends JDialog {
 					if (!file.equals("ERROR")) {
 						try {
 						sin = new SinFile(file);
+						System.out.println(sin.getIdent());
 						textSin.setText(file);
 						String p = HexDump.toHex(sin.getPartitionInfo()).replaceAll(", ", "");
 						textPartition.setText(p.substring(1, p.length()-1));

@@ -26,6 +26,7 @@ import org.logger.MyLogger;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 
 public class SinEditorUI extends JDialog {
 
@@ -34,6 +35,8 @@ public class SinEditorUI extends JDialog {
 	private JTextField textPartition;
 	private JTextField textSpare;
 	private SinFile sin;
+	private JTextField textCtype;
+	private JButton btnUnpack;
 
 
 	/**
@@ -42,13 +45,15 @@ public class SinEditorUI extends JDialog {
 	public SinEditorUI() {
 		setTitle("Sin Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 259);
+		setBounds(100, 100, 450, 313);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -67,14 +72,18 @@ public class SinEditorUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		{
 			JLabel lblSinFil = new JLabel("Sin File :");
-			contentPanel.add(lblSinFil, "2, 2, 3, 1");
+			contentPanel.add(lblSinFil, "2, 2, 5, 1");
 		}
 		{
 			textSin = new JTextField();
-			contentPanel.add(textSin, "2, 4, 3, 1, fill, default");
+			contentPanel.add(textSin, "2, 4, 5, 1, fill, default");
 			textSin.setColumns(10);
 		}
 		{
@@ -85,34 +94,34 @@ public class SinEditorUI extends JDialog {
 					if (!file.equals("ERROR")) {
 						try {
 						sin = new SinFile(file);
-						System.out.println(sin.getIdent());
 						textSin.setText(file);
 						String p = HexDump.toHex(sin.getPartitionInfo()).replaceAll(", ", "");
 						textPartition.setText(p.substring(1, p.length()-1));
 						textSpare.setText(HexDump.toHex(sin.getSpare()));
+						textCtype.setText(sin.getIdent());
 						}
 						catch (Exception e) {}
 					}
 				}
 			});
-			contentPanel.add(button, "6, 4");
+			contentPanel.add(button, "8, 4");
 		}
 		{
 			JLabel lblPartitionInfo = new JLabel("Partition Info :");
-			contentPanel.add(lblPartitionInfo, "2, 6, 3, 1");
+			contentPanel.add(lblPartitionInfo, "2, 6, 5, 1");
 		}
 		{
 			textPartition = new JTextField();
-			contentPanel.add(textPartition, "2, 8, 3, 1, fill, default");
+			contentPanel.add(textPartition, "2, 8, 5, 1, fill, default");
 			textPartition.setColumns(10);
 		}
 		{
 			JLabel lblSpareInfo = new JLabel("Spare Info :");
-			contentPanel.add(lblSpareInfo, "2, 10, 3, 1");
+			contentPanel.add(lblSpareInfo, "2, 10, 5, 1");
 		}
 		{
 			textSpare = new JTextField();
-			contentPanel.add(textSpare, "2, 12, 3, 1, fill, default");
+			contentPanel.add(textSpare, "2, 12, 5, 1, fill, default");
 			textSpare.setColumns(10);
 		}
 		{
@@ -127,11 +136,33 @@ public class SinEditorUI extends JDialog {
 					}
 				}
 			});
-			contentPanel.add(btnDumpData, "2, 14, center, center");
+			{
+				JLabel lblContentType = new JLabel("Content type :");
+				contentPanel.add(lblContentType, "2, 14");
+			}
+			{
+				textCtype = new JTextField();
+				contentPanel.add(textCtype, "2, 16, 5, 1, fill, default");
+				textCtype.setColumns(10);
+			}
+			contentPanel.add(btnDumpData, "2, 18, center, center");
 		}
 		{
-			JButton btnNewButton = new JButton("Unpack data");
-			contentPanel.add(btnNewButton, "4, 14, center, default");
+			JButton btnDumpHeader = new JButton("Dump header");
+			btnDumpHeader.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						sin.dumpHeader();
+					}
+					catch (IOException ioe) {}
+				}
+			});
+			contentPanel.add(btnDumpHeader, "4, 18");
+		}
+		{
+			btnUnpack = new JButton("Unpack data");
+			contentPanel.add(btnUnpack, "6, 18, center, default");
+			btnUnpack.setEnabled(false);
 		}
 		{
 			JPanel buttonPane = new JPanel();

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.logger.MyLogger;
+import org.system.OS;
+import org.system.ProcessBuilderWrapper;
 
 public class SinFile {
 
@@ -20,18 +22,33 @@ public class SinFile {
 	byte spare;
 	File sinfile;
 	byte[] yaffs2 = {0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xFF, (byte)0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	String datatype = null;
 	
 	public SinFile(String file) throws FileNotFoundException,IOException {
 		sinfile = new File(file);
 		processHeader();
+		datatype = getDatatype();
 	}
 
 	public String getFile() {
 		return sinfile.getAbsolutePath();
 	}
 	
+	public String getHeader() {
+		return sinfile.getAbsolutePath().replaceAll(".sin",".header");
+	}
+	
 	public String getImage() throws IOException {
 		return sinfile.getAbsolutePath().replaceAll(".sin","."+getIdent());
+	}
+	
+	public void dumpHeader() throws IOException {
+		MyLogger.getLogger().info("Extracting "+getFile() + " header to " + getHeader());
+		FileOutputStream fout = new FileOutputStream(new File(getHeader()));
+		fout.write(header);
+		fout.flush();
+		fout.close();
+		MyLogger.getLogger().info("HEADER Extraction finished");
 	}
 	
 	public void dumpImage() throws IOException {
@@ -60,7 +77,7 @@ public class SinFile {
 		fout.flush();
 		fout.close();
 		fin.close();
-		MyLogger.getLogger().info("SIN Extraction finished");
+		MyLogger.getLogger().info("DATA Extraction finished");
 	}
 
 	private void processHeader() throws IOException {
@@ -99,7 +116,7 @@ public class SinFile {
 		return partinfo;
 	}
 
-	public String getIdent() throws IOException {
+	public String getDatatype() throws IOException {
 		FileInputStream fin = new FileInputStream(sinfile);
 		int read = fin.read(header);
 		read = fin.read(partinfo);
@@ -117,13 +134,28 @@ public class SinFile {
 			String yaffs = new String(yaffs2);
 			if (result.equals(yaffs)) return "yaffs2";
 			if (result.contains("ELF")) return "elf";
+			boolean isnull = true;
+			for (int i=0;i<ident.length;i++)
+				if (ident[i]!=0) isnull=false;
+			while (isnull) {
+				byte b = (byte)fin.read();
+				if (b!=0) isnull=false;
+			}
+			byte[] ident1 = new byte[52];
+			fin.read(ident1);
+			ident1 = new byte[4];
+			fin.read(ident1);
 			fin.close();
-			return "";
+			if (HexDump.toHex(ident1).equals("[FF, FF, 53, EF]")) return "ext4";
+			return "unknown";
 		} catch (IOException e) {
 			fin.close();
-			return "";
+			return "unknown";
 		}
-		
+	}
+
+	public String getIdent() throws IOException {
+		return datatype;
 	}
 
 	public byte getSpare() {

@@ -258,7 +258,6 @@ public class firmSelect extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
-				System.out.println(result);
 				try {
 					filelist();
 					addCheckBoxesWipe();

@@ -66,31 +66,6 @@ public class JKernel32 {
 		return hevent;
 	}
 	
-	public static byte[] readBytesAsync(int bufsize) throws IOException {
-		IntByReference nbread = new IntByReference();
-		WinBase.OVERLAPPED ovread = new WinBase.OVERLAPPED();
-		ovread.Offset     = 0; 
-		ovread.OffsetHigh = 0;
-		//ovread.hEvent = JKernel32.createEvent();
-		System.out.println("Read Event created");
-		byte[] b = new byte[bufsize];
-		if (!kernel32.ReadFile(HandleToDevice, b, bufsize, nbread, ovread)) {
-			System.out.println("Read done");
-			if (kernel32.GetLastError() == kernel32.ERROR_IO_PENDING) {
-				System.out.println("IO Pending, waiting event");
-				//if (kernel32.WaitForSingleObject(ovread.hEvent, 10000)==kernel32.WAIT_OBJECT_0) {
-					System.out.println("Getting overlapped result");
-					boolean result = kernel32.GetOverlappedResult(HandleToDevice, ovread, nbread, true);
-					System.out.println(result + " : " + JKernel32.getLastError());
-				//}
-				//else {
-				//	System.out.println(JKernel32.getLastError());
-				//}
-			}
-		}
-		kernel32.CloseHandle(ovread.hEvent);
-		return BytesUtil.getReply(b,nbread.getValue());
-	}
 	
 	public static void sleep(int ms) {
 		try {
@@ -98,35 +73,6 @@ public class JKernel32 {
 		} catch (Exception e) {}
 	}
 	
-	public static boolean writeBytesAsync(byte bytes[]) throws IOException {
-		System.out.println("=== Begin Writing to device ===");
-		IntByReference nbwritten = new IntByReference();
-		ovwrite.Offset     = 0; 
-		ovwrite.OffsetHigh = 0;
-		ovwrite.hEvent = JKernel32.createEvent();
-		System.out.println("Write Event created");
-		if (!kernel32.WriteFile(HandleToDevice, bytes, bytes.length, nbwritten,ovwrite)) {
-			System.out.println("Write done");
-			if (kernel32.GetLastError() == kernel32.ERROR_IO_PENDING) {
-				System.out.println("IO Pending, waiting event");
-				if (kernel32.WaitForSingleObject(ovwrite.hEvent, kernel32.INFINITE)==kernel32.WAIT_OBJECT_0) {
-					if (!kernel32.GetOverlappedResult(HandleToDevice, ovwrite, nbwritten, true))
-						System.out.println(JKernel32.getLastError());
-				}
-				else {
-					System.out.println(JKernel32.getLastError());
-				}
-			}
-		}
-		kernel32.CloseHandle(ovwrite.hEvent);
-		System.out.println("buffer : "+bytes.length+" nbwritten : "+nbwritten.getValue());
-		if (nbwritten.getValue()!=bytes.length)
-			throw new IOException("Did not write all data");
-		bytes = null;
-		System.out.println("==== End Writing to device ===");
-		return true;
-	}
-
 	public static boolean writeBytes(byte bytes[]) throws IOException {
 		IntByReference nbwritten = new IntByReference();
 		boolean result = kernel32.WriteFile(HandleToDevice, bytes, bytes.length, nbwritten, null);

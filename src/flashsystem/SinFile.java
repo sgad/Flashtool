@@ -35,11 +35,13 @@ public class SinFile {
 	}
 	
 	public String getHeader() {
-		return sinfile.getAbsolutePath().replaceAll(".sin",".header");
+		String path = sinfile.getAbsolutePath(); 
+		return path.substring(0, path.length()-3)+"header";
 	}
 	
 	public String getImage() throws IOException {
-		return sinfile.getAbsolutePath().replaceAll(".sin","."+getIdent());
+		String path = sinfile.getAbsolutePath(); 
+		return path.substring(0, path.length()-3)+getIdent();
 	}
 	
 	public void dumpHeader() throws IOException {

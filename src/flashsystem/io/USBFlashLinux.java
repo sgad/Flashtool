@@ -1,8 +1,12 @@
 package flashsystem.io;
 
+import flashsystem.HexDump;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 import java.io.IOException;
+
+import org.logger.MyLogger;
+
 import linuxlib.JUsb;
 
 public class USBFlashLinux {
@@ -12,59 +16,72 @@ public class USBFlashLinux {
 	
 	public static void open(String pid) throws IOException {
 		try {
-			JUsb.openDevice();
-			if (pid.equals("ADDE")) {
-				readS1Reply();
-				if (lastreply == null) throw new IOException("Unable to read from device");
-			}
+			MyLogger.getLogger().info("Opening device for R/W");
+			JUsb.open();
 		}catch (Exception e) {
 			if (lastreply == null) throw new IOException("Unable to read from device");
 		}
 	}
 
 	public static void writeS1(S1Packet p) throws IOException,X10FlashException {
-		JUsb.writeDevice(p.getByteArray());
-		int count = 0;
-		while (true) {
-			try {
-				readS1Reply();
-				break;
-			}
-			catch (IOException e) {
-				try {
-					Thread.sleep(500);
-				}
-				catch (Exception s) {}
-				count++;
-				if (count==3) {
-					throw e;
-				}
-			}
-			catch (X10FlashException e) {
-				throw e;
-			}
+		try {
+			JUsb.writeBytes(p.getByteArray());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		readS1Reply();
 	}
 
 	public static void write(byte[] array) throws IOException,X10FlashException {
-		JUsb.writeDevice(array);
+		try {
+			JUsb.writeBytes(array);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
     public static  void readS1Reply() throws X10FlashException, IOException
     {
-    	S1Packet p = JUsb.readS1Device();
+    	S1Packet p=null;
+    	boolean finished = false;
+		try {
+			while (!finished) {
+				byte[] b = JUsb.readBytes();
+				if (p==null) {
+					p = new S1Packet(b);
+				}
+				else {
+					p.addData(b);
+				}
+				finished=!p.hasMoreToRead();
+			}
+			p.validate();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			if (p!=null) p.release();
+			p=null;
+		}
     	if (p!=null) {
     		lastreply = p.getDataArray();
     		lastflags = p.getFlags();
+    		p.release();
     	}
     	else {
     		lastreply = null;
+    		p.release();
     	}
-    	p.release();
     }
 
     public static void readReply()  throws X10FlashException, IOException {
-    	lastreply = JUsb.readDevice();
+    	try {
+			lastreply = JUsb.readBytes();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public static int getLastFlags() {
@@ -76,7 +93,12 @@ public class USBFlashLinux {
     }
 
     public static void close() {
-		JUsb.closeDevice();
+		try {
+			JUsb.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

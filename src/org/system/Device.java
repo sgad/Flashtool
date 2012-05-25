@@ -6,11 +6,15 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import linuxlib.JUsb;
-import linuxlib.LinuxUsbDevice;
 
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.logger.MyLogger;
+
+import se.marell.libusb.LibUsbNoDeviceException;
+import se.marell.libusb.LibUsbOtherException;
+import se.marell.libusb.LibUsbPermissionException;
+
 import com.sun.jna.platform.win32.WinBase;
 
 import win32lib.JKernel32;
@@ -105,10 +109,9 @@ public class Device {
     public static DeviceIdent getConnectedDeviceLinux() {
     	DeviceIdent id = new DeviceIdent();
     	try {
-	    	Iterator<LinuxUsbDevice> i = JUsb.getConnectedDevices().iterator();
-	    	while (i.hasNext()) {
-	    		LinuxUsbDevice d = i.next();
-	    		id.addDevId(d.getIdVendor(),d.getIdProduct(),d.getSerial());
+    		JUsb.fillDevice();
+    		if (JUsb.getVendorId().equals("0FCE")) {
+	    		id.addDevId(JUsb.getVendorId(),JUsb.getProductId(),JUsb.getSerial());
 	        }
 	        synchronized (lastid) {
 	        	lastid=id;
@@ -153,6 +156,12 @@ public class Device {
     }
 
     public static void clean() {
-    	if (!OS.getName().equals("windows")) JUsb.clean(); 
+    	if (!OS.getName().equals("windows"))
+			try {
+				JUsb.cleanup();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
     }
 }

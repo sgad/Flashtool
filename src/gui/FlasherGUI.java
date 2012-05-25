@@ -83,6 +83,7 @@ import java.awt.Toolkit;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import linuxlib.JUsb;
 
 
 public class FlasherGUI extends JFrame {
@@ -156,6 +157,7 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
+		if (OS.getName()!="windows") JUsb.init();
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );
@@ -326,25 +328,25 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
-			mntmSinEdit = new JMenuItem("SIN Editor");
-			mntmSinEdit.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						doSinEdit();
-					}
-					catch (Exception e1) {}
-				}
-			});
-			mntmElfUnpack = new JMenuItem("ELF Extractor");
-			mntmElfUnpack.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						doElfUnpack();
-					}
-					catch (Exception e1) {}
-				}
-			});
 		}
+		mntmSinEdit = new JMenuItem("SIN Editor");
+		mntmSinEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doSinEdit();
+				}
+				catch (Exception e1) {}
+			}
+		});
+		mntmElfUnpack = new JMenuItem("ELF Extractor");
+		mntmElfUnpack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doElfUnpack();
+				}
+				catch (Exception e1) {}
+			}
+		});
 		
 		JMenu mnRoot = new JMenu("Root");
 		mnAdvanced.add(mnRoot);
@@ -465,8 +467,6 @@ public class FlasherGUI extends JFrame {
 			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
 			mnAdvanced.add(mntmTaBackupRestore);
 			mnAdvanced.add(mntmRawIO);
-			mnAdvanced.add(mntmSinEdit);
-			mnAdvanced.add(mntmElfUnpack);
 			mntmTaBackupRestore.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -476,7 +476,8 @@ public class FlasherGUI extends JFrame {
 				}
 			});
 		}
-		
+		mnAdvanced.add(mntmSinEdit);
+		mnAdvanced.add(mntmElfUnpack);		
 		mnAdvanced.add(mntmBuildpropEditor);
 
 		mntmBuildpropRebrand = new JMenuItem("Rebrand");

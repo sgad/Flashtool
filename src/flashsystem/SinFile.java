@@ -137,8 +137,12 @@ public class SinFile {
 			if (result.equals(yaffs)) return "yaffs2";
 			if (result.contains("ELF")) return "elf";
 			boolean isnull = true;
-			for (int i=0;i<ident.length;i++)
-				if (ident[i]!=0) isnull=false;
+			int count=0;
+			for (int i=0;i<ident.length;i++) {
+				if (ident[i]!=0) {
+					isnull=false;
+				}
+			}
 			while (isnull) {
 				byte b = (byte)fin.read();
 				if (b!=0) isnull=false;
@@ -148,7 +152,7 @@ public class SinFile {
 			ident1 = new byte[4];
 			fin.read(ident1);
 			fin.close();
-			if (HexDump.toHex(ident1).equals("[FF, FF, 53, EF]")) return "ext4";
+			if (HexDump.toHex(ident1).contains("53, EF")) return "ext4";
 			return "unknown";
 		} catch (IOException e) {
 			fin.close();

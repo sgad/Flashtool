@@ -71,7 +71,7 @@ public class USBFlashLinux {
     	}
     	else {
     		lastreply = null;
-    		p.release();
+    		lastflags = 0;
     	}
     }
 

@@ -99,6 +99,8 @@ public class BundleMetaData {
 			add(intname,"baseband".toUpperCase());
 		else if (intname.toUpperCase().contains("ADSP") || intname.toUpperCase().startsWith("DSP"))
 			add(intname,"baseband".toUpperCase());
+		else if (intname.toUpperCase().contains("MODEM") || intname.toUpperCase().contains("PRCMU"))
+			add(intname,"baseband".toUpperCase());
 		else if (intname.toUpperCase().contains("FOTA"))
 			add(intname,"fota".toUpperCase());
 		else if (intname.toUpperCase().contains("APPS_LOG"))

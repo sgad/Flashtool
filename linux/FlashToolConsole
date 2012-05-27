@@ -2,6 +2,7 @@
 
 export BASEDIR=$(dirname $0)
 export system64=$(uname -m)
+cd $BASEDIR
 
 show_help() {
 	echo Usage : FlashToolConsole [OPTIONS]

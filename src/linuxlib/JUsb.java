@@ -14,6 +14,7 @@ import se.marell.libusb.LibUsbInvalidParameterException;
 import se.marell.libusb.LibUsbNoDeviceException;
 import se.marell.libusb.LibUsbNotFoundException;
 import se.marell.libusb.LibUsbOtherException;
+import se.marell.libusb.LibUsbOverflowException;
 import se.marell.libusb.LibUsbPermissionException;
 import se.marell.libusb.LibUsbPipeException;
 import se.marell.libusb.LibUsbSystem;
@@ -147,11 +148,16 @@ public class JUsb {
   	  	dev.close();		
 	}
 	
-	public static byte[] readBytes() throws Exception {
+	public static byte[] readBytes() throws LibUsbTimeoutException, LibUsbPipeException, LibUsbOverflowException, LibUsbNoDeviceException, LibUsbOtherException {
 		int read = dev.bulk_read(0x81, data, 0);
 		return BytesUtil.getReply(data, read);
 	}
-	
+
+	public static byte[] readBytes(int timeout) throws LibUsbTimeoutException, LibUsbPipeException, LibUsbOverflowException, LibUsbNoDeviceException, LibUsbOtherException {
+		int read = dev.bulk_read(0x81, data, timeout);
+		return BytesUtil.getReply(data, read);
+	}
+
 	public static void cleanup() throws Exception {
 		us.cleanup();
 	}

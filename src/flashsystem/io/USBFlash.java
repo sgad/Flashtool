@@ -46,6 +46,15 @@ public class USBFlash {
 		}
 	}
 
+	public static void readS1Reply(int timeout)  throws IOException,X10FlashException {
+		if (OS.getName().equals("windows")) {
+			USBFlashWin32.readS1Reply();
+		}
+		else {
+			USBFlashLinux.readS1Reply(timeout);
+		}
+	}
+
 	public static void readReply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.readReply();

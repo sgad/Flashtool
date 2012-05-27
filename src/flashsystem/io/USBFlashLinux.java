@@ -73,6 +73,40 @@ public class USBFlashLinux {
     		lastreply = null;
     		lastflags = 0;
     	}
+    	if (lastreply == null) throw new X10FlashException("Cannot read from device");
+    }
+
+    public static  void readS1Reply(int timeout) throws X10FlashException, IOException
+    {
+    	S1Packet p=null;
+    	boolean finished = false;
+		try {
+			while (!finished) {
+				byte[] b = JUsb.readBytes(timeout);
+				if (p==null) {
+					p = new S1Packet(b);
+				}
+				else {
+					p.addData(b);
+				}
+				finished=!p.hasMoreToRead();
+			}
+			p.validate();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			if (p!=null) p.release();
+			p=null;
+		}
+    	if (p!=null) {
+    		lastreply = p.getDataArray();
+    		lastflags = p.getFlags();
+    		p.release();
+    	}
+    	else {
+    		lastreply = null;
+    		lastflags = 0;
+    	}
     }
 
     public static void readReply()  throws X10FlashException, IOException {

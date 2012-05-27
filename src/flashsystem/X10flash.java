@@ -241,7 +241,7 @@ public class X10flash {
 				uploadImage(fin, 0x1000);
 			}
 		}
-		USBFlash.readS1Reply();
+		USBFlash.readS1Reply(5000);
 		hookDevice(true);
     }
 
@@ -249,7 +249,7 @@ public class X10flash {
 		MyLogger.getLogger().info("Flashing loader");
 		FileInputStream fin = new FileInputStream(loader);
 		uploadImage(fin, 0x1000);
-		USBFlash.readS1Reply();
+		USBFlash.readS1Reply(5000);
 		hookDevice(true);
     }
 

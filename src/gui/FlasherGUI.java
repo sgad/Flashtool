@@ -1079,8 +1079,6 @@ public class FlasherGUI extends JFrame {
 					bundle=null;
 				}
 				if (bundle!=null) {
-					if (!bundle.hasLoader())
-						bundle.setLoader(new File(Devices.getCurrent().getLoader()));
 					X10flash flash=null;
 					try {
 			    		MyLogger.getLogger().info("Preparing files for flashing");

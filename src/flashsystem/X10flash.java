@@ -4,19 +4,23 @@ import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
 import gui.LoaderRootFilter;
 import gui.LoaderSelectorGUI;
+import gui.deviceSelectGui;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
+import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
 
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
 
 public class X10flash {
@@ -237,8 +241,33 @@ public class X10flash {
 				}
 			}
 			else {
-				FileInputStream fin = new FileInputStream(filelist[0]);
-				uploadImage(fin, 0x1000);
+				if (filelist.length==1) {
+					FileInputStream fin = new FileInputStream(filelist[0]);
+					uploadImage(fin, 0x1000);
+				}
+				else {
+	        		String devid="";
+	        		deviceSelectGui devsel = new deviceSelectGui(null);
+	        		devid = devsel.getDevice(new Properties());
+	        		File f = new File(OS.getWorkDir()+"/devices/"+devid+"/loader.sin");
+					FileInputStream fin = new FileInputStream(f);
+					uploadImage(fin, 0x1000);
+					fin = new FileInputStream(f);
+					FileOutputStream fout = new FileOutputStream(OS.getWorkDir()+"/loaders/"+new File(phoneprops.getProperty("LOADER_ROOT")+".sin"));
+					try {
+						byte b[] = new byte[1];
+						int read = fin.read(b);
+						while (read == 1) {
+							fout.write(b);
+							read = fin.read(b);
+						}
+					}
+					catch (Exception e) {
+					}
+					fout.flush();
+					fout.close();
+					fin.close();
+				}
 			}
 		}
 		USBFlash.readS1Reply(5000);

@@ -242,7 +242,8 @@ public final class Bundle {
 			while (entries.hasMoreElements()) {
 				saveEntry(getEntry(entries.nextElement()));
 			}
-			saveEntry(getLoader());
+			if (hasLoader())
+				saveEntry(getLoader());
 		}
 		catch (Exception e) {
 			throw new BundleException(e.getMessage());

@@ -309,10 +309,10 @@ public class X10flash {
     }
 
     public long getNumberPasses() {
-	    Enumeration<BundleEntry> e = _bundle.allEntries();
+	    Enumeration<String> e = _bundle.getMeta().getAllEntries();
 	    long totalsize = 0;
 	    while (e.hasMoreElements()) {
-	    	BundleEntry entry = e.nextElement();
+	    	BundleEntry entry = _bundle.getEntry(e.nextElement());
 	    	if (entry.getName().contains("loader"))
 	    		totalsize = totalsize + entry.getSize()/0x1000+1;
 	    	else 

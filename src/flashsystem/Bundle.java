@@ -229,10 +229,11 @@ public final class Bundle {
 				out.write(buffer, 0, len);
 			in.close();
 			out.close();
+			File f = new File(outname);
 			bundleList.put(entry.getName(), new BundleEntry(new File(outname),entry.getName()));
 		}
 	}
-
+	
 	public void open() throws BundleException {
 		try {
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");

@@ -9,7 +9,7 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.5.3.0
+!define VERSION 0.8.1.0
 !define COMPANY Androxyde
 !define URL http://androxyde.github.com/Flashtool/
 
@@ -42,7 +42,7 @@ OutFile update.exe
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.5.3.0
+VIProductVersion 0.8.1.0
 VIAddVersionKey ProductName Flashtool
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
@@ -67,12 +67,7 @@ aborted:
 continue:
     SetOutPath $INSTDIR
     SetOverwrite on
-    Delete $INSTDIR\x10flasher_lib\driverid.properties
-    RmDir /r $INSTDIR\custom\features\UnlockBL
-    RmDir /r $INSTDIR\custom\root
-    RmDir /r $INSTDIR\custom\shells
-    RmDir /r $INSTDIR\devices
-    File /r ..\Deploy\FlashTool\*
+    File ..\Deploy\FlashTool\x10flasher.jar
     WriteRegStr HKLM "${REGKEY}\Components" Flashtool 1
 SectionEnd
 

@@ -14,7 +14,7 @@ public class USBFlashLinux {
 	private static int lastflags;
 	private static byte[] lastreply;
 	
-	public static void open(String pid) throws IOException {
+	public static void linuxOpen(String pid) throws IOException {
 		try {
 			MyLogger.getLogger().info("Opening device for R/W");
 			JUsb.open();
@@ -23,17 +23,16 @@ public class USBFlashLinux {
 		}
 	}
 
-	public static void writeS1(S1Packet p) throws IOException,X10FlashException {
+	public static void linuxWriteS1(S1Packet p) throws IOException,X10FlashException {
 		try {
 			JUsb.writeBytes(p.getByteArray());
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		readS1Reply();
 	}
 
-	public static void write(byte[] array) throws IOException,X10FlashException {
+	public static void linuxWrite(byte[] array) throws IOException,X10FlashException {
 		try {
 			JUsb.writeBytes(array);
 		} catch (Exception e) {
@@ -42,7 +41,7 @@ public class USBFlashLinux {
 		}
 	}
 
-    public static  void readS1Reply() throws X10FlashException, IOException
+    public static  void linuxReadS1Reply() throws X10FlashException, IOException
     {
     	S1Packet p=null;
     	boolean finished = false;
@@ -76,7 +75,7 @@ public class USBFlashLinux {
     	if (lastreply == null) throw new X10FlashException("Cannot read from device");
     }
 
-    public static  void readS1Reply(int timeout) throws X10FlashException, IOException
+    public static  void linuxReadS1Reply(int timeout) throws X10FlashException, IOException
     {
     	S1Packet p=null;
     	boolean finished = false;
@@ -109,7 +108,7 @@ public class USBFlashLinux {
     	}
     }
 
-    public static void readReply()  throws X10FlashException, IOException {
+    public static void linuxReadReply()  throws X10FlashException, IOException {
     	try {
 			lastreply = JUsb.readBytes();
 		} catch (Exception e) {
@@ -118,15 +117,15 @@ public class USBFlashLinux {
 		}
     }
     
-    public static int getLastFlags() {
+    public static int linuxGetLastFlags() {
     	return lastflags;
     }
     
-    public static byte[] getLastReply() {
+    public static byte[] linuxGetLastReply() {
     	return lastreply;
     }
 
-    public static void close() {
+    public static void linuxClose() {
 		try {
 			JUsb.close();
 		} catch (Exception e) {

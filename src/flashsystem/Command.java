@@ -84,7 +84,6 @@ public class Command {
     }
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
-    	MyLogger.updateProgress();
     	if (!_simulate) {
 	    		S1Packet p = new S1Packet(command,data,ongoing);
 	    		try {

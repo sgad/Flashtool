@@ -3,6 +3,8 @@ package flashsystem.io;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 import java.io.IOException;
+
+import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.OS;
@@ -12,82 +14,84 @@ public class USBFlash {
 	public static void open(String pid) throws IOException {
 		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.open(pid);
+			USBFlashWin32.windowsOpen(pid);
 		}
 		else {
-			USBFlashLinux.open(pid);
+			USBFlashLinux.linuxOpen(pid);
 		}
 	}
 
 	public static void writeS1(S1Packet p) throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.writeS1(p);
+			USBFlashWin32.windowsWriteS1(p);
 		}
 		else {
-			USBFlashLinux.writeS1(p);
+			USBFlashLinux.linuxWriteS1(p);
 		}
+		readS1Reply();
 	}
 
 	public static void write(byte[] array) throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.write(array);
+			USBFlashWin32.windowsWrite(array);
 		}
 		else {
-			USBFlashLinux.write(array);
+			USBFlashLinux.linuxWrite(array);
 		}		
 	}
 
 	public static void readS1Reply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.readS1Reply();
+			USBFlashWin32.windowsReadS1Reply();
 		}
 		else {
-			USBFlashLinux.readS1Reply();
+			USBFlashLinux.linuxReadS1Reply();
 		}
+		MyLogger.updateProgress();
 	}
 
 	public static void readS1Reply(int timeout)  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.readS1Reply();
+			USBFlashWin32.windowsReadS1Reply();
 		}
 		else {
-			USBFlashLinux.readS1Reply(timeout);
+			USBFlashLinux.linuxReadS1Reply(timeout);
 		}
 	}
 
 	public static void readReply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
-			USBFlashWin32.readReply();
+			USBFlashWin32.windowsReadReply();
 		}
 		else {
-			USBFlashLinux.readReply();
+			USBFlashLinux.linuxReadReply();
 		}
 	}
 
 	public static int getLastFlags() {
 		if (OS.getName().equals("windows")) {
-			return USBFlashWin32.getLastFlags();
+			return USBFlashWin32.windowsGetLastFlags();
 		}
 		else {
-			return USBFlashLinux.getLastFlags();
+			return USBFlashLinux.linuxGetLastFlags();
 		}
     }
 
     public static byte[] getLastReply() {
 		if (OS.getName().equals("windows")) {
-			return USBFlashWin32.getLastReply();
+			return USBFlashWin32.windowsGetLastReply();
 		}
 		else {
-			return USBFlashLinux.getLastReply();
+			return USBFlashLinux.linuxGetLastReply();
 		}
     }
 
     public static void close() {
     	if (OS.getName().equals("windows")) {
-    		USBFlashWin32.close();
+    		USBFlashWin32.windowsClose();
     	}
     	else
-    		USBFlashLinux.close();
+    		USBFlashLinux.linuxClose();
     	DeviceChangedListener.pause(false);
     }
 }

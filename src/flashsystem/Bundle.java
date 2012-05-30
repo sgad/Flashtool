@@ -234,6 +234,28 @@ public final class Bundle {
 		}
 	}
 	
+	public long getMaxProgress() {
+		    Enumeration<String> e = getMeta().getAllEntries();
+		    long totalsize = 0;
+		    while (e.hasMoreElements()) {
+		    	BundleEntry entry = getEntry(e.nextElement());
+		    	if (entry.getName().contains("loader")) {
+		    		totalsize = totalsize + (entry.getSize()/0x1000);
+		    		if (entry.getSize()%0x1000>0)
+		    			totalsize = totalsize+1;
+		    		totalsize = totalsize + 1;
+		    	}
+		    	else if (entry.getName().toUpperCase().endsWith("SIN")) 
+		    		totalsize = totalsize + (entry.getSize()/0x10000)*2;
+		    		if (entry.getSize()%0x10000>0)
+		    			totalsize = totalsize+1;
+		    		totalsize = totalsize + 1;
+		    }
+		    if (hasCmd25()) totalsize = totalsize + 1;
+		    if (hasPartition()) totalsize = totalsize + 2;
+		    return totalsize+8;
+	}
+
 	public void open() throws BundleException {
 		try {
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");

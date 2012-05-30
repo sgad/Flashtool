@@ -30,6 +30,7 @@ public class X10flash {
     private LoaderInfo phoneprops = null;
     byte readarray65[] = new byte[0x10000];
     byte readarray4[] = new byte[0x1000];
+    private static int count = 0;
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -182,6 +183,7 @@ public class X10flash {
 				fileinputstream.close();
 				throw new X10FlashException("Error in processHeader");
 			}
+			count++;
             cmd.send(Command.CMD05,BytesUtil.concatAll(abyte0, abyte1),false);
             if (USBFlash.getLastFlags() == 0)
             	getLastError();
@@ -196,6 +198,7 @@ public class X10flash {
     }
     
     private void uploadImage(InputStream fileinputstream, int buffer) throws X10FlashException {
+    	count = 0;
     	try {
 	    	processHeader(fileinputstream);
 			int readCount;
@@ -209,6 +212,7 @@ public class X10flash {
 						cmd.send(Command.CMD06, BytesUtil.getReply(readarray4, readCount), (readCount==buffer));
 					else
 						cmd.send(Command.CMD06, BytesUtil.getReply(readarray65, readCount), (readCount==buffer));
+				count++;
 				if (readCount!=buffer) break;
 			} while(true);
 			fileinputstream.close();
@@ -308,19 +312,6 @@ public class X10flash {
 		}
     }
 
-    public long getNumberPasses() {
-	    Enumeration<String> e = _bundle.getMeta().getAllEntries();
-	    long totalsize = 0;
-	    while (e.hasMoreElements()) {
-	    	BundleEntry entry = _bundle.getEntry(e.nextElement());
-	    	if (entry.getName().contains("loader"))
-	    		totalsize = totalsize + entry.getSize()/0x1000+1;
-	    	else 
-	    		totalsize = totalsize + (entry.getSize()/0x10000)*2+3;
-	    }
-	    return totalsize+13;
-    }
-
     public String getPhoneProperty(String property) {
     	return phoneprops.getProperty(property);
     }
@@ -350,7 +341,6 @@ public class X10flash {
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
-		    MyLogger.initProgress(getNumberPasses());
 		    sendLoader();
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
@@ -434,6 +424,7 @@ public class X10flash {
     
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
+    	MyLogger.initProgress(_bundle.getMaxProgress());
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");

@@ -35,6 +35,8 @@ public class ProcessBuilderWrapper {
         seInfo.start();
         seError.start();
         status = process.waitFor();
+        seInfo.join();
+        seError.join();
     }
     
     public ProcessBuilderWrapper(List<String> command) throws Exception {

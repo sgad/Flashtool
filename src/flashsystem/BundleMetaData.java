@@ -178,8 +178,12 @@ public class BundleMetaData {
 		return _inttof.getProperty(internal);
 	}
 
-	public boolean hasCategorie(String categ) {
-		return _categ.containsKey(categ.toUpperCase());
+	public boolean hasCategorie(String categ, boolean checkSelected) {
+		if (_categ.containsKey(categ.toUpperCase())) {
+			if (checkSelected) return _enabled.getProperty(categ.toUpperCase()).equals("true");
+			else return true;
+		}
+		else return false;
 	}
 
 	public String getCategorie(String name) {
@@ -192,12 +196,15 @@ public class BundleMetaData {
 		return "";
 	}
 
-	public Enumeration<String> getAllEntries() {
+	public Enumeration<String> getAllEntries(boolean checkSelected) {
 		Vector<String> result = new Vector<String>();
 		Enumeration elem = _categ.keys();
 		while (elem.hasMoreElements()) {
 			String categ = (String)elem.nextElement();
-			if (_enabled.getProperty(categ).equals("true")) {
+			boolean toAdd = true;
+			if (checkSelected)
+				 toAdd = _enabled.getProperty(categ).equals("true");
+			if (toAdd) {
 				Vector<String> list = (Vector<String>)_categ.get(categ);
 				Enumeration<String> listelem = list.elements();
 				while (listelem.hasMoreElements()) {
@@ -208,16 +215,21 @@ public class BundleMetaData {
 		return result.elements();
 	}
 
-	public Enumeration<String> getEntriesOf(String pcateg) {
+	public Enumeration<String> getEntriesOf(String pcateg,boolean checkSelected) {
 		Vector<String> result = new Vector<String>();
 		Enumeration elem = _categ.keys();
 		while (elem.hasMoreElements()) {
 			String categ = (String)elem.nextElement();
 			if (categ.toUpperCase().equals(pcateg.toUpperCase())) {
-				Vector<String> list = (Vector<String>)_categ.get(categ);
-				Enumeration<String> listelem = list.elements();
-				while (listelem.hasMoreElements()) {
-					result.add(listelem.nextElement());
+				boolean toAdd = true;
+				if (checkSelected)
+					 toAdd = _enabled.getProperty(categ).equals("true");
+				if (toAdd) {
+					Vector<String> list = (Vector<String>)_categ.get(categ);
+					Enumeration<String> listelem = list.elements();
+					while (listelem.hasMoreElements()) {
+						result.add(listelem.nextElement());
+					}
 				}
 			}
 		}

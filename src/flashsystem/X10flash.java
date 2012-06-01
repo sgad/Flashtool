@@ -300,7 +300,7 @@ public class X10flash {
 		for (int i = 1;i<=_bundle.getMeta().getNbCategs();i++) {
 			String categ = _bundle.getMeta().getCagorie(i);
 			if (_bundle.getMeta().isCategEnabled(categ)) {
-				Enumeration entries = _bundle.getMeta().getEntriesOf(categ);
+				Enumeration entries = _bundle.getMeta().getEntriesOf(categ,true);
 				while (entries.hasMoreElements()) {
 					String entry = (String)entries.nextElement();
 					BundleEntry bent = _bundle.getEntry(entry);
@@ -325,7 +325,7 @@ public class X10flash {
     }
    
     public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {
-		Enumeration entries = _bundle.getMeta().getEntriesOf("TA");
+		Enumeration entries = _bundle.getMeta().getEntriesOf("TA",true);
 		while (entries.hasMoreElements()) {
 			String entry = (String)entries.nextElement();
 			BundleEntry bent = _bundle.getEntry(entry);

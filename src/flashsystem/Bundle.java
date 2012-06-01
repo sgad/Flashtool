@@ -91,7 +91,7 @@ public final class Bundle {
 
 	private void feedFromMeta() {
 		bundleList.clear();
-		Enumeration<String> all = _meta.getAllEntries();
+		Enumeration<String> all = _meta.getAllEntries(true);
 		while (all.hasMoreElements()) {
 			String name = all.nextElement();
 			BundleEntry entry = new BundleEntry(new File(_meta.getPath(name)),name);
@@ -135,7 +135,7 @@ public final class Bundle {
 	}
 		
 	public boolean hasTA() {
-		return _meta.hasCategorie("TA");
+		return _meta.hasCategorie("TA",true);
 	}
 
 	public BundleEntry getLoader() throws IOException, FileNotFoundException {
@@ -143,15 +143,15 @@ public final class Bundle {
 	}
 
 	public boolean hasLoader() {
-		return _meta.hasCategorie("LOADER");
+		return _meta.hasCategorie("LOADER",false);
 	}
 
 	public BundleEntry getPartition() throws IOException, FileNotFoundException {
-		return (BundleEntry)bundleList.get(_meta.getEntriesOf("PARTITION").nextElement());
+		return (BundleEntry)bundleList.get(_meta.getEntriesOf("PARTITION",true).nextElement());
 	}
 
 	public boolean hasPartition() {
-		return _meta.hasCategorie("PARTITION");
+		return _meta.hasCategorie("PARTITION",true);
 	}
 	
 	public boolean simulate() {
@@ -235,7 +235,7 @@ public final class Bundle {
 	}
 	
 	public long getMaxProgress() {
-		    Enumeration<String> e = getMeta().getAllEntries();
+		    Enumeration<String> e = getMeta().getAllEntries(true);
 		    long totalsize = 0;
 		    while (e.hasMoreElements()) {
 		    	BundleEntry entry = getEntry(e.nextElement());
@@ -261,7 +261,7 @@ public final class Bundle {
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
 			f.mkdir();
 			MyLogger.getLogger().debug("Created the "+f.getName()+" folder");
-			Enumeration<String> entries = _meta.getAllEntries();
+			Enumeration<String> entries = _meta.getAllEntries(true);
 			while (entries.hasMoreElements()) {
 				saveEntry(getEntry(entries.nextElement()));
 			}

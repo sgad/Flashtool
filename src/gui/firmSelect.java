@@ -130,7 +130,7 @@ public class firmSelect extends JDialog {
 		model_1 = new DefaultTableModel();
 		model_1.addColumn("File");
 		table_1.setModel(model_1);		
-		Enumeration<String> e = selected.getMeta().getAllEntries();
+		Enumeration<String> e = selected.getMeta().getAllEntries(true);
 		while (e.hasMoreElements()) {
 			String elem = e.nextElement();
 			model_1.addRow(new String[]{elem});

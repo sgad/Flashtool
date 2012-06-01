@@ -118,8 +118,18 @@ public class ElfParser {
 			fin.seek(p.getOffset());
 			byte[] image = new byte[p.getSize()];
 			fin.read(image);
-			MyLogger.getLogger().info("Extracting part " + p.getName() + " to " +data.getAbsoluteFile()+"."+p.getName());
-			File f = new File(data.getAbsoluteFile()+"."+p.getName());
+			String ext = "."+p.getName();
+			byte[] ident = new byte[352];
+			System.arraycopy(image, 0, ident, 0, 352);
+			String identHex = HexDump.toHex(ident);
+			if (identHex.contains("[1F, 8B"))
+				ext = ".ramdisk.gz";
+			if (identHex.contains("[00, 00, A0, E1"))
+				ext = ".Image";
+			if (identHex.contains("53, 31, 5F, 52, 50, 4D"))
+				ext = ".rpm.bin";
+			MyLogger.getLogger().info("Extracting part " + p.getName() + " to " +data.getAbsoluteFile()+ext);
+			File f = new File(data.getAbsoluteFile()+ext);
 			FileOutputStream fout = new FileOutputStream(f);
 			fout.write(image);
 			image=null;

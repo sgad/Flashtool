@@ -177,7 +177,12 @@ public final class Bundle {
 	}
 	
 	public boolean hasCmd25() {
-		return _cmd25.equals("true");
+		try {
+			return _cmd25.equals("true");
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public void createFTF() throws Exception {

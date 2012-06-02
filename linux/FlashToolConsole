@@ -130,10 +130,10 @@ then
    done
    case $p_action in
       flash)
-         $JAVA_HOME/bin/java -Xms128m -Xmx512m -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+         $JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
          ;;
       imei)
-         $JAVA_HOME/bin/java -Xms128m -Xmx512m -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=imei
+         $JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -cp ${CLASSPATH}${BASEDIR}/x10flasher.jar gui.FlasherGUI -console --action=imei
    esac
 else
    echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"

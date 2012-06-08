@@ -68,6 +68,10 @@ continue:
     SetOutPath $INSTDIR
     SetOverwrite on
     File ..\Deploy\FlashTool\x10flasher.jar
+    File ..\Deploy\FlashTool\FlashTool.exe
+    File ..\Deploy\FlashTool\FlashTool64.exe
+    File ..\Deploy\FlashTool\FlashTool
+    File ..\Deploy\FlashTool\FlashToolConsole
     WriteRegStr HKLM "${REGKEY}\Components" Flashtool 1
 SectionEnd
 

@@ -110,6 +110,8 @@ chmod 755 ${BASEDIR}/x10flasher_lib/adb.linux
 chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.linux
 chmod 755 ${BASEDIR}/x10flasher_lib/adb.mac
 chmod 755 ${BASEDIR}/x10flasher_lib/fastboot.mac
+chmod 755 ./x10flasher_lib/bin2elf
+chmod 755 ./x10flasher_lib/bin2sin
 
 if test -z "${JAVA_HOME}"
 then

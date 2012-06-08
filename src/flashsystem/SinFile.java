@@ -44,6 +44,11 @@ public class SinFile {
 		return path.substring(0, path.length()-3)+getIdent();
 	}
 	
+	public String getPartInfoName() {
+		String path = sinfile.getAbsolutePath(); 
+		return path.substring(0, path.length()-3)+"partinfo";		
+	}
+	
 	public void dumpHeader() throws IOException {
 		MyLogger.getLogger().info("Extracting "+getFile() + " header to " + getHeader());
 		FileOutputStream fout = new FileOutputStream(new File(getHeader()));
@@ -67,6 +72,10 @@ public class SinFile {
 			fin.close();
 			throw new IOException("Error in retrieving partinfo");
 		}
+		FileOutputStream foutpart = new FileOutputStream(new File(this.getPartInfoName()));
+		foutpart.write(partinfo);
+		foutpart.flush();
+		foutpart.close();
 		FileOutputStream fout = new FileOutputStream(new File(getImage()));
 		try {
 			while (true) {

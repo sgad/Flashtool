@@ -28,24 +28,24 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class SinEditorUI extends JDialog {
+
+public class SinCreatorUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textSin;
 	private JTextField textPartition;
 	private JTextField textSpare;
 	private SinFile sin;
-	private JTextField textCtype;
-	private JButton btnUnpack;
+	private JTextField textData;
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public SinEditorUI() {
-		setTitle("Sin Editor");
+	public SinCreatorUI(String sinfile, String part, String spare) {
+		setTitle("Sin Creator");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 346);
+		setBounds(100, 100, 450, 318);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -80,33 +80,13 @@ public class SinEditorUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		{
-			JLabel lblSinFil = new JLabel("Sin File :");
+			JLabel lblSinFil = new JLabel("Sin FileName :");
 			contentPanel.add(lblSinFil, "2, 2, 5, 1");
 		}
 		{
 			textSin = new JTextField();
 			contentPanel.add(textSin, "2, 4, 5, 1, fill, default");
 			textSin.setColumns(10);
-		}
-		{
-			JButton button = new JButton("...");
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					String file=chooseSin();
-					if (!file.equals("ERROR")) {
-						try {
-						sin = new SinFile(file);
-						textSin.setText(file);
-						String p = HexDump.toHex(sin.getPartitionInfo()).replaceAll(", ", "");
-						textPartition.setText(p.substring(1, p.length()-1));
-						textSpare.setText(HexDump.toHex(sin.getSpare()));
-						textCtype.setText(sin.getIdent());
-						}
-						catch (Exception e) {}
-					}
-				}
-			});
-			contentPanel.add(button, "8, 4");
 		}
 		{
 			JLabel lblPartitionInfo = new JLabel("Partition Info :");
@@ -127,8 +107,8 @@ public class SinEditorUI extends JDialog {
 			textSpare.setColumns(10);
 		}
 		{
-			JButton btnDumpData = new JButton("Dump data");
-			btnDumpData.addActionListener(new ActionListener() {
+			JButton btnCreateSin = new JButton("Create sin");
+			btnCreateSin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						sin.dumpImage();
@@ -139,46 +119,15 @@ public class SinEditorUI extends JDialog {
 				}
 			});
 			{
-				JLabel lblContentType = new JLabel("Content type :");
+				JLabel lblContentType = new JLabel("Data File");
 				contentPanel.add(lblContentType, "2, 14");
 			}
 			{
-				textCtype = new JTextField();
-				contentPanel.add(textCtype, "2, 16, 5, 1, fill, default");
-				textCtype.setColumns(10);
+				textData = new JTextField();
+				contentPanel.add(textData, "2, 16, 5, 1, fill, default");
+				textData.setColumns(10);
 			}
-			contentPanel.add(btnDumpData, "2, 18, center, center");
-		}
-		{
-			JButton btnDumpHeader = new JButton("Dump header");
-			btnDumpHeader.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						sin.dumpHeader();
-					}
-					catch (IOException ioe) {}
-				}
-			});
-			contentPanel.add(btnDumpHeader, "4, 18");
-		}
-		{
-			btnUnpack = new JButton("Unpack data");
-			contentPanel.add(btnUnpack, "6, 18, center, default");
-			btnUnpack.setEnabled(false);
-		}
-		{
-			JButton btnNewButton = new JButton("Create Sin As");
-			btnNewButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					SinCreatorUI cui = new SinCreatorUI(sin.getFile(),textPartition.getText(),textSpare.getText());
-					cui.setVisible(true);
-				}
-			});
-			contentPanel.add(btnNewButton, "4, 20");
-		}
-		{
-			//JButton btnUseAsTemplate = new JButton("Use as template");
-			//contentPanel.add(btnUseAsTemplate, "4, 20");
+			contentPanel.add(btnCreateSin, "2, 18, center, center");
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -196,6 +145,9 @@ public class SinEditorUI extends JDialog {
 				getRootPane().setDefaultButton(okButton);
 			}
 		}
+		textSin.setText(sinfile);
+		textPartition.setText(part);
+		textSpare.setText(spare);
 	}
 
 	public String chooseSin() {

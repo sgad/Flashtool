@@ -264,6 +264,13 @@ public final class Bundle {
 	public void open() throws BundleException {
 		try {
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
+			if (f.exists()) {
+				File[] f1 = f.listFiles();
+				for (int i = 0;i<f1.length;i++) {
+					if (!f1[i].delete()) throw new Exception("Cannot delete "+f1[i].getAbsolutePath());
+				}
+				if (!f.delete()) throw new Exception("Cannot delete "+f.getAbsolutePath());
+			}
 			f.mkdir();
 			MyLogger.getLogger().debug("Created the "+f.getName()+" folder");
 			Enumeration<String> entries = _meta.getAllEntries(true);
@@ -278,6 +285,13 @@ public final class Bundle {
 		}
     }
 
+	
+	
+	
+	
+	
+	
+	
 	public void close() {
 		if (_firmware !=null) {
 			Enumeration<JarEntry> e=_firmware.entries();

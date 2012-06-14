@@ -91,6 +91,8 @@
 		<copy file="./linux/fastboot.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
         <copy file="./linux/adb.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
         <copy file="./linux/fastboot.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
+		<copy file="./linux/bin2elf" todir="../Deploy/FlashTool/x10flasher_lib"/>
+		<copy file="./linux/bin2sin" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="./libs"
 				excludes="**/.svn"/>

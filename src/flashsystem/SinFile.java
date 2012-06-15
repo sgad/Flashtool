@@ -34,6 +34,10 @@ public class SinFile {
 		return sinfile.getAbsolutePath();
 	}
 	
+	public String getName() {
+		return sinfile.getName();
+	}
+	
 	public String getHeader() {
 		String path = sinfile.getAbsolutePath(); 
 		return path.substring(0, path.length()-3)+"header";

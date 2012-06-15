@@ -28,7 +28,22 @@ public class OS {
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb.exe").getAbsolutePath();
 		else
 			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"adb."+OS.getName()).getAbsolutePath();
-			   	
+	}
+
+	public static String getBin2SinPath() {
+		String fsep = OS.getFileSeparator();
+		if (OS.getName().equals("windows"))
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2sin.exe").getAbsolutePath();
+		else
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2sin").getAbsolutePath();
+	}
+
+	public static String getBin2ElfPath() {
+		String fsep = OS.getFileSeparator();
+		if (OS.getName().equals("windows"))
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf.exe").getAbsolutePath();
+		else
+			return new File(System.getProperty("user.dir")+fsep+"x10flasher_lib"+fsep+"bin2elf").getAbsolutePath();
 	}
 
 	public static String get7z() {

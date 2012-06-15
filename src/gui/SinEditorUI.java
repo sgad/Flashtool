@@ -170,7 +170,7 @@ public class SinEditorUI extends JDialog {
 			JButton btnNewButton = new JButton("Create Sin As");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					SinCreatorUI cui = new SinCreatorUI(sin.getFile(),textPartition.getText(),textSpare.getText());
+					SinCreatorUI cui = new SinCreatorUI(sin.getName(),textPartition.getText(),textSpare.getText());
 					cui.setVisible(true);
 				}
 			});

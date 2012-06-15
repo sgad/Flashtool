@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import org.system.OS;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.logger.MyLogger;
+import org.system.ProcessBuilderWrapper;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -35,7 +37,6 @@ public class SinCreatorUI extends JDialog {
 	private JTextField textSin;
 	private JTextField textPartition;
 	private JTextField textSpare;
-	private SinFile sin;
 	private JTextField textData;
 
 
@@ -111,7 +112,14 @@ public class SinCreatorUI extends JDialog {
 			btnCreateSin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						sin.dumpImage();
+						if (textSpare.getText().equals("09")) {
+							ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getBin2SinPath(),textData.getText(), textPartition.getText(), "0x"+textSpare.getText(),"0x20000"},false);
+						}
+						else {
+							ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getBin2SinPath(),textData.getText(), textPartition.getText(), "0x"+textSpare.getText(),"0x20000", "0x1000"},false);
+						}
+						File result = new File(textData.getText()+".sin");
+						result.renameTo(new File(OS.getWorkDir()+"/custom/sin/"+textSin.getText()));
 					}
 					catch (Exception e) {
 						MyLogger.getLogger().error(e.getMessage());
@@ -126,6 +134,18 @@ public class SinCreatorUI extends JDialog {
 				textData = new JTextField();
 				contentPanel.add(textData, "2, 16, 5, 1, fill, default");
 				textData.setColumns(10);
+			}
+			{
+				JButton button = new JButton("...");
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						String file=chooseData();
+						if (!file.equals("ERROR")) {
+							textData.setText(file);
+						}
+					}
+				});
+				contentPanel.add(button, "8, 16");
 			}
 			contentPanel.add(btnCreateSin, "2, 18, center, center");
 		}
@@ -150,17 +170,20 @@ public class SinCreatorUI extends JDialog {
 		textSpare.setText(spare);
 	}
 
-	public String chooseSin() {
+	public String chooseData() {
 		JFileChooser chooser = new JFileChooser(new java.io.File(".")); 
 
 		FileFilter ff = new FileFilter(){
 			public boolean accept(File f){
 				if(f.isDirectory()) return true;
-				else if(f.getName().endsWith(".sin")) return true;
+				else if(f.getName().endsWith(".yaffs2")) return true;
+				else if(f.getName().endsWith(".ext4")) return true;
+				else if(f.getName().endsWith(".elf")) return true;
+				else if(f.getName().endsWith(".img")) return true;
 				else return false;
 			}
 			public String getDescription(){
-				return "*.sin";
+				return "*.yaffs, *.ext4, *.elf, *.img";
 			}
 		};
 		 

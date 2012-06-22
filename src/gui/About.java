@@ -44,7 +44,7 @@ public class About extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
-			JLabel lblName = new JLabel("X10 Flashing Tool");
+			JLabel lblName = new JLabel("Sony Flashing Tool");
 			lblName.setName(getName()+"_msg1");
 			lblName.setHorizontalAlignment(SwingConstants.CENTER);
 			lblName.setBounds(10, 11, 348, 14);

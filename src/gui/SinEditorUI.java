@@ -37,12 +37,16 @@ public class SinEditorUI extends JDialog {
 	private SinFile sin;
 	private JTextField textCtype;
 	private JButton btnUnpack;
+	private JButton btnDumpData;
+	private JButton btnDumpHeader;
+	private JButton btnCreateSin;
 
 
 	/**
 	 * Create the dialog.
 	 */
 	public SinEditorUI() {
+		setModal(true);
 		setTitle("Sin Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 346);
@@ -85,6 +89,7 @@ public class SinEditorUI extends JDialog {
 		}
 		{
 			textSin = new JTextField();
+			textSin.setEditable(false);
 			contentPanel.add(textSin, "2, 4, 5, 1, fill, default");
 			textSin.setColumns(10);
 		}
@@ -101,6 +106,9 @@ public class SinEditorUI extends JDialog {
 						textPartition.setText(p.substring(1, p.length()-1));
 						textSpare.setText(HexDump.toHex(sin.getSpare()));
 						textCtype.setText(sin.getIdent());
+						btnDumpData.setEnabled(true);
+						btnDumpHeader.setEnabled(true);
+						btnCreateSin.setEnabled(true);
 						}
 						catch (Exception e) {}
 					}
@@ -114,6 +122,7 @@ public class SinEditorUI extends JDialog {
 		}
 		{
 			textPartition = new JTextField();
+			textPartition.setEditable(false);
 			contentPanel.add(textPartition, "2, 8, 5, 1, fill, default");
 			textPartition.setColumns(10);
 		}
@@ -123,11 +132,13 @@ public class SinEditorUI extends JDialog {
 		}
 		{
 			textSpare = new JTextField();
+			textSpare.setEditable(false);
 			contentPanel.add(textSpare, "2, 12, 5, 1, fill, default");
 			textSpare.setColumns(10);
 		}
 		{
-			JButton btnDumpData = new JButton("Dump data");
+			btnDumpData = new JButton("Dump data");
+			btnDumpData.setEnabled(false);
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -144,13 +155,15 @@ public class SinEditorUI extends JDialog {
 			}
 			{
 				textCtype = new JTextField();
+				textCtype.setEditable(false);
 				contentPanel.add(textCtype, "2, 16, 5, 1, fill, default");
 				textCtype.setColumns(10);
 			}
 			contentPanel.add(btnDumpData, "2, 18, center, center");
 		}
 		{
-			JButton btnDumpHeader = new JButton("Dump header");
+			btnDumpHeader = new JButton("Dump header");
+			btnDumpHeader.setEnabled(false);
 			btnDumpHeader.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -167,14 +180,15 @@ public class SinEditorUI extends JDialog {
 			btnUnpack.setEnabled(false);
 		}
 		{
-			JButton btnNewButton = new JButton("Create Sin As");
-			btnNewButton.addActionListener(new ActionListener() {
+			btnCreateSin = new JButton("Create Sin As");
+			btnCreateSin.setEnabled(false);
+			btnCreateSin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					SinCreatorUI cui = new SinCreatorUI(sin.getName(),textPartition.getText(),textSpare.getText());
 					cui.setVisible(true);
 				}
 			});
-			contentPanel.add(btnNewButton, "4, 20");
+			contentPanel.add(btnCreateSin, "4, 20");
 		}
 		{
 			//JButton btnUseAsTemplate = new JButton("Use as template");

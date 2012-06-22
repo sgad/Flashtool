@@ -29,6 +29,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 public class SinCreatorUI extends JDialog {
@@ -38,12 +40,14 @@ public class SinCreatorUI extends JDialog {
 	private JTextField textPartition;
 	private JTextField textSpare;
 	private JTextField textData;
+	private JButton btnCreateSin;
 
 
 	/**
 	 * Create the dialog.
 	 */
 	public SinCreatorUI(String sinfile, String part, String spare) {
+		setModal(true);
 		setTitle("Sin Creator");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 318);
@@ -86,6 +90,13 @@ public class SinCreatorUI extends JDialog {
 		}
 		{
 			textSin = new JTextField();
+			textSin.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent arg0) {
+					if (textSin.getText().length()==0) btnCreateSin.setEnabled(false);
+					else if (textData.getText().length()>0) btnCreateSin.setEnabled(true);
+				}
+			});
 			contentPanel.add(textSin, "2, 4, 5, 1, fill, default");
 			textSin.setColumns(10);
 		}
@@ -95,6 +106,7 @@ public class SinCreatorUI extends JDialog {
 		}
 		{
 			textPartition = new JTextField();
+			textPartition.setEditable(false);
 			contentPanel.add(textPartition, "2, 8, 5, 1, fill, default");
 			textPartition.setColumns(10);
 		}
@@ -104,11 +116,13 @@ public class SinCreatorUI extends JDialog {
 		}
 		{
 			textSpare = new JTextField();
+			textSpare.setEditable(false);
 			contentPanel.add(textSpare, "2, 12, 5, 1, fill, default");
 			textSpare.setColumns(10);
 		}
 		{
-			JButton btnCreateSin = new JButton("Create sin");
+			btnCreateSin = new JButton("Create sin");
+			btnCreateSin.setEnabled(false);
 			btnCreateSin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -132,6 +146,7 @@ public class SinCreatorUI extends JDialog {
 			}
 			{
 				textData = new JTextField();
+				textData.setEditable(false);
 				contentPanel.add(textData, "2, 16, 5, 1, fill, default");
 				textData.setColumns(10);
 			}
@@ -142,6 +157,8 @@ public class SinCreatorUI extends JDialog {
 						String file=chooseData();
 						if (!file.equals("ERROR")) {
 							textData.setText(file);
+							if (textSin.getText().length()==0) btnCreateSin.setEnabled(false);
+							else btnCreateSin.setEnabled(true);
 						}
 					}
 				});

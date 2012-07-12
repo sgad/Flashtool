@@ -62,16 +62,18 @@ public class SinFile {
 	}
 	
 	public void dumpImage() throws IOException {
-		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
-		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		fin.seek(header.length+partinfo.length);
-		int read; 
+		// First I write partition info bytearray in a .partinfo file
 		FileOutputStream foutpart = new FileOutputStream(new File(this.getPartInfoName()));
 		foutpart.write(partinfo);
 		foutpart.flush();
 		foutpart.close();
-		//byte[] dummy = new byte[1];
-		//fin.read(dummy);
+		
+		// Data Extraction (usually yaffs2, elf or ext4 object)
+		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		// seek to start offset of data
+		fin.seek(header.length+partinfo.length);
+		int read; 
 		FileOutputStream fout = new FileOutputStream(new File(getImage()));
 		try {
 			while (true) {

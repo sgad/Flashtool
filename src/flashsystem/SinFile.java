@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 import org.logger.MyLogger;
 import org.system.OS;
@@ -13,8 +14,6 @@ import org.system.ProcessBuilderWrapper;
 
 public class SinFile {
 
-	int headersize;
-	int partitioninfosize=0x10;
 	byte[] header;
 	byte[] partinfo = new byte[0x10];
 	byte[] ident = new byte[16];
@@ -64,22 +63,15 @@ public class SinFile {
 	
 	public void dumpImage() throws IOException {
 		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
-		FileInputStream fin = new FileInputStream(sinfile);
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		fin.seek(header.length+partinfo.length);
 		int read; 
-		read = fin.read(header);
-		if (read!=headersize) {
-			fin.close();
-			throw new IOException("Error in retrieving header");
-		}
-		read = fin.read(partinfo);
-		if (read!=partinfo.length) {
-			fin.close();
-			throw new IOException("Error in retrieving partinfo");
-		}
 		FileOutputStream foutpart = new FileOutputStream(new File(this.getPartInfoName()));
 		foutpart.write(partinfo);
 		foutpart.flush();
 		foutpart.close();
+		//byte[] dummy = new byte[1];
+		//fin.read(dummy);
 		FileOutputStream fout = new FileOutputStream(new File(getImage()));
 		try {
 			while (true) {
@@ -96,49 +88,41 @@ public class SinFile {
 	}
 
 	private void processHeader() throws IOException {
-		FileInputStream fileinputstream = new FileInputStream(sinfile);	
-		byte abyte0[] = new byte[6];
-		int j = fileinputstream.read(abyte0);
-		if(j != 6) {
-			fileinputstream.close();
+		int nbread;
+		int headersize;
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		byte hsize[] = new byte[4];
+		fin.seek(2);
+		nbread = fin.read(hsize);
+		if(nbread != 4) {
+			fin.close();
 			throw new IOException("Error in processHeader");
 		}
-		int k;
-		byte abyte1[] = new byte[4];
-		System.arraycopy(abyte0, 2, abyte1, 0, 4);
-		k = BytesUtil.getInt(abyte1);
-		abyte1 = new byte[k - 6];
-		k = fileinputstream.read(abyte1);
-		if(k != abyte1.length) {
-			fileinputstream.close();
-			throw new IOException("Error in processHeader");
-		}
-		spare = abyte1[0];
-		headersize = BytesUtil.concatAll(abyte0, abyte1).length;
+		headersize = BytesUtil.getInt(hsize);
 		header = new byte[headersize];
-		fileinputstream.close();
+		fin.seek(0);
+		nbread = fin.read(header);
+		if(nbread != headersize) {
+			fin.close();
+			throw new IOException("Error in processHeader");
+		}
+		spare = header[6];
+		nbread = fin.read(partinfo);
+		if(nbread != partinfo.length) {
+			fin.close();
+			throw new IOException("Error in processHeader");
+		}
+		fin.close();
     }
 
 	public byte[] getPartitionInfo() throws IOException {
-		FileInputStream fin = new FileInputStream(sinfile);
-		int read = fin.read(header);
-		read = fin.read(partinfo);
-		if (read!=partinfo.length) {
-			fin.close();
-			throw new IOException("Error in retrieving partinfo");
-		}
-		fin.close();
 		return partinfo;
 	}
 
 	public String getDatatype() throws IOException {
-		FileInputStream fin = new FileInputStream(sinfile);
-		int read = fin.read(header);
-		read = fin.read(partinfo);
-		if (read!=partinfo.length) {
-			fin.close();
-			throw new IOException("Error in retrieving partinfo");
-		}
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		fin.seek(header.length+partinfo.length);
+		int read;
 		try {
 			read = fin.read(ident);
 			if (read!=ident.length) {
@@ -147,8 +131,14 @@ public class SinFile {
 			}
 			String result = new String(ident);
 			String yaffs = new String(yaffs2);
-			if (result.equals(yaffs)) return "yaffs2";
-			if (result.contains("ELF")) return "elf";
+			if (result.equals(yaffs)) {
+				fin.close();
+				return "yaffs2";
+			}
+			if (result.contains("ELF")) {
+				fin.close();
+				return "elf";
+			}
 			boolean isnull = true;
 			int count=0;
 			for (int i=0;i<ident.length;i++) {

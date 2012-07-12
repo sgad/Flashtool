@@ -75,13 +75,8 @@ public class SinFile {
 		fin.seek(header.length+partinfo.length);
 		int read; 
 		FileOutputStream fout = new FileOutputStream(new File(getImage()));
-		try {
-			while (true) {
-				read = fin.read(parts);
-				fout.write(parts, 0, read);
-			}
-		}
-		catch (Exception e) {
+		while ((read = fin.read(parts)) > 0) {
+			fout.write(parts, 0, read);
 		}
 		fout.flush();
 		fout.close();

@@ -17,7 +17,6 @@ public class SeusSinTool {
 	        OutputStream out = new FileOutputStream(basefile+".zip.gz");
 	        int len;
 	        while((len = in.read(buf)) >= 0) {
-	          if (len > 0)
 	            out.write(buf, 0, len);
 	        }
 	        out.flush();
@@ -28,11 +27,29 @@ public class SeusSinTool {
 		        if (fxml.isFile()) fxml.renameTo(new File(folder+"\\update1.xml"));
 		        if (OS.getName().equals("windows")) {
 		        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {OS.get7z(),"e", "-y", basefile+".zip.gz", "-o"+folder},false);
-		        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {OS.get7z(), "e", "-y", basefile+".zip", "-o"+folder},false);
+		        	FileInputStream fload = new FileInputStream(new File(basefile+".zip"));
+		        	fload.read(buf);
+		        	fload.close();
+		        	if (new String(buf).contains("Loader")) {
+		        		File fl = new File(basefile+".zip");
+		        		fl.renameTo(new File(folder+"/loader.sin"));
+		        	}
+		        	else {
+		        		ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {OS.get7z(), "e", "-y", basefile+".zip", "-o"+folder},false);
+		        	}
 		        }
 		        else {
 		        	ProcessBuilderWrapper run = new ProcessBuilderWrapper(new String[] {"gunzip", basefile+".zip.gz"},false);
-		        	ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {"unzip", "-o", basefile+".zip","-d",folder},false);
+		        	FileInputStream fload = new FileInputStream(new File(basefile+".zip"));
+		        	fload.read(buf);
+		        	fload.close();
+		        	if (new String(buf).contains("Loader")) {
+		        		File fl = new File(basefile+".zip");
+		        		fl.renameTo(new File(folder+"/loader.sin"));
+		        	}
+		        	else {
+		        		ProcessBuilderWrapper run1 = new ProcessBuilderWrapper(new String[] {"unzip", "-o", basefile+".zip","-d",folder},false);
+		        	}
 		        }
 		        File fdek = new File(basefile+".zip.gz");
 		        fdek.delete();

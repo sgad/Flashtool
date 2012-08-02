@@ -17,6 +17,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.zip.Deflater;
+
 import org.logger.MyLogger;
 import org.system.OS;
 
@@ -198,7 +200,7 @@ public final class Bundle {
 		Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes("UTF-8")));
 	    FileOutputStream stream = new FileOutputStream(ftf);
 	    JarOutputStream out = new JarOutputStream(stream, manifest);
-	    out.setLevel(JarOutputStream.STORED);
+	    out.setLevel(Deflater.BEST_SPEED);
 		Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();

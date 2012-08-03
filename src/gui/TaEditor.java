@@ -138,7 +138,7 @@ public class TaEditor extends JDialog {
 				});
 				tablePartition.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mouseClicked(MouseEvent arg0) {
+					public void mouseReleased(MouseEvent arg0) {
 						String result=(String)modelPartition.getValueAt(tablePartition.getSelectedRow(), 0);
 						try {
 							if (ta!=null)

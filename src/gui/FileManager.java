@@ -82,7 +82,7 @@ public class FileManager extends JFrame {
 		list.setFixedCellWidth(200);
 		list.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseReleased(MouseEvent e) {
 				try {
 					if (e.getClickCount()==2) {
 						lblCurPath.setText(lblCurPath.getText()+list.getSelectedValue()+"/");

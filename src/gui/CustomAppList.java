@@ -61,7 +61,7 @@ public class CustomAppList extends JDialog {
 				};
 				tableCustom.addMouseListener(new MouseAdapter() {
 					@Override
-					public void mouseClicked(MouseEvent arg0) {
+					public void mouseReleased(MouseEvent arg0) {
 						if (arg0.getClickCount()==2) {
 							result = (String)tableCustom.getModel().getValueAt(tableCustom.getSelectedRow(), 0);
 							dispose();

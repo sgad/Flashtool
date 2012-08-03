@@ -235,28 +235,11 @@ public class firmSelect extends JDialog {
 		        return false;
 		    }
 		};
+		tableFirm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPaneFolderContent.setViewportView(tableFirm);
 		tableFirm.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
-				try {
-					filelist();
-					addCheckBoxesWipe();
-					addCheckBoxesExclupde();
-					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
-						public void actionPerformed(ActionEvent arg0) {
-							selected.setCmd25(selected.hasCmd25()?"false":"true");
-						}
-					});
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		tableFirm.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
 				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
 				try {
 					filelist();
@@ -274,9 +257,27 @@ public class firmSelect extends JDialog {
 				}
 			}
 		});
-		tableFirm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scrollPaneFolderContent.setViewportView(tableFirm);
-			JScrollPane scrollPaneFirmwareContent = new JScrollPane();
+		tableFirm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+				try {
+					filelist();
+					addCheckBoxesWipe();
+					addCheckBoxesExclupde();
+					initMiscCheckBoxes();
+					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							selected.setCmd25(selected.hasCmd25()?"false":"true");
+						}
+					});
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		JScrollPane scrollPaneFirmwareContent = new JScrollPane();
 			contentPanel.add(scrollPaneFirmwareContent, "4, 6, 1, 11, fill, fill");
 				table_1 = new JTable(model_1);
 				scrollPaneFirmwareContent.setViewportView(table_1);

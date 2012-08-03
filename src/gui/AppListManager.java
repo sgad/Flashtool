@@ -93,7 +93,7 @@ public class AppListManager extends JDialog {
 						//tableX10.setAutoCreateColumnsFromModel(false);
 						tableX10.addMouseListener(new MouseAdapter() {
 							@Override
-							public void mouseClicked(MouseEvent arg0) {
+							public void mouseReleased(MouseEvent arg0) {
 								if (arg0.getClickCount()==2) {
 									ApkAdd add = new ApkAdd((String)modelX10.getValueAt(tableX10.getSelectedRow(), 0),(String)modelX10.getValueAt(tableX10.getSelectedRow(), 1));
 									String[] result = add.getEntry();
@@ -149,7 +149,7 @@ public class AppListManager extends JDialog {
 						tableCustom.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						tableCustom.addMouseListener(new MouseAdapter() {
 							@Override
-							public void mouseClicked(MouseEvent arg0) {
+							public void mouseReleased(MouseEvent arg0) {
 								if (arg0.getClickCount()==2) {
 									ApkAdd add = new ApkAdd((String)modelCustom.getValueAt(tableCustom.getSelectedRow(), 0),(String)modelCustom.getValueAt(tableCustom.getSelectedRow(), 1));
 									String[] result = add.getEntry();

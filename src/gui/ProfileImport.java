@@ -232,7 +232,7 @@ public class ProfileImport extends JDialog {
 		});
 		tableProfiles.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseReleased(MouseEvent arg0) {
 				result=(String)tableProfilesmodel.getValueAt(tableProfiles.getSelectedRow(), 0);
 				try {
 					filelist();

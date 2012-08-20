@@ -83,10 +83,10 @@ public class ElfUnpacker extends JDialog {
 						try {
 							if (file.toLowerCase().endsWith("sin")) {
 								SinFile sin = new SinFile(file);
-								if (sin.getIdent().equals("elf")) {
+								if (sin.getDataType().equals("elf")) {
 									sin.dumpImage();
-									file = sin.getImage();
-									elf = new ElfParser(sin.getImage());
+									file = sin.getImageFileName();
+									elf = new ElfParser(sin.getImageFileName());
 									textElf.setText(file);
 									textParts.setText(Integer.toString(elf.getNbParts()));
 									btnDumpData.setEnabled(true);
@@ -95,7 +95,7 @@ public class ElfUnpacker extends JDialog {
 									textElf.setText("");
 									textParts.setText("");
 									btnDumpData.setEnabled(false);
-									MyLogger.getLogger().error(sin.getFile()+" does not contain elf data");
+									MyLogger.getLogger().error(sin.getShortFileName()+" does not contain elf data");
 								}
 							}
 							else {

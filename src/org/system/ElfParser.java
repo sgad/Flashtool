@@ -120,7 +120,10 @@ public class ElfParser {
 			fin.read(image);
 			String ext = "."+p.getName();
 			byte[] ident = new byte[352];
-			System.arraycopy(image, 0, ident, 0, 352);
+			if (image.length<352)
+				System.arraycopy(image, 0, ident, 0, image.length);
+			else
+				System.arraycopy(image, 0, ident, 0, 352);
 			String identHex = HexDump.toHex(ident);
 			if (identHex.contains("[1F, 8B"))
 				ext = ".ramdisk.gz";
@@ -139,5 +142,5 @@ public class ElfParser {
 		fin.close();
 		MyLogger.getLogger().info("ELF Extraction finished");
 	}
-
+	
 }

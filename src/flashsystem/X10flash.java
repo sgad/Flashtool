@@ -28,9 +28,6 @@ public class X10flash {
     private Bundle _bundle;
     private Command cmd;
     private LoaderInfo phoneprops = null;
-    byte readarray65[] = new byte[0x10000];
-    byte readarray4[] = new byte[0x1000];
-    private static int count = 0;
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -165,29 +162,13 @@ public class X10flash {
 		MyLogger.initProgress(0);	    
     }
     
-    private void processHeader(InputStream fileinputstream) throws X10FlashException {
+    private void processHeader(SinFile sin) throws X10FlashException {
     	try {
-			byte abyte0[] = new byte[6];
-			int j = fileinputstream.read(abyte0);
-			if(j != 6) {
-				fileinputstream.close();
-				throw new X10FlashException("Error in processHeader");
-			}
-			int k;
-			byte abyte1[] = new byte[4];
-			System.arraycopy(abyte0, 2, abyte1, 0, 4);
-			k = BytesUtil.getInt(abyte1);
-			abyte1 = new byte[k - 6];
-			k = fileinputstream.read(abyte1);
-			if(k != abyte1.length) {
-				fileinputstream.close();
-				throw new X10FlashException("Error in processHeader");
-			}
-			count++;
-            cmd.send(Command.CMD05,BytesUtil.concatAll(abyte0, abyte1),false);
-            if (USBFlash.getLastFlags() == 0)
-            	getLastError();
-    	}
+    		MyLogger.getLogger().info("    Checking header");
+	    	cmd.send(Command.CMD05,sin.getHeaderBytes(),false);
+	        if (USBFlash.getLastFlags() == 0)
+	        	getLastError();
+	    	}
     	catch (IOException ioe) {
     		throw new X10FlashException("Error in processHeader : "+ioe.getMessage());
     	}
@@ -197,40 +178,30 @@ public class X10flash {
             cmd.send(Command.CMD07,Command.VALNULL,false);    	
     }
     
-    private void uploadImage(InputStream fileinputstream, int buffer) throws X10FlashException {
-    	count = 0;
+    private void uploadImage(SinFile sin) throws X10FlashException {
     	try {
-	    	processHeader(fileinputstream);
-			int readCount;
-			do {
-				if (buffer==0x1000)
-					readCount = fileinputstream.read(readarray4);
-				else
-					readCount = fileinputstream.read(readarray65);
-				if (readCount > 0)
-					if (buffer==0x1000)
-						cmd.send(Command.CMD06, BytesUtil.getReply(readarray4, readCount), (readCount==buffer));
-					else
-						cmd.send(Command.CMD06, BytesUtil.getReply(readarray65, readCount), (readCount==buffer));
-				count++;
-				if (readCount!=buffer) break;
-			} while(true);
-			fileinputstream.close();
+	    	processHeader(sin);
+	    	MyLogger.getLogger().info("    Flashing data");
+			for (int j=0;j<sin.getNbChunks();j++) {
+				cmd.send(Command.CMD06, sin.getChunckBytes(j), (sin.getNbChunks()<(j+1)));
+			}
 			if (USBFlash.getLastFlags() == 0)
 				getLastError();
     	}
     	catch (Exception e) {
     		e.printStackTrace();
-    		try {fileinputstream.close();}catch(Exception cl) {}
     		throw new X10FlashException (e.getMessage());
     	}
     }
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException {
-		MyLogger.getLogger().info("Flashing loader");
+		MyLogger.getLogger().info("Processing loader");
 		String LoaderHandler;
-		if (_bundle.hasLoader())
-			uploadImage(_bundle.getLoader().getInputStream(), 0x1000);
+		if (_bundle.hasLoader()) {
+			SinFile sin = new SinFile(_bundle.getLoader().getAbsolutePath());
+			sin.setChunkSize(0x1000);
+			uploadImage(sin);
+		}
 		else {
 			File dir = new File(OS.getWorkDir()+"/loaders");
 			LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
@@ -239,24 +210,25 @@ public class X10flash {
 				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);
 				String loader = sel.getVersion();
 				if (loader.length()>0) {
-					File f = new File(OS.getWorkDir()+"/loaders/"+loader);
-					FileInputStream fin = new FileInputStream(f);
-					uploadImage(fin, 0x1000);
+					SinFile sin = new SinFile(OS.getWorkDir()+"/loaders/"+loader);
+					sin.setChunkSize(0x1000);
+					uploadImage(sin);
 				}
 			}
 			else {
 				if (filelist.length==1) {
-					FileInputStream fin = new FileInputStream(filelist[0]);
-					uploadImage(fin, 0x1000);
+					SinFile sin = new SinFile(filelist[0].getAbsolutePath());
+					sin.setChunkSize(0x1000);
+					uploadImage(sin);
 				}
 				else {
 	        		String devid="";
 	        		deviceSelectGui devsel = new deviceSelectGui(null);
 	        		devid = devsel.getDevice(new Properties());
-	        		File f = new File(OS.getWorkDir()+"/devices/"+devid+"/loader.sin");
-					FileInputStream fin = new FileInputStream(f);
-					uploadImage(fin, 0x1000);
-					fin = new FileInputStream(f);
+	        		SinFile sin = new SinFile(OS.getWorkDir()+"/devices/"+devid+"/loader.sin");
+	        		sin.setChunkSize(0x1000);
+					uploadImage(sin);
+					FileInputStream fin = new FileInputStream(new File(OS.getWorkDir()+"/devices/"+devid+"/loader.sin"));
 					FileOutputStream fout = new FileOutputStream(OS.getWorkDir()+"/loaders/"+new File(phoneprops.getProperty("LOADER_ROOT")+".sin"));
 					try {
 						byte b[] = new byte[1];
@@ -279,9 +251,10 @@ public class X10flash {
     }
 
     public void sendLoader(File loader) throws FileNotFoundException, IOException, X10FlashException {
-		MyLogger.getLogger().info("Flashing loader");
-		FileInputStream fin = new FileInputStream(loader);
-		uploadImage(fin, 0x1000);
+		MyLogger.getLogger().info("Processing loader");
+		SinFile sin = new SinFile(loader.getAbsolutePath());
+		sin.setChunkSize(0x1000);
+		uploadImage(sin);
 		USBFlash.readS1Reply(5000);
 		hookDevice(true);
     }
@@ -289,9 +262,11 @@ public class X10flash {
     public void sendPartition() throws FileNotFoundException, IOException, X10FlashException {		
 		if (_bundle.hasPartition()) {
 			BundleEntry entry = _bundle.getPartition();
-			MyLogger.getLogger().info("Flashing "+entry.getName());
+			MyLogger.getLogger().info("Processing "+entry.getName());
 			closeTA();
-			uploadImage(entry.getInputStream(),0x10000);
+			SinFile sin = new SinFile(entry.getAbsolutePath());
+			sin.setChunkSize(0x10000);
+			uploadImage(sin);
 			openTA(2);
 		}
     }
@@ -304,8 +279,10 @@ public class X10flash {
 				while (entries.hasMoreElements()) {
 					String entry = (String)entries.nextElement();
 					BundleEntry bent = _bundle.getEntry(entry);
-					MyLogger.getLogger().info("Flashing "+bent.getName());
-					uploadImage(bent.getInputStream(),0x10000);
+					MyLogger.getLogger().info("Processing "+bent.getName());
+					SinFile sin = new SinFile(bent.getAbsolutePath());
+					sin.setChunkSize(0x10000);
+					uploadImage(sin);
 					MyLogger.getLogger().debug("Flashing "+bent.getName()+" finished");
 				}
 			}
@@ -355,7 +332,7 @@ public class X10flash {
         	closeTA();
         	closeDevice(0x01);
 			MyLogger.getLogger().info("Flashing finished.");
-			MyLogger.getLogger().info("Please wait. Phone will reboot");
+			MyLogger.getLogger().info("Please unplug and start your phone");
 			MyLogger.getLogger().info("For flashtool, Unknown Sources and Debugging must be checked in phone settings");
 			MyLogger.initProgress(0);
     	}

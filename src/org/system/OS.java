@@ -8,6 +8,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import flashsystem.HexDump;
+
 public class OS {
 
 	public static String getName() {
@@ -62,7 +64,50 @@ public class OS {
 	public static String getWorkDir() {
 		return System.getProperty("user.dir");
 	}
-	
+
+	public static String getSHA256(byte[] array) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			digest.update(array, 0, array.length);
+			byte[] sha256 = digest.digest();
+			return HexDump.toHex(sha256);
+		}
+		catch(NoSuchAlgorithmException nsa) {
+			throw new RuntimeException("Unable to process file for SHA-256", nsa);
+		}
+	}
+
+	public static String getSHA256(File f) {
+		byte[] buffer = new byte[8192];
+		int read = 0;
+		InputStream is=null;
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			is = new FileInputStream(f);
+			while( (read = is.read(buffer)) > 0) {
+				digest.update(buffer, 0, read);
+			}		
+			byte[] sha256 = digest.digest();
+			BigInteger bigInt = new BigInteger(1, sha256);
+			String output = bigInt.toString(32);
+			return output.toUpperCase();
+		}
+		catch(IOException e) {
+			throw new RuntimeException("Unable to process file for SHA-256", e);
+		}
+		catch(NoSuchAlgorithmException nsa) {
+			throw new RuntimeException("Unable to process file for SHA-256", nsa);
+		}
+		finally {
+			try {
+				is.close();
+			}
+			catch(IOException e) {
+				throw new RuntimeException("Unable to close input stream for SHA-256 calculation", e);
+			}
+		}
+	}
+
 	public static String getMD5(File f) {
 		byte[] buffer = new byte[8192];
 		int read = 0;

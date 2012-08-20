@@ -44,6 +44,10 @@ public class BundleEntry {
 		return _name;
 	}
 	
+	public String getAbsolutePath() {
+		return fileentry.getAbsolutePath();
+	}
+	
 	public boolean isJarEntry() {
 		return jarentry!=null;
 	}

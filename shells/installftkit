@@ -1,5 +1,5 @@
 export PATH=DEVICEWORKDIR:$PATH
 
-(cd /;tar xf DEVICEWORKDIR/ftkit.tar)
+(cd /;busybox tar xf DEVICEWORKDIR/ftkit.tar)
 
-rm -r DEVICEWORKDIR/ftkit.tar
+busybox rm -r DEVICEWORKDIR/ftkit.tar

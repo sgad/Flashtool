@@ -102,10 +102,10 @@ public class SinEditorUI extends JDialog {
 						try {
 						sin = new SinFile(file);
 						textSin.setText(file);
-						String p = HexDump.toHex(sin.getPartitionInfo()).replaceAll(", ", "");
+						String p = HexDump.toHex(sin.getPartitionInfoBytes()).replaceAll(", ", "");
 						textPartition.setText(p.substring(1, p.length()-1));
-						textSpare.setText(HexDump.toHex(sin.getSpare()));
-						textCtype.setText(sin.getIdent());
+						textSpare.setText(HexDump.toHex(sin.getSpareBytes()));
+						textCtype.setText(sin.getDataType());
 						btnDumpData.setEnabled(true);
 						btnDumpHeader.setEnabled(true);
 						btnCreateSin.setEnabled(true);
@@ -184,7 +184,7 @@ public class SinEditorUI extends JDialog {
 			btnCreateSin.setEnabled(false);
 			btnCreateSin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					SinCreatorUI cui = new SinCreatorUI(sin.getName(),textPartition.getText(),textSpare.getText());
+					SinCreatorUI cui = new SinCreatorUI(sin.getLongFileName(),textPartition.getText(),textSpare.getText());
 					cui.setVisible(true);
 				}
 			});

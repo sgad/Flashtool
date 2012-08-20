@@ -12,16 +12,20 @@ import org.logger.MyLogger;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
 
+import foxtrot.Job;
+import foxtrot.Worker;
+
 public class SinFile {
 
-	byte[] header;
-	byte[] partinfo = new byte[0x10];
 	byte[] ident = new byte[16];
-	byte[] parts = new byte[65535];
-	byte spare;
+    static byte readarray64[] = new byte[0x10000];
+    static byte readarray4[] = new byte[0x1000];
 	File sinfile;
 	byte[] yaffs2 = {0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xFF, (byte)0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	String datatype = null;
+	long nbchunks = 0;
+	long chunksize = 0;
+	SinFileHeader sinheader;
 	
 	public SinFile(String file) throws FileNotFoundException,IOException {
 		sinfile = new File(file);
@@ -29,96 +33,187 @@ public class SinFile {
 		datatype = getDatatype();
 	}
 
-	public String getFile() {
+	public String getLongFileName() {
 		return sinfile.getAbsolutePath();
 	}
 	
-	public String getName() {
+	public String getShortFileName() {
 		return sinfile.getName();
 	}
 	
-	public String getHeader() {
+	public String getHeaderFileName() {
 		String path = sinfile.getAbsolutePath(); 
 		return path.substring(0, path.length()-3)+"header";
 	}
 	
-	public String getImage() throws IOException {
-		String path = sinfile.getAbsolutePath(); 
-		return path.substring(0, path.length()-3)+getIdent();
+	public byte[] getHeaderBytes() {
+		return sinheader.getHeader();
+	}	
+	
+	public byte[] getChunckBytes(int chunkId) throws IOException {
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		long offset = sinheader.getHeaderSize()+(chunkId*chunksize);
+		fin.seek(offset);
+		int readcount=0;
+		if (readarray64.length==chunksize) {
+			readcount = fin.read(readarray64);
+			fin.close();
+			return BytesUtil.getReply(readarray64,readcount);
+		}
+		else {
+			readcount = fin.read(readarray4);
+			fin.close();
+			return BytesUtil.getReply(readarray4,readcount);
+		}
 	}
 	
-	public String getPartInfoName() {
+	public void setChunkSize(long size) {
+		long datasize = sinfile.length()-sinheader.getHeaderSize();
+		nbchunks = datasize / size;
+		chunksize = size;
+		if (datasize%size>0) nbchunks++;
+	}
+	
+	public long getChunkSize() {
+		return chunksize;
+	}
+	
+	public long getNbChunks() {
+		return nbchunks;
+	}
+	
+	public String getImageFileName() throws IOException {
+		String path = sinfile.getAbsolutePath(); 
+		return path.substring(0, path.length()-3)+getDataType();
+	}
+	
+	public String getPartInfoFileName() {
 		String path = sinfile.getAbsolutePath(); 
 		return path.substring(0, path.length()-3)+"partinfo";		
 	}
 	
 	public void dumpHeader() throws IOException {
-		MyLogger.getLogger().info("Extracting "+getFile() + " header to " + getHeader());
-		FileOutputStream fout = new FileOutputStream(new File(getHeader()));
-		fout.write(header);
+		MyLogger.getLogger().info("Extracting "+getShortFileName() + " header to " + getHeaderFileName());
+		FileOutputStream fout = new FileOutputStream(new File(getHeaderFileName()));
+		fout.write(sinheader.getHeader());
 		fout.flush();
 		fout.close();
 		MyLogger.getLogger().info("HEADER Extraction finished");
 	}
 	
 	public void dumpImage() throws IOException {
-		// First I write partition info bytearray in a .partinfo file
-		FileOutputStream foutpart = new FileOutputStream(new File(this.getPartInfoName()));
-		foutpart.write(partinfo);
-		foutpart.flush();
-		foutpart.close();
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					// First I write partition info bytearray in a .partinfo file
+					if (sinheader.hasPartitionInfo()) {
+						FileOutputStream foutpart = new FileOutputStream(new File(getPartInfoFileName()));
+						foutpart.write(sinheader.getPartitionInfo());
+						foutpart.flush();
+						foutpart.close();
+					}
 		
-		// Data Extraction (usually yaffs2, elf or ext4 object)
-		MyLogger.getLogger().info("Extracting "+getFile() + " content to " + getImage());
-		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		// seek to start offset of data
-		fin.seek(header.length+partinfo.length);
-		int read; 
-		FileOutputStream fout = new FileOutputStream(new File(getImage()));
-		while ((read = fin.read(parts)) > 0) {
-			fout.write(parts, 0, read);
-		}
-		fout.flush();
-		fout.close();
-		fin.close();
-		MyLogger.getLogger().info("DATA Extraction finished");
+					// To fill the empty file with FF values
+					byte[] empty = new byte[65*1024];
+					for (int i=0; i<empty.length;i++)
+						empty[i] = (byte)0xFF;		
+					// Creation of empty file
+					File f = new File(getImageFileName());
+					f.delete();
+					RandomAccessFile fout = new RandomAccessFile(f,"rw");
+					MyLogger.getLogger().info("Generating empty file");
+					for (long i = 0; i<sinheader.getOutfileLength()/empty.length; i++) {
+						fout.write(empty);
+					}
+					for (long i = 0; i<sinheader.getOutfileLength()%empty.length; i++) {
+						fout.write(0xFF);
+					}
+					MyLogger.getLogger().info("Finished Generating empty file");
+					RandomAccessFile finblocks = new RandomAccessFile(sinfile,"r");
+					RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
+					// Positionning in files
+					findata.seek(sinheader.getHeaderSize());
+					finblocks.seek(15);
+					byte[] boffset = new byte[4];
+					byte[] blength = new byte[4];
+					byte[] hashsize = new byte[1];
+					boolean isblock = true;
+					// While we read a block (validated by block read hash and data computed hash) we iterate thru files
+					while (isblock) {
+						finblocks.read(boffset);
+						finblocks.read(blength);
+						finblocks.read(hashsize);
+						byte[] payload = new byte[hashsize[0]];
+						finblocks.read(payload);
+						byte[] data = new byte[BytesUtil.getInt(blength)];
+						findata.read(data);
+						if (HexDump.toHex(payload).equals(OS.getSHA256(data))) {
+							if (sinheader.getNbHashBlocks()>1) {
+								fout.seek(BytesUtil.getLong(boffset));
+								fout.write(data);
+							}
+							else {
+								fout.seek(0);
+								fout.write(data);					
+							}
+						}
+						else {
+							isblock = false;
+						}
+					}
+					fout.close();
+					finblocks.close();
+					findata.close();
+					MyLogger.getLogger().info("DATA Extraction finished");
+				}
+				catch (Exception e) {
+				}
+				return null;
+			}
+		});
 	}
 
 	private void processHeader() throws IOException {
 		int nbread;
-		int headersize;
+		byte header[] = new byte[15];
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		byte hsize[] = new byte[4];
-		fin.seek(2);
-		nbread = fin.read(hsize);
-		if(nbread != 4) {
-			fin.close();
-			throw new IOException("Error in processHeader");
-		}
-		headersize = BytesUtil.getInt(hsize);
-		header = new byte[headersize];
-		fin.seek(0);
 		nbread = fin.read(header);
-		if(nbread != headersize) {
+		if(nbread != header.length) {
 			fin.close();
 			throw new IOException("Error in processHeader");
 		}
-		spare = header[6];
-		nbread = fin.read(partinfo);
-		if(nbread != partinfo.length) {
+		sinheader = new SinFileHeader(header);
+		byte[] firstblock = new byte[9];
+		fin.read(firstblock);
+		sinheader.setFirstBlock(firstblock);
+		if (sinheader.hasPartitionInfo()) {
+			fin.seek(sinheader.getHeaderSize());
+			byte[] partinfo = new byte[sinheader.getPartitionInfoLength()];
+			nbread = fin.read(partinfo);
+			if(nbread != partinfo.length) {
+				fin.close();
+				throw new IOException("Error in processHeader");
+			}
+			sinheader.setPartitionInfo(partinfo);
+		}
+		fin.seek(0);
+		header = new byte[sinheader.getHeaderSize()];
+		nbread = fin.read(header);
+		if(nbread != header.length) {
 			fin.close();
 			throw new IOException("Error in processHeader");
 		}
+		sinheader.setHeader(header);
 		fin.close();
     }
 
-	public byte[] getPartitionInfo() throws IOException {
-		return partinfo;
+	public byte[] getPartitionInfoBytes() throws IOException {
+		return sinheader.getPartitionInfo();
 	}
 
 	public String getDatatype() throws IOException {
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		fin.seek(header.length+partinfo.length);
+		fin.seek(sinheader.getHeaderSize()+sinheader.getPartitionInfo().length);
 		int read;
 		try {
 			read = fin.read(ident);
@@ -160,12 +255,12 @@ public class SinFile {
 		}
 	}
 
-	public String getIdent() throws IOException {
+	public String getDataType() throws IOException {
 		return datatype;
 	}
 
-	public byte getSpare() {
-		return spare;
+	public byte getSpareBytes() {
+		return sinheader.getPartitionType();
 	}
 
 }

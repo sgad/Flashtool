@@ -6,7 +6,7 @@ RequestExecutionLevel highest
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Flashtool Drivers"
-!define PRODUCT_VERSION "1.0.1"
+!define PRODUCT_VERSION "1.0.2"
 !define PRODUCT_PUBLISHER "Androxyde"
 !define PRODUCT_WEB_SITE "http://androxyde.github.com/Flashtool/"
 
@@ -41,47 +41,87 @@ Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile ..\Deploy\Flashtool\drivers\Flashtool-drivers.exe
 ShowInstDetails show
 
-Section /o "X10 ADB Drivers" SEC01
-  SetOutPath "$TEMP\Flashtool\ADB\X10"
-  File /r "Drivers\ADB\X10\*"
+Section /o "Sony Ericsson X8 Drivers" SEC01
+  SetOutPath "$TEMP\Flashtool\ADB\Sony Ericsson X8 Drivers"
+  File /r "Drivers\ADB\Sony Ericsson X8 Drivers\*"
 SectionEnd
 
-Section /o "Arc-Play-Neo-Acro ADB Drivers" SEC02
-  SetOutPath "$TEMP\Flashtool\ADB\Arc-Play-Neo-Acro"
-  File /r "Drivers\ADB\Arc-Play-Neo-Acro\*"
+Section /o "Sony Ericsson X10 Drivers" SEC02
+  SetOutPath "$TEMP\Flashtool\ADB\Sony Ericsson X10 Drivers"
+  File /r "Drivers\ADB\Sony Ericsson X10 Drivers\*"
 SectionEnd
 
-Section /o "Pro-Ray ADB Drivers" SEC03
-  SetOutPath "$TEMP\Flashtool\ADB\Pro-Ray"
-  File /r "Drivers\ADB\Pro-Ray\*"
+Section /o "Sony Ericsson X10 mini Drivers" SEC03
+  SetOutPath "$TEMP\Flashtool\ADB\Sony Ericsson X10 mini Drivers"
+  File /r "Drivers\ADB\Sony Ericsson X10 mini Drivers\*"
 SectionEnd
 
-Section /o "X8 ADB Drivers" SEC04
-  SetOutPath "$TEMP\Flashtool\ADB\X8"
-  File /r "Drivers\ADB\X8\*"
+Section /o "Sony Ericsson Xperia arc, Xperia neo, Xperia PLAY, Xperia acro IS11S, Xperia acro SO-02C drivers" SEC04
+  SetOutPath "$TEMP\Flashtool\ADB\Sony Ericsson Xperia arc, Xperia neo, Xperia PLAY, Xperia acro IS11S, Xperia acro SO-02C drivers"
+  File /r "Drivers\ADB\Sony Ericsson Xperia arc, Xperia neo, Xperia PLAY, Xperia acro IS11S, Xperia acro SO-02C drivers\*"
 SectionEnd
 
-Section /o "X10 MiniPro ADB Drivers" SEC05
-  SetOutPath "$TEMP\Flashtool\ADB\X10 MiniPro"
-  File /r "Drivers\ADB\X10 MiniPro\*"
+Section /o "Xperia acro HD (IS12S) driver for ICS" SEC05
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia acro HD (IS12S) driver for ICS"
+  File /r "Drivers\ADB\Xperia acro HD (IS12S) driver for ICS\*"
 SectionEnd
 
-Section /o "Xperia S, NX, acro HD" SEC06
-  SetOutPath "$TEMP\Flashtool\ADB\xperia_s"
-  File /r "Drivers\ADB\xperia_s\*"
+Section /o "Xperia acro HD (SO-03D) driver for ICS" SEC06
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia acro HD (SO-03D) driver for ICS"
+  File /r "Drivers\ADB\Xperia acro HD (SO-03D) driver for ICS\*"
 SectionEnd
 
-Section /o "Xperia P, U, Sola" SEC07
-  SetOutPath "$TEMP\Flashtool\ADB\xperia_p_u_sola"
-  File /r "Drivers\ADB\xperia_p_u_sola\*"
+Section /o "Xperia acro S driver for ICS" SEC07
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia acro S driver for ICS"
+  File /r "Drivers\ADB\Xperia acro S driver for ICS\*"
 SectionEnd
 
-Section /o "Flashmode Drivers" SEC08
+Section /o "Xperia GX (SO-04D) driver for ICS" SEC08
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia GX (SO-04D) driver for ICS"
+  File /r "Drivers\ADB\Xperia GX (SO-04D) driver for ICS\*"
+SectionEnd
+
+Section /o "Xperia NX driver for ICS" SEC09
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia NX driver for ICS"
+  File /r "Drivers\ADB\Xperia NX driver for ICS\*"
+SectionEnd
+
+Section /o "Xperia P, Xperia U, and Xperia sola drivers" SEC10
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia P, Xperia U, and Xperia sola drivers"
+  File /r "Drivers\ADB\Xperia P, Xperia U, and Xperia sola drivers\*"
+SectionEnd
+
+Section /o "Xperia pro, Xperia ray, Xperia ray SO-03C drivers" SEC11
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia pro, Xperia ray, Xperia ray SO-03C drivers"
+  File /r "Drivers\ADB\Xperia pro, Xperia ray, Xperia ray SO-03C drivers\*"
+SectionEnd
+
+Section /o "Xperia S driver for ICS" SEC12
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia S driver for ICS"
+  File /r "Drivers\ADB\Xperia S driver for ICS\*"
+SectionEnd
+
+Section /o "Xperia S, Xperia NX and Xperia acro HD drivers" SEC13
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia S, Xperia NX and Xperia acro HD drivers"
+  File /r "Drivers\ADB\Xperia S, Xperia NX and Xperia acro HD drivers\*"
+SectionEnd
+
+Section /o "Xperia S, Xperia NX, and Xperia acro HD drivers for GB" SEC14
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia S, Xperia NX, and Xperia acro HD drivers for GB"
+  File /r "Drivers\ADB\Xperia S, Xperia NX, and Xperia acro HD drivers for GB\*"
+SectionEnd
+
+Section /o "Xperia SX driver for ICS" SEC15
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia SX driver for ICS"
+  File /r "Drivers\ADB\Xperia SX driver for ICS\*"
+SectionEnd
+
+Section /o "Flashmode Drivers" SEC16
   SetOutPath "$TEMP\Flashtool\GordonGate"
   File /r "Drivers\GordonGate\*"
 SectionEnd
 
-Section /o "Fastboot Drivers" SEC09
+Section /o "Fastboot Drivers" SEC17
   SetOutPath "$TEMP\Flashtool\Fastboot"
   File /r "Drivers\FASTBOOT\*"
 SectionEnd
@@ -110,6 +150,14 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC07} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC08} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC09} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC10} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC11} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC12} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC13} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC14} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC15} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC16} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC17} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit

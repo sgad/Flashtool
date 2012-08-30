@@ -45,6 +45,7 @@ public class deviceSelectGui extends JDialog {
     	modelDevices.addColumn("Id");
     	modelDevices.addColumn("Name");
     	tableDevices.setModel(modelDevices);
+    	tableDevices.getRowSorter().toggleSortOrder(0);
     	tableDevices.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     	tableDevices.getColumn("Id").setPreferredWidth(50);
     	tableDevices.getColumn("Name").setPreferredWidth(170);
@@ -61,6 +62,7 @@ public class deviceSelectGui extends JDialog {
     	modelDevices.addColumn("Id");
     	modelDevices.addColumn("Name");
     	tableDevices.setModel(modelDevices);
+    	tableDevices.getRowSorter().toggleSortOrder(0);
     	tableDevices.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     	tableDevices.getColumn("Id").setPreferredWidth(50);
     	tableDevices.getColumn("Name").setPreferredWidth(170);
@@ -95,6 +97,8 @@ public class deviceSelectGui extends JDialog {
 			{
 				tableDevices = new JTable();
 				tableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				tableDevices.setAutoCreateRowSorter(true);
+				
 				scrollPane.setViewportView(tableDevices);
 			}
 		}
@@ -157,11 +161,11 @@ public class deviceSelectGui extends JDialog {
 		return ((result.length()>0) || _bundle.hasLoader());
 	}
 
-/*	public String getDevice() {
+	public String getDevice() {
 		fillTable();
 		setVisible(true);
 		return result;
-	}*/
+	}
 
 	public String getDevice(Properties list) {
 		if (list.size()>1) {

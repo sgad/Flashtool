@@ -27,6 +27,10 @@ public class SinFile {
 	long chunksize = 0;
 	SinFileHeader sinheader;
 	
+	public SinFileHeader getSinHeader() {
+		return sinheader;
+	}
+	
 	public SinFile(String file) throws FileNotFoundException,IOException {
 		sinfile = new File(file);
 		processHeader();
@@ -121,17 +125,18 @@ public class SinFile {
 					File f = new File(getImageFileName());
 					f.delete();
 					RandomAccessFile fout = new RandomAccessFile(f,"rw");
-					MyLogger.getLogger().info("Generating empty file");
+					MyLogger.getLogger().info("Generating container file");
 					for (long i = 0; i<sinheader.getOutfileLength()/empty.length; i++) {
 						fout.write(empty);
 					}
 					for (long i = 0; i<sinheader.getOutfileLength()%empty.length; i++) {
 						fout.write(0xFF);
 					}
-					MyLogger.getLogger().info("Finished Generating empty file");
+					MyLogger.getLogger().info("Finished Generating container file");
 					RandomAccessFile finblocks = new RandomAccessFile(sinfile,"r");
 					RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
 					// Positionning in files
+					MyLogger.getLogger().info("Extracting data into container");
 					findata.seek(sinheader.getHeaderSize());
 					finblocks.seek(15);
 					byte[] boffset = new byte[4];
@@ -164,7 +169,7 @@ public class SinFile {
 					fout.close();
 					finblocks.close();
 					findata.close();
-					MyLogger.getLogger().info("DATA Extraction finished");
+					MyLogger.getLogger().info("Data Extraction finished");
 				}
 				catch (Exception e) {
 				}

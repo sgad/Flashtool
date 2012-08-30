@@ -90,6 +90,7 @@ public class ElfUnpacker extends JDialog {
 									textElf.setText(file);
 									textParts.setText(Integer.toString(elf.getNbParts()));
 									btnDumpData.setEnabled(true);
+									MyLogger.getLogger().info("You can now press the Unpack button to get the elf data content");
 								}
 								else {
 									textElf.setText("");

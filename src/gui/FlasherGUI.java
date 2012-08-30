@@ -126,6 +126,9 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
 	private JMenuItem mntmElfUnpack;
+	private JMenuItem mntmDevicesAdd;
+	//private JMenuItem mntmDevicesRemove;
+	private JMenuItem mntmDevicesEdit;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -570,7 +573,33 @@ public class FlasherGUI extends JFrame {
 		JMenu mnHelp = new JMenu("Help");
 		mnHelp.setName("mnHelp");
 		mnPlugins = new JMenu("Plugins");
+		JMenu mnDevices = new JMenu("Devices");
+		mntmDevicesAdd = new JMenuItem("Add device");
+		mntmDevicesAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DeviceEditorUI edit = new DeviceEditorUI();
+				edit.setVisible(true);
+			}
+		});
+		//mntmDevicesRemove = new JMenuItem("Remove device");
+		mntmDevicesEdit = new JMenuItem("Edit device");
+		mntmDevicesEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Devices.listDevices(true);
+        		deviceSelectGui devsel = new deviceSelectGui(null);
+        		String devid = devsel.getDevice();
+        		if (devid.length()>0) {
+        			DeviceEditorUI edit = new DeviceEditorUI();
+        			edit.setEntry(Devices.getDevice(devid));
+        			edit.setVisible(true);
+        		}
+			}
+		});		
+		mnDevices.add(mntmDevicesAdd);
+		//mnDevices.add(mntmDevicesRemove);
+		mnDevices.add(mntmDevicesEdit);
 		menuBar.add(mnPlugins);
+		menuBar.add(mnDevices);
 		menuBar.add(mnHelp);
 
 		JMenu mnLoglevel = new JMenu("Loglevel");
@@ -1555,7 +1584,7 @@ public class FlasherGUI extends JFrame {
 		        			String localdev = buildprop.getProperty(prop);
 		        			while (i.hasNext()) {
 		        				String pattern = i.next().toUpperCase();
-		        				if (localdev.toUpperCase().contains(pattern)) {
+		        				if (localdev.toUpperCase().equals(pattern)) {
 		        					founditems.put(current.getId(), current.getName());
 		        				}
 		        			}

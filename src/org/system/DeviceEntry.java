@@ -141,6 +141,10 @@ public class DeviceEntry {
 		return set;
 	}
 	
+	public String getRecognition() {
+		return _entry.getProperty("recognition");
+	}
+	
 	public void addRecognitionToList(String recog) {
 		String current = _entry.getProperty("recognition");
 		current = current + ","+recog;

@@ -509,12 +509,13 @@ public class FastBootToolboxGUI extends JDialog {
 		FileFilter ff = new FileFilter(){
 			public boolean accept(File f){
 				if(f.isDirectory()) return true;
-				else if(f.getName().endsWith(".img")) return true;
+				else if(f.getName().toUpperCase().endsWith(".IMG")) return true;
+				else if(f.getName().toUpperCase().endsWith(".ELF")) return true;
 				else if(f.getName().equals("kernel.sin")) return true;
 				else return false;
 			}
 			public String getDescription(){
-				return "kernel IMG file or kernel.sin";
+				return "kernel IMG/ELF file or kernel.sin";
 			}
 		};
 		 

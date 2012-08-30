@@ -286,13 +286,6 @@ public final class Bundle {
 			throw new BundleException(e.getMessage());
 		}
     }
-
-	
-	
-	
-	
-	
-	
 	
 	public void close() {
 		if (_firmware !=null) {

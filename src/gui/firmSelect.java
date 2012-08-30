@@ -69,7 +69,7 @@ public class firmSelect extends JDialog {
 	private String result;
 	private boolean retcode = false;
 	JButton okButton;
-	private JTable table_1;
+	private JTable tablesin;
 	private JTextField folderSource;
 	private String filename="";
 	private Properties hasCmd25 = new Properties();
@@ -86,6 +86,7 @@ public class firmSelect extends JDialog {
 		modelFirm.addColumn("Version");
 		modelFirm.addColumn("Branding");
 		tableFirm.setModel(modelFirm);
+		tableFirm.getRowSorter().toggleSortOrder(0);
 		tableFirm.setColumnModel(tableColumnModel);
 		tableFirm.createDefaultColumnsFromModel();
 		tableColumnModel.setColumnVisible(tableColumnModel.getColumnByModelIndex(0), false);
@@ -129,7 +130,8 @@ public class firmSelect extends JDialog {
 	public void refreshContent() {
 		model_1 = new DefaultTableModel();
 		model_1.addColumn("File");
-		table_1.setModel(model_1);		
+		tablesin.setModel(model_1);
+		tablesin.getRowSorter().toggleSortOrder(0);
 		Enumeration<String> e = selected.getMeta().getAllEntries(true);
 		while (e.hasMoreElements()) {
 			String elem = e.nextElement();
@@ -137,7 +139,7 @@ public class firmSelect extends JDialog {
 	    	MyLogger.getLogger().debug("Adding "+elem+" to the content of "+result);
 	    }
 	    if (model_1.getRowCount()>0)
-	    	table_1.setRowSelectionInterval(0, 0);
+	    	tablesin.setRowSelectionInterval(0, 0);
 	}
 	
 	/**
@@ -236,6 +238,7 @@ public class firmSelect extends JDialog {
 		    }
 		};
 		tableFirm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableFirm.setAutoCreateRowSorter(true);
 		scrollPaneFolderContent.setViewportView(tableFirm);
 		tableFirm.addKeyListener(new KeyAdapter() {
 			@Override
@@ -279,8 +282,9 @@ public class firmSelect extends JDialog {
 		});
 		JScrollPane scrollPaneFirmwareContent = new JScrollPane();
 			contentPanel.add(scrollPaneFirmwareContent, "4, 6, 1, 11, fill, fill");
-				table_1 = new JTable(model_1);
-				scrollPaneFirmwareContent.setViewportView(table_1);
+				tablesin = new JTable(model_1);
+				tablesin.setAutoCreateRowSorter(true);
+				scrollPaneFirmwareContent.setViewportView(tablesin);
 							
 							JPanel panel = new JPanel();
 							contentPanel.add(panel, "6, 6, 3, 11, fill, fill");

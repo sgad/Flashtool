@@ -80,7 +80,6 @@ public class deviceSelectGui extends JDialog {
 	public deviceSelectGui(Bundle bundle) {
 		_bundle = bundle;
 		setName("deviceSelectGui");
-		setResizable(false);
 		setModal(true);
 		setTitle("Device Selection");
 		setBounds(100, 100, 240, 322);
@@ -95,7 +94,13 @@ public class deviceSelectGui extends JDialog {
 			JScrollPane scrollPane = new JScrollPane();
 			contentPanel.add(scrollPane, "1, 1, fill, fill");
 			{
-				tableDevices = new JTable();
+				tableDevices = new JTable() {
+					public boolean getScrollableTracksViewportWidth()
+		            {
+		                return getPreferredSize().width < getParent().getWidth();
+		            }
+				};
+				tableDevices.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
 				tableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				tableDevices.setAutoCreateRowSorter(true);
 				scrollPane.setViewportView(tableDevices);

@@ -45,7 +45,6 @@ public class deviceSelectGui extends JDialog {
     	modelDevices.addColumn("Id");
     	modelDevices.addColumn("Name");
     	tableDevices.setModel(modelDevices);
-    	tableDevices.getRowSorter().toggleSortOrder(0);
     	tableDevices.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     	tableDevices.getColumn("Id").setPreferredWidth(50);
     	tableDevices.getColumn("Name").setPreferredWidth(170);
@@ -55,6 +54,7 @@ public class deviceSelectGui extends JDialog {
     		modelDevices.addRow(new String[]{entry.getId(),entry.getName()});
     		tableDevices.setRowSelectionInterval(0, 0);
     	}
+    	tableDevices.getRowSorter().toggleSortOrder(0);
 	}
 
 	public void fillTable(Properties list) {
@@ -62,7 +62,6 @@ public class deviceSelectGui extends JDialog {
     	modelDevices.addColumn("Id");
     	modelDevices.addColumn("Name");
     	tableDevices.setModel(modelDevices);
-    	tableDevices.getRowSorter().toggleSortOrder(0);
     	tableDevices.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     	tableDevices.getColumn("Id").setPreferredWidth(50);
     	tableDevices.getColumn("Name").setPreferredWidth(170);
@@ -72,6 +71,7 @@ public class deviceSelectGui extends JDialog {
     		modelDevices.addRow(new String[]{entry.getId(),entry.getName()});
     		tableDevices.setRowSelectionInterval(0, 0);
     	}
+    	tableDevices.getRowSorter().toggleSortOrder(0);
 	}
 
 	/**
@@ -98,7 +98,6 @@ public class deviceSelectGui extends JDialog {
 				tableDevices = new JTable();
 				tableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				tableDevices.setAutoCreateRowSorter(true);
-				
 				scrollPane.setViewportView(tableDevices);
 			}
 		}
@@ -118,7 +117,7 @@ public class deviceSelectGui extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						result=(String)modelDevices.getValueAt(tableDevices.getSelectedRow(), 0);
+						result=(String)modelDevices.getValueAt(getSelectedRow(tableDevices), 0);
 						dispose();
 					}
 				});
@@ -180,6 +179,10 @@ public class deviceSelectGui extends JDialog {
 
 	public void setLanguage() {
 		Language.translate(this);
+	}
+
+	private int getSelectedRow(JTable table) {
+		return table.getRowSorter().convertRowIndexToModel(table.getSelectedRow());
 	}
 
 }

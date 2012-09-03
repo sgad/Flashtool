@@ -86,7 +86,7 @@ public class firmSelect extends JDialog {
 		modelFirm.addColumn("Version");
 		modelFirm.addColumn("Branding");
 		tableFirm.setModel(modelFirm);
-		tableFirm.getRowSorter().toggleSortOrder(0);
+		tableFirm.getRowSorter().toggleSortOrder(1);
 		tableFirm.setColumnModel(tableColumnModel);
 		tableFirm.createDefaultColumnsFromModel();
 		tableColumnModel.setColumnVisible(tableColumnModel.getColumnByModelIndex(0), false);
@@ -111,7 +111,7 @@ public class firmSelect extends JDialog {
 	    }
 	    else {
 	    	tableFirm.setRowSelectionInterval(0, 0);
-	    	result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+	    	result=(String)modelFirm.getValueAt(getSelectedRow(tableFirm), 0);
 	    	okButton.setEnabled(true);
 	    }
 	}
@@ -119,10 +119,10 @@ public class firmSelect extends JDialog {
 	public void filelist() throws Exception {
 		if (result!=null) {
 			selected=new Bundle(folderSource.getText()+fsep+result,Bundle.JARTYPE);
-			selected.setDevice((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 1));
-			selected.setVersion((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 2));
-			selected.setBranding((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 3));
-			selected.setCmd25(hasCmd25.getProperty((String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0)));
+			selected.setDevice((String)modelFirm.getValueAt(getSelectedRow(tableFirm), 1));
+			selected.setVersion((String)modelFirm.getValueAt(getSelectedRow(tableFirm), 2));
+			selected.setBranding((String)modelFirm.getValueAt(getSelectedRow(tableFirm), 3));
+			selected.setCmd25(hasCmd25.getProperty((String)modelFirm.getValueAt(getSelectedRow(tableFirm), 0)));
 		}
 		refreshContent();
 	}
@@ -243,7 +243,7 @@ public class firmSelect extends JDialog {
 		tableFirm.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+				result=(String)modelFirm.getValueAt(getSelectedRow(tableFirm), 0);
 				try {
 					filelist();
 					addCheckBoxesWipe();
@@ -263,7 +263,7 @@ public class firmSelect extends JDialog {
 		tableFirm.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				result=(String)modelFirm.getValueAt(tableFirm.getSelectedRow(), 0);
+				result=(String)modelFirm.getValueAt(getSelectedRow(tableFirm), 0);
 				try {
 					filelist();
 					addCheckBoxesWipe();
@@ -480,4 +480,7 @@ public class firmSelect extends JDialog {
 		panelMisc.revalidate();
 	}
 
+	private int getSelectedRow(JTable table) {
+		return table.getRowSorter().convertRowIndexToModel(table.getSelectedRow());
+	}
 }

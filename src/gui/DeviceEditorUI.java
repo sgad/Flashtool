@@ -339,6 +339,7 @@ public class DeviceEditorUI extends JDialog {
 	public void setEntry(DeviceEntry ent) {
 		_ent=ent;
 		deviceid.setText(ent.getId());
+		deviceid.setEditable(false);
 		devicename.setText(ent.getName());
 		buildprop.setText(ent.getBuildProp());
 		recognition.setText(ent.getRecognition());

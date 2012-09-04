@@ -5,6 +5,13 @@
 <meta name="description" content="Flashtool is a software to flash Xperia devices">
 <meta name="keywords" content="Flashtool">
 <link type="text/css" rel="StyleSheet" href="common/tab.css" />
+<script type="te<html>
+<head>
+
+<title>Flashtool - Xperia devices flashing</title>
+<meta name="description" content="Flashtool is a software to flash Xperia devices">
+<meta name="keywords" content="Flashtool">
+<link type="text/css" rel="StyleSheet" href="common/tab.css" />
 <script type="text/javascript" src="common/tabpane.js"></script>
 <script>
     function hidePl() {
@@ -89,6 +96,8 @@ To install the Flashtool, follow the steps below:
             <ol><ol><a href="http://ul.to/6kntckg6" target="_new">uploaded.to</a></ol></ol>
             <ol><ol><a href="https://hotfile.com/dl/170379817/1cf08f2/flashtool-0.9.2.0-windows.exe.html" target="_new">rapidgator</a></ol></ol>
             <ol><ol><a href="http://rapidgator.net/file/38944579/flashtool-0.9.2.0-windows.exe.html" target="_new">rapidgator</a></ol></ol>
+            <ol> Linux Edition - v0.9.2.0 (MD5 : 805F4E305C8D847321B20E5F19196B57)</ol>
+            <ol><ol><a href="http://ul.to/lqje2dmu" target="_new">uploaded.to</a></ol></ol>
         </dl>
         </td></tr>
         </table>
@@ -165,6 +174,423 @@ and questions I get from people using Flashtool.
 - Windows package does not include anymore linux jre and Linux package does not include anymore windows jre.
   The result is a smaller package for each platform.
   
+* 0.9.1.0
+- Updated Java to jre7u6
+- Updated drivers with all drivers available on Sony Dev web site
+- Resolved a issue with mouse events (sometimes in a table or a list, clicking on an item does not select it)
+- Fastboot toolbox can select .elf extension in the file selector filter
+- Sin Editor reworked. Now ext4 extraction from sin files works fine. ext4 image is mountable
+- Elf Extractor issue with some kernel that include a command line part.
+- Added a Devices menu on the main window. You can add a new device to supported devices list or edit a known device
+- FTF bundles are now compressed when created. It will reduce ftf file size.
+- Sortable columns in Firmware selector and Device selector
+
+* 0.9.0.0
+- Updated Java to jre7u5
+- Added support for Xperia GO
+- Decryption features can now extract loader.sin from Sony Filesets (Loader fileset is usually 63Kb big)
+
+* 0.8.6.0
+- Added Xperia U, P, Sola, Ion to BL Unlock plugin.
+
+* 0.8.5.0
+- Fixed issue with turkish regional settings (and maybe others we don't know)
+  No more need to change regional settings to see FTF content.
+
+* 0.8.4.0
+- Repaired TA Backup / Restore / Editor (broken by 0.8.3)
+
+* 0.8.3 :
+- Fixed an issue in firmware selector. When partition categorie or TA categorie are excluded from
+  selection, it was not excluded from flashing.
+- Elf Extractor now identifies the program type included into kernel (Image, ramdisk or rpm)
+
+* 0.8.2.0 :
+- Fixed an issue where fastboot mode is not handled correctly under linux.
+
+* 0.8.1.0 :
+- Fixed an issue where loader is not found when using BL Unlock or TA Backup/Restore/Editor
+- Progressbar when flashing was not showing right progress.
+
+* 0.8.0.0 :
+- Fixed an issue with flashing ftf under linux (specially ubuntu 12.04)
+- Fixed system app backup when ls applet used to enumerate system apps is busybox one with colorization
+- Added a kernel.sin extractor (ELF Extractor) to get image, ramdisk and rpm.bin on 2012 devices
+- Added a Sin editor which is only capable of extracting data part from sin files for the moment.
+- Added drivers for Xperia U, Sola, P
+- Added Xperia U, Sola, P recognition (thanks to krabappel2548)
+
+* 0.7.1.0 :
+- Switched to Java7 platform.
+- Added categories to bundles.
+- Added a No final data check option for some firmwares (ie ICS for ArcS)
+- For LT26, partition-image can now be flashed.
+
+* 0.6.9.1 :
+- Moved TA Editor and TA Backup&Restore to dev features. Can be enabled in config.properties (devfeatures=yes)
+  Take care with this feature. It can easily break your phone.
+
+* 0.6.9.0 :
+- Added official recognition of LT26 (Xperia S)
+- Added a TA Backup&Restore
+- Added a TA Editor
+- Added a BootLoader Unlock plugin for 2011 and 2012 devices
+- Added a command line option to get IMEI (FlashTool -console --action=imei)
+- Added ability to flash system.img from fastboot toolbox
+- Added greek language
+- Added Xperia S to drivers installation
+
+* 0.6.8.0 :
+- Added Recovery to locked bootloader on LT15,1T18
+- Added Recovery installation to E10, E15, U20 devices from flashtool 
+- Added working fastboot for linux
+- Modified uninstaller to avoid deleting custom files
+- Added a flashtool toolkit for FT scripts in /system/flashtool (do not delete this folder)
+- Added a console mode for both windows and linux
+
+* 0.6.7.0:
+- Added ThKernel to kernel installer for X10
+- Better detection of missing drivers if they are not installed for adb, flashmode or fastboot mode
+- Flashtool now works natively in 64bits for both Windows and Linux.
+  Run Flashtool64 under windows to use the native 64bits release
+
+* 0.6.6.0:
+- Some improvements in device mode detection.
+- Fixed an issue with cleaner feature (check if all files are there before beginning).
+- Added DoomKernel v06 and v06-1113 to kernel installer for X10.
+- Prepared for x64 native version under windows. (not working at the moment).
+
+* 0.6.5.0:
+- Fixed a bug when waiting for device in unlock bootloader feature.
+
+* 0.6.4.0:
+- Added drag&drop for ftf bundles.
+- Windows and linux version edition (no more use of SE code and DLL)
+- Added DoomKernel v06 for X10 owners
+- Added Bootloader relock for X10 owners
+
+* 0.5.3.0:
+- Corrected an issuee where some X10 Mini Pro devices are not recognized (and maybe others)
+
+* 0.5.2.0:
+- Corrected issue where flashtool refused to close when using fastboot (hopefully)
+- You can now have spaces in path to flashtool (can be installed in program files)
+- Optimized device recognition
+- Optimized Flashtool exit (there were some lags)
+- Updated Superuser to 3.0.7 and su to 3.0.3
+- Updated CWM5 to 5.2.0.7 for X10
+
+* 0.5.1.0:
+- Corrected an issue where devices are not recognized in the right mode
+
+* 0.5.0.0:
+- Added BL unlock for E10,E15,U20
+- Added E10,E15,U20 to list of devices
+- Added a Fastboot Toolbox (thanks DooMLoRD)
+- More accurate phone connection/disconnection detection as well as connection mode
+
+* 0.4.2.0:
+- Added BL unlock for X10
+- Small fixes for plugin API
+- Device recognition for all 2011 xperia line
+
+* 0.4.1.0:
+- Added drivers for 2011 line of xperia phones
+- When rooting device, it did not reboot at end of process.
+- su perms were not set the same way as Superuser do when it updates su binary
+- Corrected a small issue on ARC where phone was not detected after applying part1 of root exploit.
+- When installing recovery, the first install sets the installed version as default one.
+  It was not the case, causing pressing back key at boot not entering recovery as no default one was found.
+
+* 0.4.0.0:
+- Added zergRush root exploit for 2.3 FW
+- Added a toolbar instead of buttons. Icons can be changed from x10flasher_lib/x10flasher-res.jar
+  if you don't like default ones :-)
+- Updated Superuser.apk and su to the latest version.
+- X10 BL unlock will come later as a plugin. Plugin system almost ready
+
+* 0.3.0.0:
+- Rebrand feature added
+- Build.prop editor has become a generic text file editor
+- busybox installation can handle multiple versions
+- recovery installation can handle multiple versions
+- kernel installation can handle multiple versions
+- when flashing, system.sin can be excluded to flash only BB related files from a complete FTF bundle
+- Updated ADB drivers for 2.3.3 devices
+- Updated Superuser.apk and su to the latest version.
+- To apply aZuZu root method, after having flashed kernel downgrade, go to Advanced->root->force psneuter.
+  aZuZu ftf files included in the flashtool package.
+
+* 0.2.9.1:
+- Better chargemon support for all ROMS
+- Busybox upgraded to 1.17.2 (taken from superoneclick 1.7)
+- Developper feature : install and reboot custom kernels 
+  (doesn't work as custom kernels do not work yet. Just developper feature)
+
+* 0.2.9:
+- Recovery updated to FreeXperia recovery from J's CM7rc2
+- Recovery and Busybox installation should work on Custom Roms
+- Busybox is searched in /system/xbin now (J's CM7rc2 changes)
+- Recovery is installed in /system/recovery (as J's CM7rc2)
+- This version should recognize xperia ARC
+- This version should be able to flash SE decrypted firmwares for xperia ARC ? (need some testers)
+- This version may root xperia ARC ? (need some testers)
+- This version may install busybox on xperia ARC ? (need some testers)
+- This version may install xrecovery on xperia ARC ? (need some testers)
+
+* 0.2.8:
+[New] The device is autodetected by the flashtool at plug / unplug
+[New] If you install xRecovery from flashtool, you can reboot into recovery from flashtool too (Advanced menu)
+[New] You can now backup all /system/app content (Advanced menu)
+[New] You can translate all parts of the Graphical Interface (look in x10flasher_lib/langs for samples)
+[Upd] Firmware screen selection offers the ability to change the folder source containing ftf files.
+[Upd] Clean task now has a notion of profile that can be imported/exported for sharing
+[Upd] Customize is now APK Installer. This screen has the ability to choose the folder where apk files are
+[Upd] Optimize should work for any device (X10, X10mini/pro, X8)
+[Upd] xRecovery should work for any device (X10, X10mini/pro, X8)
+[Bug] Flashing should not anymore hang if flash goes wrong. An error should be thrown and flash aborted
+
+* 0.2.6:
+[Upd] Flashing 1.6 firmwares could lead to a FC with Timescape. 1.6 bundles must have the preset.ta file
+      if this one exists. otherwise the flash will be uncomplete.
+[Upd] Updated the "turn to flashmode" wait box. (thanks to rendeiro2005 for the animated gif)
+[Upd] Updated to xRecovery 0.3
+[Upd] Decryption now opens the bundle creation when complete.
+[Bug] Correction of a bug under certain scenario with ROM cleaner (when switching firmware version)
+
+* 0.2.5:
+[Bug] Root not working properly (regression from 0.2.3 to 0.2.4). Fixed.
+[New] Feature] Added a basic build.prop editor.
+
+* 0.2.4:
+[Bug] Clean (root needed) task bug resolved. A new button "Ask Root Perms" has been added
+      to be sure the flashtool has root accesses. All task which need root access are disabled
+      while this Ask Root task is not complete.
+[New] Firmwares have to come bundled in one file named with a ftf extension
+      (ftf for Flash Tool Firmware). A Create Bundle feature has been added to the tool to create
+      your own firmware bundles. (So no need to Redownload a firmware you already have. Just bundle it).
+      This way it will be easier to package / distribute / integrate firmwares as they come out.
+
+* 0.2.3:
+[Bug] SEUS decrypt fixed
+[New] Wipe Userdata is set to default YES</pre>
+    </td></tr>
+        </table>
+    </div>
+<div class="tab-page"><h2 class="tab">Previous releases</h2>
+    <table border="0" cellpadding="0" cellspacing="3" width="100%">
+    <tr><th>Previous versions</th></tr>
+        <tr><td>
+        <dl>
+            <dt><br><br>0.9 release :
+            <ol> Windows Edition - v0.9.1.0 (MD5 : A38082F2D75494F4EEB1BAA6BC884715)</ol>
+            <ol><ol><a href="http://ul.to/hz3nzd64" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/169829627/65a569d/flashtool-0.9.1.0-windows.exe.html" target="_new">hotfile</a></ol></ol>            
+            <ol><ol><a href="http://rapidgator.net/file/38147082/flashtool-0.9.1.0-windows.exe.html" target="_new">rapidgator</a></ol></ol>            
+            <ol> Linux Edition - v0.9.1.0 (MD5 : EE2A8AB875FAC5DD6971799691D10406)</ol>
+            <ol><ol><a href="http://ul.to/idz72kfh" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="http://hotfile.com/dl/169838671/561d5b5/flashtool-0.9.1.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>                        
+            <ol><ol><a href="http://rapidgator.net/file/38114206/flashtool-0.9.1.0-linux.tar.7z.html" target="_new">rapidgator</a></ol></ol>
+            <ol> Windows Edition - v0.9.0.0 (MD5 : 0A8CA4A2A0F89EA7F458DA60C709C0D9)</ol>
+            <ol><ol><a href="http://ul.to/mi5ynnw3" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/163801674/a1fa959/flashtool-0.9.0.0-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol> Linux Edition - v0.9.0.0 (MD5 : C9EFD33B78C7CAAD52272A162CCB9DCF)</ol>
+            <ol><ol><a href="http://ul.to/9rn0a5ps" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/163917872/5a7ab73/flashtool-0.9.0.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>
+            <dt><br><br>0.8 release :
+            <ol> Windows Edition - v0.8.6.0 (MD5 : 6B461646F09D3492E3FEBED168637B9D)</ol>
+            <ol><ol><a href="http://ul.to/fj8fd7gy" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/169973777/d214132/flashtool-0.8.6.0-windows.exe.html" target="_new">hotfile</a></ol></ol>            
+            <ol> Linux Edition - v0.8.6.0 (MD5 : 10C7199ED41296A9CC9B72954B5F83C1)</ol>
+            <ol><ol><a href="http://ul.to/u4vcmhn9" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/169976249/cb86f30/flashtool-0.8.6.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>
+            <dt><br><br>0.7 release :
+            <ol> Windows Edition - v0.7.1.0 (MD5 : 4A91DB666201BE1AFF58F3AF3847B050)</ol>
+            <ol><ol><a href="http://ul.to/czwoidh5" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/154666641/e4afe0b/flashtool-0.7.1.0-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol> Linux Edition - v0.7.1.0 (MD5 : 99C7FD9C31C19E38CCAA042745BC2405)</ol>
+            <ol><ol><a href="http://ul.to/lva5oouo" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/154699243/9c7372a/flashtool-0.7.1.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>
+            <dt><br><br>0.6 release :
+            <ol> Linux Edition   - v0.6.9.1 (MD5 : 9E6AEAA286FC145FDEBD65F6CC492585)</ol>
+            <ol><ol><a href="http://ul.to/g3uingdb" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="http://hotfile.com/dl/153611705/67c3e78/flashtool-0.6.9.1-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol> Linux Edition   - v0.6.9.1 (MD5 : 0BB12562F21B5291F34CD06272EB10F5)</ol>
+            <ol><ol><a href="http://ul.to/o2ho5m6u" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/153695636/d8ca637/flashtool-0.6.9.1-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>            
+            <ol> Windows Edition v0.6.8 (MD5 : 510BAA2AB9EBD68468B65A4741A46762)</ol>
+            <ol><ol><a href="http://ul.to/m358gzxg" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/152189649/d1e9e47/flashtool-0.6.8.0-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol> Linux Edition v0.6.8 (MD5 : AE10533070659EA71DCA105DF4E22765)</ol>
+            <ol><ol><a href="http://ul.to/kw030bdh" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/152190991/6e99d87/flashtool-0.6.8.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>
+            <ol> Windows Edition v0.6.7</ol>
+            <ol><ol><a href="http://hotfile.com/dl/147940761/ce5e642/flashtool-0.6.7.0-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol> Linux Edition v0.6.7</ol>
+            <ol><ol><a href="http://hotfile.com/dl/147974264/44a4f7c/Flashtool-0.6.7.0-linux.tar.7z.html" target="_new">hotfile</a></ol></ol>
+            <dt><br><br>0.5 release :
+            <dt><a href="http://hotfile.com/dl/142819326/a1a073c/flashtool-0.5.3.0-windows.exe.html" target="_new">Flashtool 0.5.3 Full Widnows Edition</a>
+            <dt><br><br>0.2 release :
+            <dt><a href="http://hotfile.com/dl/139866304/94a2481/Flashtool-0.2.9.1-windows.exe.html" target="_new">Flashtool 0.2.9.1 Full Widnows Edition</a>
+        </dl>
+        </td></tr>
+    </table>
+    </div>
+</div>
+<script>setupAllTabs();</script>
+</body>
+</html>
+xt/javascript" src="common/tabpane.js"></script>
+<script>
+    function hidePl() {
+        document.getElementById('movie').style.visibility='hidden';
+    }
+    function showPl() {
+        document.getElementById('movie').style.visibility='visible';
+    }
+</script>
+</head>
+<body style="background:ThreeDFace" class="readme">
+<a name="top"></a>
+<table border=0 cellpadding=0 cellspacing=3 width=600>
+    <tr>
+        <td valign=top rowspan=2>
+        <h1>Flashtool v0.9.2.0</h1>
+        (Updated on 03/09/2012)<br>
+        &copy;2011 by Androxyde<br><br>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td>
+        <a href="http://hotfile.com/register.html?reff=5349854" target="_new"><img src="common/hotfilebanner.jpg" alt="hotfile" /></a></p>
+        </td>
+        <td>
+        <p><a href="http://ul.to/ref/3363295" target="_new"><img src="http://uploaded.to/img/public/234x60.jpg" alt="uploaded.to" /></a></p>
+        </td>
+        <td>
+        <p><a href="http://rapidgator.net/article/premium/ref/470232" target="_blank"><img src="http://rapidgator.net/images/banners/8_125x125.gif" border="0" width="125" height="125" alt="Rapidgator.net"/></a></p>
+        </td>
+    </tr>
+</table><br>
+<div class="tab-pane" >
+<div class="tab-page"><h2 class="tab">Introduction</h2>
+ <table border="0" cellpadding="0" cellspacing="3" width="100%">
+ <tr><th>Introduction to Flashtool</th></tr>
+ <tr><td>
+   Flashtool is a flashing software that can be used to : 
+   <ol>
+    <li>Flash original Images (Android 1.6, 2.1, 2.3 Images)
+    <li>Root your phone
+    <li>Install Recovery, Busybox, custom kernels
+    <li>Clean your Rom (remove /system/apps apps of your choice) (Be careful, unless you really know what you do, do not modify the default list. This can make your phone stuck at the SE Logo)
+    <li>Clear dalvik cache
+    <li>Optimize (install of JIT v2) (Disabled in 0.4, will readd it as a plugin for 2.1 phones only)
+    <li>Customize (installs apps found in the custom/apps folder of the flashtool)
+    <li>Clean uninstalled (remove any references to system apps removed in the Clean (root needed) step)
+    <li>Edit any text file on the device
+    <li>Rebrand your device
+   </li>
+   </ol>
+ </td></tr>
+ <tr><th>Screenshot</th></tr>
+ <td><img src="common/sshot1.png"/></td>
+ </tr>
+ </tr></td>
+ </table></div>
+<div class="tab-page"><h2 class="tab">Installation</h2>
+  <table border="0" cellpadding="0" cellspacing="3" width="100%">
+        <tr><th>Requirements</th></tr>
+        <tr><td>Before downloading and even installing, disable your antivirus. The package is virus free. Antivirus complains about psneuter and zergRush root exploits and I still haven't found how to fool the antivirus.<p><td></tr>
+        <tr><th>Installation of Flashtool</th></tr>
+        <tr><td>
+To install the Flashtool, follow the steps below:
+<ol> Windows version :
+    <li>Install the full install Flashtool 0.9.2.0 package<br>
+    <li>Apply the latest update (each update is cumulative)<br>
+    Updates will not be functionnal if full 0.9.2.0 is not installed<br>
+</ol>
+<ol> Linux version :
+    <li>Unpack the tar.7z package<br>
+    <li>Check that libusb-1.0 is installed. On 64bits system, both 64bit and 32bit should be installed.<br>
+    <li>Add these rules to /etc/udev : <br>
+        SUBSYSTEM=="usb", ACTION=="add", SYSFS{idVendor}=="0fce", SYSFS{idProduct}=="*", MODE="0777"<br>
+    <li>Apply the latest update (each update is cumulative)<br>
+    Updates will not be functionnal if full 0.9.2.0 is not installed<br>
+</ol>
+        </td></tr>
+        <tr><td>
+        <dl>
+            <dt>Full install :
+            <ol> Windows Edition - v0.9.2.0 (MD5 : 96CF3EC1CEB1C67809F1A804572E696A)</ol>
+            <ol><ol><a href="http://ul.to/6kntckg6" target="_new">uploaded.to</a></ol></ol>
+            <ol><ol><a href="https://hotfile.com/dl/170379817/1cf08f2/flashtool-0.9.2.0-windows.exe.html" target="_new">hotfile</a></ol></ol>
+            <ol><ol><a href="http://rapidgator.net/file/38944579/flashtool-0.9.2.0-windows.exe.html" target="_new">rapidgator</a></ol></ol>
+        </dl>
+        </td></tr>
+        </table>
+    </div>
+    <div class="tab-page">
+        <h2 class="tab">FAQ</h2>
+        <table border=0 cellpadding=0 cellspacing=3 width=100%>
+        <tr><th>Frequently Asked Questions</th></tr>
+        <tr><td>
+The FAQ section is constantly growing - depending on what kind of feedback
+and questions I get from people using Flashtool.
+<blockquote>
+<dl>
+<dt>Troubleshooting<dd>
+    <a href="#faq1">I run flashtool and it says debug mode is off while it is on when I plug my device - what can I do ?</a><br>
+    <a href="#faq2">You say there is a Bootloader Unlock plugin but I can't see it in the plugin menu. Why ?</a><br>
+</dl>
+<dl>
+<dt>Using Flashtool<dd>
+    <a href="#use1">My device is not recognized. Does it mean Flashtool is not compatible with my device ?</a><br>
+</dl>
+</blockquote>
+</td></tr>
+<tr><th class="th1">Troubleshooting</th></tr>
+<tr><td>
+<p><span style="float:right"><a href="#top">Back to Top</a></span><a name="faq1"><em>I run flashtool and it says debug mode is off while it is on when I plug my device - what can I do ?</em></a>
+<p>On 2011 line devices, you have to be in MSC mode instead of MTP mode. Here is how to switch to MSC mode :
+<table>
+<tr>
+<td><img src="common/msc1.png"/></td>
+<td><img src="common/msc2.png"/></td>
+<td><img src="common/msc3.png"/></td>
+<td><img src="common/msc4.png"/></td>
+</tr>
+</table>
+</td></tr>
+<tr><td>
+<p><span style="float:right"><a href="#top">Back to Top</a></span><a name="faq2"><em>You say there is a Bootloader Unlock plugin but I can't see it in the plugin menu. Why ?</em></a>
+<p>Plugins will appear in the plugin menu if and only if all plugin requirements are met.
+<br>Here are requirements for BL Unlock plugin :
+<li>kernelversions=2.6.29,2.6.29-00054-g5f01537
+<li>androidversions=2.1,2.2,2.3
+<li>needroot=true
+<li>compatibledevices=X10,E10,E15,U20
+<p> If at least one of these criteria is not met, plugin will not be added to the Plugins menu
+<P>
+</td></tr>
+<tr><th class="th1">Using Flashtool</th></tr>
+<tr><td>
+<p><span style="float:right"><a href="#top">Back to Top</a></span><a name="use1"><em>My device is not recognized. Does it mean Flashtool is not compatible with my device ?</em></a>
+<p>Well, the flash button will ALWAYS be available. If your device is not recognized, Flashing will be the only feature available.
+<br>It means you can flash FTF bundles made for your device and upgrade / downgrade your device.
+</td></tr>
+<table>
+<tr>
+</table>
+    </div>
+    <div class="tab-page">
+        <h2 class="tab">Release Notes</h2>
+        <table border=0 cellpadding=0 cellspacing=3 width=100%>
+        <tr><th>Known bugs / Limitations</th></tr>
+        <tr><td>
+        </td></tr>
+        <tr><th>Flashtool Release Notes</th></tr>
+        <tr><td>
+<pre>
+<hr>
 * 0.9.1.0
 - Updated Java to jre7u6
 - Updated drivers with all drivers available on Sony Dev web site

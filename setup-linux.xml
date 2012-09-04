@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="all" name="Create Linux Package">
+
+	<target name="all" depends="loadprops, JRE, dotar"/>
+	
+	<target name="JRE">
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
+	</target>
+
+	<target name="loadprops">
+        <loadmf jar="../Deploy/FlashTool/x10flasher.jar" prefix=""/>
+    </target>
+
+	<target name="dotar">
+		<exec executable="tar" dir="../Deploy">
+		    <arg value="cf"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar"/>
+			<arg value="FlashTool"/>
+		</exec>
+		<exec executable="7zr" dir="../Deploy">
+			<arg value="a"/>
+			<arg value="-t7z"/>
+			<arg value="-m0=lzma"/>
+			<arg value="-mx=4"/>
+			<arg value="-mfb=64"/>
+			<arg value="-md=32m"/>
+			<arg value="-ms=on"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar.7z"/>
+			<arg value="flashtool-${Internal-Version}-linux.tar"/>
+		</exec>
+		<exec executable="rm" dir="../Deploy">
+			<arg value="flashtool-${Internal-Version}-linux.tar"/>
+		</exec>
+	</target>
+	   
+	<!--
+	    Loads entries from a manifest file.
+	    @jar     The jar from where to read
+	    @prefix  A prefix to prepend
+	-->
+	    <macrodef name="loadmf">
+	        <attribute name="jar"/>
+	        <attribute name="prefix" default=""/>
+	        <sequential>
+	            <loadproperties>
+	                <!-- Load the manifest entries -->
+	                <zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+	                <!-- Add the prefix -->
+	                <filterchain>
+	                    <prefixlines prefix="@{prefix}"/>
+	                </filterchain>
+	            </loadproperties>
+	        </sequential>
+	    </macrodef>
+</project>

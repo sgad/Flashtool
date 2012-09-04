@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project default="all" name="Create Windows Package">
+	
+	<target name="all" depends="loadprops, JRE, dodrivers, dosetup"/>
+	
+	<target name="JRE">
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
+	</target>
+
+	<target name="loadprops">
+		<loadmf jar="../Deploy/FlashTool/x10flasher.jar" prefix=""/>
+	</target>
+	
+	   <target name="dodrivers">
+	        <nsis script="drivers.nsi" path="C:\Program Files (x86)\NSIS\Unicode"/>
+	    </target>
+
+	<target name="dosetup">
+		<copy file="setup.nsi" tofile="setup_new.nsi"/>
+		<replace file="setup_new.nsi" token="FLASHTOOLVERSION" value="${Internal-Version}"/>
+		<nsis script="setup_new.nsi" path="C:\Program Files (x86)\NSIS\Unicode"/>
+		<delete file="setup_new.nsi"/>
+	</target>
+	   
+	<!--
+	    Loads entries from a manifest file.
+	    @jar     The jar from where to read
+	    @prefix  A prefix to prepend
+	-->
+	    <macrodef name="loadmf">
+	        <attribute name="jar"/>
+	        <attribute name="prefix" default=""/>
+	        <sequential>
+	            <loadproperties>
+	                <!-- Load the manifest entries -->
+	                <zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF"/>
+	                <!-- Add the prefix -->
+	                <filterchain>
+	                    <prefixlines prefix="@{prefix}"/>
+	                </filterchain>
+	            </loadproperties>
+	        </sequential>
+	    </macrodef>
+    
+	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
+       <classpath location="libs/nsisant-1.3.jar"/>
+     </taskdef>
+
+</project>

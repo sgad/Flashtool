@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
-
+	
+	<property name="version" value="0.9.2.0"/>
+	
 	<target name="all" depends="core release,devices,JRE"/>
 
 	<target name="devices" depends="E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,WT19 Device,X10 Device,LT26 Device, LT22 Device, LT28 Device, MT27 Device, ST25 Device, ST27 Device, LT26w Device, ST21 Device"/>
@@ -39,7 +41,8 @@
             <manifest>
                 <attribute name="Main-Class" value="gui.FlasherGUI"/>
                 <attribute name="Class-Path" value=". x10flasher.jar x10flasher_lib/AXMLPrinter2.jar x10flasher_lib/com.sonyericsson.cs_ma3_common_2.10.9.13.jar x10flasher_lib/commons-io-2.0.1.jar x10flasher_lib/forms-1.4.2.jar x10flasher_lib/foxtrot-core-4.0.jar x10flasher_lib/HexLib.jar x10flasher_lib/jdom-1.1.1.jar x10flasher_lib/jgoodies-common-1.2.1.jar x10flasher_lib/jgoodies-looks-2.4.2.jar x10flasher_lib/jna.jar x10flasher_lib/jopt-simple-4.3.jar x10flasher_lib/libusb.jar x10flasher_lib/log4j-1.2.16.jar x10flasher_lib/platform.jar x10flasher_lib/rsyntaxtextarea.jar x10flasher_lib/x10flasher-res.jar"/>
-                <attribute name="Implementation-Version" value="Version 0.9.2.0 built on ${TODAY}"/>
+                <attribute name="Implementation-Version" value="Version ${version} built on ${TODAY}"/>
+            	<attribute name="Internal-Version" value="${version}"/>
             </manifest>
         	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>
         </jar>

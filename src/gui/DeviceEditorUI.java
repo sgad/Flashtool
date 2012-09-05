@@ -56,6 +56,7 @@ public class DeviceEditorUI extends JDialog {
 	 * Create the dialog.
 	 */
 	public DeviceEditorUI() {
+		setModal(true);
 		config = new PropertiesFile("org/system/ressources/deviceTemplate.properties","");
 		setTitle("Device Editor");
 		setBounds(100, 100, 461, 368);

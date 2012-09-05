@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import flashsystem.HexDump;
 
@@ -189,4 +192,17 @@ public class OS {
 	public static String getSystem32Dir() {
 		return getWinDir()+getFileSeparator()+"System32";
 	}
+
+	public static Collection<File> listFileTree(File dir) {
+	    Set<File> fileTree = new HashSet<File>();
+	    for (File entry : dir.listFiles()) {
+	        if (entry.isFile()) fileTree.add(entry);
+	        else {
+	        	fileTree.addAll(listFileTree(entry));
+	        	fileTree.add(entry);
+	        }
+	    }
+	    return fileTree;
+	}
+
 }

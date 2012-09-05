@@ -11,11 +11,14 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
+
+import java.io.ByteArrayInputStream;
 import java.io.File; 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;  
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.net.URI;
 import foxtrot.Job;
@@ -47,6 +50,10 @@ import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.TextFile;
 import java.util.Iterator;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.Deflater;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
@@ -129,6 +136,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmDevicesAdd;
 	//private JMenuItem mntmDevicesRemove;
 	private JMenuItem mntmDevicesEdit;
+	private JMenuItem mntmDevicesExport;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -574,7 +582,7 @@ public class FlasherGUI extends JFrame {
 		mnHelp.setName("mnHelp");
 		mnPlugins = new JMenu("Plugins");
 		JMenu mnDevices = new JMenu("Devices");
-		mntmDevicesAdd = new JMenuItem("Add device");
+		mntmDevicesAdd = new JMenuItem("Add");
 		mntmDevicesAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				DeviceEditorUI edit = new DeviceEditorUI();
@@ -582,7 +590,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 		//mntmDevicesRemove = new JMenuItem("Remove device");
-		mntmDevicesEdit = new JMenuItem("Edit device");
+		mntmDevicesEdit = new JMenuItem("Edit");
 		mntmDevicesEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Devices.listDevices(true);
@@ -595,9 +603,27 @@ public class FlasherGUI extends JFrame {
         		}
 			}
 		});		
+		mntmDevicesExport = new JMenuItem("Export");
+		mntmDevicesExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Devices.listDevices(true);
+        		deviceSelectGui devsel = new deviceSelectGui(null);
+        		String devid = devsel.getDevice();
+        		if (devid.length()>0) {
+        			try {
+        				doExportDevice(devid);
+        				MyLogger.getLogger().info("Device "+devid+" Exported successfully");
+        			}
+        			catch (Exception e) {
+        				MyLogger.getLogger().error(e.getMessage());
+        			}
+        		}
+			}
+		});
 		mnDevices.add(mntmDevicesAdd);
 		//mnDevices.add(mntmDevicesRemove);
 		mnDevices.add(mntmDevicesEdit);
+		mnDevices.add(mntmDevicesExport);
 		menuBar.add(mnPlugins);
 		menuBar.add(mnDevices);
 		menuBar.add(mnHelp);
@@ -1929,5 +1955,36 @@ public class FlasherGUI extends JFrame {
 			MyLogger.getLogger().error(e.getMessage());
 		}
     }
+
+    public void doExportDevice(String device) throws Exception {
+		File ftd = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device+".ftd");
+		byte buffer[] = new byte[10240];
+	    FileOutputStream stream = new FileOutputStream(ftd);
+	    JarOutputStream out = new JarOutputStream(stream);
+	    out.setLevel(Deflater.BEST_SPEED);
+	    File root = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device);
+	    int rootindex = root.getAbsolutePath().length();
+		Collection<File> c = OS.listFileTree(root);
+		Iterator<File> i = c.iterator();
+		while (i.hasNext()) {
+			File entry = i.next();
+			String name = entry.getAbsolutePath().substring(rootindex-device.length());
+			if (entry.isDirectory()) name = name+"/";
+		    JarEntry jarAdd = new JarEntry(name);
+	        out.putNextEntry(jarAdd);
+	        if (!entry.isDirectory()) {
+	        InputStream in = new FileInputStream(entry);
+	        while (true) {
+	          int nRead = in.read(buffer, 0, buffer.length);
+	          if (nRead <= 0)
+	            break;
+	          out.write(buffer, 0, nRead);
+	        }
+	        in.close();
+	        }
+		}
+		out.close();
+	    stream.close();
+	}
 
 }

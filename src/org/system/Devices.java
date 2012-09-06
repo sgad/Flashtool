@@ -3,8 +3,11 @@ package org.system;
 import gui.FlasherGUI;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
@@ -30,7 +33,33 @@ public class Devices  {
 	}
 	
 	public static DeviceEntry getDevice(String device) {
-		return (DeviceEntry)props.get(device);
+		try {
+			if (props.containsKey(device))
+				return (DeviceEntry)props.get(device);
+			else {
+				File f = new File(OS.getWorkDir()+File.separator+"devices"+File.separator+device+".ftd");
+				if (f.exists()) {
+					DeviceEntry ent=null;
+					JarFile jar = new JarFile(f);
+					Enumeration e = jar.entries();
+			    	while (e.hasMoreElements()) {
+			    	    JarEntry file = (JarEntry) e.nextElement();
+			    	    if (file.getName().endsWith(device+".properties")) {
+				    	    InputStream is = jar.getInputStream(file); // get the input stream
+				    	    PropertiesFile p = new PropertiesFile();
+				    	    p.load(is);
+				    	    ent = new DeviceEntry(p);
+			    	    }
+			    	}
+			    	return ent;
+				}
+				else return null;
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static void setCurrent(String device) {

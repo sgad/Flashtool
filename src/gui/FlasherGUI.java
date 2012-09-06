@@ -51,6 +51,7 @@ import org.system.StatusListener;
 import org.system.TextFile;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
@@ -134,9 +135,10 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmSinEdit;
 	private JMenuItem mntmElfUnpack;
 	private JMenuItem mntmDevicesAdd;
-	//private JMenuItem mntmDevicesRemove;
+	private JMenuItem mntmDevicesRemove;
 	private JMenuItem mntmDevicesEdit;
 	private JMenuItem mntmDevicesExport;
+	private JMenuItem mntmDevicesImport;
 	private JMenu mnPlugins;
 	private String lang;
 	private String ftfpath="";
@@ -589,7 +591,24 @@ public class FlasherGUI extends JFrame {
 				edit.setVisible(true);
 			}
 		});
-		//mntmDevicesRemove = new JMenuItem("Remove device");
+		mntmDevicesRemove = new JMenuItem("Remove");
+		mntmDevicesRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Devices.listDevices(true);
+        		deviceSelectGui devsel = new deviceSelectGui(null);
+        		String devid = devsel.getDevice();
+        		if (devid.length()>0) {
+        			try {
+        				doDeleteDevice(devid);
+        				MyLogger.getLogger().info("Device "+devid+" deleted successfully");
+        			}
+        			catch (Exception e) {
+        				MyLogger.getLogger().error(e.getMessage());
+        			}
+        		}
+			}
+		});
+		
 		mntmDevicesEdit = new JMenuItem("Edit");
 		mntmDevicesEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -603,6 +622,7 @@ public class FlasherGUI extends JFrame {
         		}
 			}
 		});		
+		
 		mntmDevicesExport = new JMenuItem("Export");
 		mntmDevicesExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -620,10 +640,45 @@ public class FlasherGUI extends JFrame {
         		}
 			}
 		});
+
+		mntmDevicesImport = new JMenuItem("Import");
+		mntmDevicesImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+        				Worker.post(new Job() {
+        					public Object run() {
+        						try {
+        							Devices.listDevices(true);
+        			        		deviceSelectGui devsel = new deviceSelectGui(null);
+        			        		Properties list = new Properties();
+        			        		File[] lfiles = new File(OS.getWorkDir()+File.separator+"devices").listFiles();
+        			        		for (int i=0;i<lfiles.length;i++) {
+        			        			if (lfiles[i].getName().endsWith(".ftd")) {
+        			        				String name = lfiles[i].getName();
+        			        				name = name.substring(0,name.length()-4);
+        			        				list.setProperty(name, "Device to import");
+        			        			}
+        			        		}
+        			        		String devid = devsel.getDeviceFromList(list);
+        			        		if (devid.length()>0) {
+	        							MyLogger.getLogger().info("Beginning import of "+devid);
+	        							doImportDevice(devid);
+	        							MyLogger.getLogger().info("Device "+devid+" imported successfully");
+        			        		}
+        						}
+        						catch (Exception e) {
+        							MyLogger.getLogger().error(e.getMessage());
+        						}
+        						return null;
+        					}
+        				});
+			}
+		});
+
 		mnDevices.add(mntmDevicesAdd);
-		//mnDevices.add(mntmDevicesRemove);
 		mnDevices.add(mntmDevicesEdit);
+		mnDevices.add(mntmDevicesRemove);
 		mnDevices.add(mntmDevicesExport);
+		mnDevices.add(mntmDevicesImport);
 		menuBar.add(mnPlugins);
 		menuBar.add(mnDevices);
 		menuBar.add(mnHelp);
@@ -1956,7 +2011,42 @@ public class FlasherGUI extends JFrame {
 		}
     }
 
-    public void doExportDevice(String device) throws Exception {
+    public static void doImportDevice(String device) throws Exception {
+    	File ftd = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device+".ftd");
+    	String destDir = OS.getWorkDir()+java.io.File.separator+"devices";
+    	new File(destDir+File.separator+device).mkdir();
+    	JarFile jar = new JarFile(ftd);
+    	boolean alldirs=false;
+    	Enumeration e;
+    	while (!alldirs) {
+	    	e = jar.entries();
+	    	alldirs=true;
+	    	while (e.hasMoreElements()) {
+	    	    JarEntry file = (JarEntry) e.nextElement();
+	    	    File f = new File(destDir + File.separator + file.getName());
+	    	    if (file.isDirectory()) { // if its a directory, create it
+	    	    	if (!f.exists())
+	    	    		if (!f.mkdir()) alldirs=false;
+	    	    }
+	    	}
+    	}
+    	e = jar.entries();
+    	while (e.hasMoreElements()) {
+    	    JarEntry file = (JarEntry) e.nextElement();
+    	    File f = new File(destDir + File.separator + file.getName());
+    	    if (!file.isDirectory()) { // if its a directory, create it
+	    	    InputStream is = jar.getInputStream(file); // get the input stream
+	    	    FileOutputStream fos = new FileOutputStream(f);
+	    	    while (is.available() > 0) {  // write contents of 'is' to 'fos'
+	    	        fos.write(is.read());
+	    	    }
+	    	    fos.close();
+	    	    is.close();
+    	    }
+    	}
+    }
+    
+    public static void doExportDevice(String device) throws Exception {
 		File ftd = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device+".ftd");
 		byte buffer[] = new byte[10240];
 	    FileOutputStream stream = new FileOutputStream(ftd);
@@ -1986,5 +2076,24 @@ public class FlasherGUI extends JFrame {
 		out.close();
 	    stream.close();
 	}
-
+    
+    public static void doDeleteDevice(String device) {
+    	String destDir = OS.getWorkDir()+File.separator+"devices"+File.separator+device;
+    	File folder = new File(destDir);
+    	deleteFolder(folder);
+    }
+    
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if(files!=null) { //some JVMs return null for empty dirs
+            for(File f: files) {
+                if(f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();    	
+    }
 }

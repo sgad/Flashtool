@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.2.0"/>
+	<property name="version" value="0.9.3.0"/>
 	
 	<target name="all" depends="core release,devices,JRE"/>
 

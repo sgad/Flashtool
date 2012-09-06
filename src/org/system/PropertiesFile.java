@@ -2,6 +2,7 @@ package org.system;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -75,5 +76,9 @@ public class PropertiesFile {
 	
 	public Properties getProperties() {
 		return props;
+	}
+	
+	public void load(InputStream is) throws Exception {
+		props.load(is);
 	}
 }

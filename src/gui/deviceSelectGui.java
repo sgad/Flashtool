@@ -182,6 +182,19 @@ public class deviceSelectGui extends JDialog {
 		return result;
 	}
 
+	public String getDeviceFromList(Properties list) {
+		if (list==null) fillTable();
+		else {
+			if (list.size()>0) {
+				fillTable(list);
+			}
+			else
+				fillTable();
+		}
+		setVisible(true);
+		return result;
+	}
+
 	public void setLanguage() {
 		Language.translate(this);
 	}

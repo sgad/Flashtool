@@ -65,15 +65,13 @@ public class ApkInstallGUI extends JDialog {
 		setName("ApkInstallGUI");
 		setTitle("APK Installer");
 		setModal(true);
-		setBounds(100, 100, 600, 357);
+		setBounds(100, 100, 606, 357);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(127dlu;default)"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(217dlu;default)"),
+				ColumnSpec.decode("max(309dlu;default)"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(19dlu;default):grow"),},
 			new RowSpec[] {
@@ -99,13 +97,13 @@ public class ApkInstallGUI extends JDialog {
 		}
 		{
 			folderSource  = new JTextField();
-			contentPanel.add(folderSource, "2, 4, 3, 1");
+			contentPanel.add(folderSource, "2, 4, fill, center");
 			folderSource.setEditable(false);
 			folderSource.setColumns(10);
 		}
 		{
 			JButton button = new JButton("...");
-			contentPanel.add(button, "6, 4");
+			contentPanel.add(button, "4, 4, center, default");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					doChoose();
@@ -119,7 +117,7 @@ public class ApkInstallGUI extends JDialog {
 		}
 		{
 			JScrollPane scrollPane = new JScrollPane();
-			contentPanel.add(scrollPane, "2, 8, 5, 5, fill, fill");
+			contentPanel.add(scrollPane, "2, 8, 3, 5, fill, fill");
 			{
 				listFolder = new JList();
 				listFolder.setModel(sortedListFolderModel);

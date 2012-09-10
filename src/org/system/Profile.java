@@ -15,7 +15,7 @@ public class Profile {
 	
 	public static void save(X10Apps apps) {
 		try {
-			File ftp = new File("./custom/clean/"+apps.getCurrentProfile()+".ftp");
+			File ftp = new File("./custom/clean/"+Devices.getCurrent().getId()+File.separator+apps.getCurrentProfile()+".ftp");
 			byte buffer[] = new byte[10240];
 			StringBuffer sbuf = new StringBuffer();
 			sbuf.append("Manifest-Version: 1.0\n");
@@ -27,7 +27,7 @@ public class Profile {
 		    out.setLevel(JarOutputStream.STORED);
 		    JarEntry jarAdd = new JarEntry("safelist"+apps.getCurrentProfile()+".properties");
 	        out.putNextEntry(jarAdd);
-	        InputStream in = new FileInputStream(new File("./custom/clean/safelist"+apps.getCurrentProfile()+".properties"));
+	        InputStream in = new FileInputStream(new File("./custom/clean/"+Devices.getCurrent().getId()+File.separator+"safelist"+apps.getCurrentProfile()+".properties"));
 	        while (true) {
 	          int nRead = in.read(buffer, 0, buffer.length);
 	          if (nRead <= 0)
@@ -37,7 +37,7 @@ public class Profile {
 	        in.close();
 		    jarAdd = new JarEntry("customlist.properties");
 	        out.putNextEntry(jarAdd);
-	        in = new FileInputStream(new File("./custom/clean/customlist.properties"));
+	        in = new FileInputStream(new File("./custom/clean/"+Devices.getCurrent().getId()+File.separator+"customlist.properties"));
 	        while (true) {
 	          int nRead = in.read(buffer, 0, buffer.length);
 	          if (nRead <= 0)
@@ -51,7 +51,7 @@ public class Profile {
 	        	if (apps.customList().containsKey(key)) {
 	        		jarAdd = new JarEntry(key);
 	        		out.putNextEntry(jarAdd);
-	    	        in = new FileInputStream(new File("./custom/apps_saved/"+key));
+	    	        in = new FileInputStream(new File("./custom/apps_saved/"+Devices.getCurrent().getId()+File.separator+key));
 	    	        while (true) {
 	    	          int nRead = in.read(buffer, 0, buffer.length);
 	    	          if (nRead <= 0)

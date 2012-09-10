@@ -1,8 +1,10 @@
-for i in `cat DEVICEWORKDIR/listappsadd`
+export PATH=DEVICEWORKDIR:$PATH
+
+for i in `busybox cat DEVICEWORKDIR/listappsadd`
 do
-   cp DEVICEWORKDIR/$i /system/app
-   chown 0.0 /system/app/$i
-   chmod 644 /system/app/$i
-   rm DEVICEWORKDIR/$i
+   busybox cp DEVICEWORKDIR/$i /system/app
+   busybox chown 0.0 /system/app/$i
+   busybox chmod 644 /system/app/$i
+   busybox rm DEVICEWORKDIR/$i
 done
-rm DEVICEWORKDIR/listappsadd
+busybox rm DEVICEWORKDIR/listappsadd

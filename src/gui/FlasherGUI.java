@@ -57,6 +57,8 @@ import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -117,6 +119,7 @@ public class FlasherGUI extends JFrame {
 	private JButton custBtn;
 	private JButton btnXrecovery;
 	private JButton btnKernel;
+	private JMenuItem mntmSwitchPro;
 	private JMenuItem mntmInstallBusybox;
 	private JMenuItem mntmDumpProperties;
 	private JMenuItem mntmClearCache;
@@ -130,6 +133,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRebootDefaultKernel;
 	private JMenuItem mntmRootPsneuter;
 	private JMenuItem mntmRootzergRush;
+	private JMenuItem mntmRootEmulator;
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
@@ -144,6 +148,7 @@ public class FlasherGUI extends JFrame {
 	private String ftfpath="";
 	private String ftfname="";
 	//private StatusListener phoneStatus;
+	private JMenu mnDev;
 
 	private static void setSystemLookAndFeel() {
 		try {
@@ -281,13 +286,18 @@ public class FlasherGUI extends JFrame {
 		mnFile.setName("mnFile");
 		menuBar.add(mnFile);
 
+		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
+		mnFile.add(mntmSwitchPro);
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.setName("mntmExit");
 		mnFile.add(mntmExit);
 
-		JMenu mnAdvanced = new JMenu("Advanced");
+		JMenu mnAdvanced = new JMenu("Tools");
 		mnAdvanced.setName("mnAdvanced");
 		menuBar.add(mnAdvanced);
+		mnDev = new JMenu("Advanced");
+		mnDev.setVisible(false);
+		menuBar.add(mnDev);
 
 		JMenu mnLang = new JMenu("Language");
 		mnLang.setName("mnLang");
@@ -322,7 +332,6 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
-		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
 			mntmDumpProperties = new JMenuItem("TA Editor");
 			mntmDumpProperties.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -341,7 +350,19 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
-		}
+			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
+			mntmTaBackupRestore.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						BackupRestore();
+					}
+					catch (Exception e1) {}
+				}
+			});
+
+			mnDev.add(mntmDumpProperties);
+			mnDev.add(mntmTaBackupRestore);
+			mnDev.add(mntmRawIO);
 		mntmSinEdit = new JMenuItem("SIN Editor");
 		mntmSinEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -367,19 +388,36 @@ public class FlasherGUI extends JFrame {
 		mntmRootPsneuter = new JMenuItem("Force psneuter");
 		mntmRootPsneuter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				doRootpsneuter();
+				if (!Devices.getCurrent().hasRoot())
+					doRootpsneuter();
+				else
+					JOptionPane.showMessageDialog(null, "Your device is already rooted");
 			}
 		});
 
 		mntmRootzergRush = new JMenuItem("Force zergRush");
 		mntmRootzergRush.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				doRootzergRush();
+				if (!Devices.getCurrent().hasRoot())
+					doRootzergRush();
+				else
+					JOptionPane.showMessageDialog(null, "Your device is already rooted");
+			}
+		});
+
+		mntmRootEmulator = new JMenuItem("Force Emulator");
+		mntmRootEmulator.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (!Devices.getCurrent().hasRoot())
+					doRootEmulator();
+				else
+					JOptionPane.showMessageDialog(null, "Your device is already rooted");
 			}
 		});
 
 		mnRoot.add(mntmRootPsneuter);
 		mnRoot.add(mntmRootzergRush);
+		mnRoot.add(mntmRootEmulator);
 		
 		JMenu mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
@@ -464,8 +502,6 @@ public class FlasherGUI extends JFrame {
 		});
 		mnXrecovery.add(mntmInstallOnline);*/
 		mnAdvanced.add(mntmInstallBusybox);
-		if (GlobalConfig.getProperty("devfeatures").equals("yes"))
-			mnAdvanced.add(mntmDumpProperties);
 
 		mntmBuildpropEditor = new JMenuItem("Build.prop Editor");
 		mntmBuildpropEditor.setName("mntmBuildpropEditor");
@@ -476,19 +512,6 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 		
-		if (GlobalConfig.getProperty("devfeatures").equals("yes")) {
-			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
-			mnAdvanced.add(mntmTaBackupRestore);
-			mnAdvanced.add(mntmRawIO);
-			mntmTaBackupRestore.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						BackupRestore();
-					}
-					catch (Exception e1) {}
-				}
-			});
-		}
 		mnAdvanced.add(mntmSinEdit);
 		mnAdvanced.add(mntmElfUnpack);		
 		mnAdvanced.add(mntmBuildpropEditor);
@@ -735,24 +758,28 @@ public class FlasherGUI extends JFrame {
 		rdbtnmntmError.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MyLogger.setLevel("ERROR");
+				GlobalConfig.setProperty("loglevel", "error");
 			}
 		});
 		
 		rdbtnmntmWarnings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MyLogger.setLevel("WARN");
+				GlobalConfig.setProperty("loglevel", "warn");
 			}
 		});
 		
 		rdbtnmntmInfos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MyLogger.setLevel("INFO");
+				GlobalConfig.setProperty("loglevel", "info");
 			}
 		});
 
 		rdbtnmntmDebug.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				MyLogger.setLevel("DEBUG");
+				GlobalConfig.setProperty("loglevel", "debug");
 			}
 		});
 
@@ -760,6 +787,15 @@ public class FlasherGUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				RunStack.killAll();
 				exitProgram();
+			}
+		});
+
+		mntmSwitchPro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
+				mntmSwitchPro.setText(ispro?"Switch Pro":"Switch SImple");
+				GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
+				mnDev.setVisible(!ispro);
 			}
 		});
 
@@ -925,6 +961,7 @@ public class FlasherGUI extends JFrame {
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		mnDev.setVisible(GlobalConfig.getProperty("devfeatures").equals("yes"));
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
 				if (!e.isDriverOk()) {
@@ -1028,15 +1065,15 @@ public class FlasherGUI extends JFrame {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-						PropertiesFile safeList = new PropertiesFile("org/adb/config/safelist.properties","."+fsep+"custom"+fsep+"clean"+fsep+"safelist.properties");
+						PropertiesFile safeList = new PropertiesFile("org/adb/config/safelist.properties","."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+"safelist.properties");
 						HashSet<String> set = AdbUtility.listSysApps();
 						Iterator<Object> keys = safeList.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String)keys.next();
 							if (safeList.getProperty(key).equals("safe") && !set.contains(key)) {
 								MyLogger.getLogger().debug(key);
-								if (TextFile.exists("."+fsep+"custom"+fsep+"apps_saved"+fsep+key)) {
-									String packageName = APKUtility.getPackageName("."+fsep+"custom"+fsep+"apps_saved"+fsep+key);
+								if (TextFile.exists("."+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+key)) {
+									String packageName = APKUtility.getPackageName("."+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+key);
 									MyLogger.getLogger().debug(packageName);
 									AdbUtility.uninstall(packageName,false);
 								}
@@ -1225,8 +1262,68 @@ public class FlasherGUI extends JFrame {
 		if (Devices.getCurrent().getVersion().contains("2.3")) {
 			doRootzergRush();
 		}
-		else 
-			doRootpsneuter();
+		else
+			if (!Devices.getCurrent().getVersion().contains("4.0") && !Devices.getCurrent().getVersion().contains("4.1"))
+				doRootpsneuter();
+			else {
+				if (Devices.getCurrent().getVersion().contains("4.0.3"))
+						doRootEmulator();
+				else
+					JOptionPane.showMessageDialog(null, "No root exploit for this version");
+			}
+	}
+	
+	public void doRootEmulator() {
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					MyLogger.getLogger().info("Preparing first part of the hack");
+					AdbUtility.run("cd /data/local && mkdir tmp");
+					AdbUtility.run("cd /data/local/tmp/ && rm *");
+					AdbUtility.run("mv /data/local/tmp /data/local/tmp.bak");
+					AdbUtility.run("ln -s /data /data/local/tmp");
+					MyLogger.getLogger().info("Rebooting device. Please wait");
+					Devices.getCurrent().reboot();
+					Devices.waitForReboot(false);
+					MyLogger.getLogger().info("Preparing second part of the hack");
+					AdbUtility.run("rm /data/local.prop");
+					AdbUtility.run("echo \"ro.kernel.qemu=1\" > /data/local.prop");
+					MyLogger.getLogger().info("Rebooting device. Please wait");
+					Devices.getCurrent().reboot();
+					Devices.waitForReboot(false);
+					if (Devices.getCurrent().hasRoot()) {
+						MyLogger.getLogger().info("Now you have root");
+						MyLogger.getLogger().info("Remounting system r/w");
+						AdbUtility.run("mount -o remount,rw /system");
+						MyLogger.getLogger().info("Installing root package");
+						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", "/system/xbin");
+						AdbUtility.push(Devices.getCurrent().getBusybox(false), "/system/xbin");
+						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", "/system/app");
+						AdbUtility.run("chown root.shell /system/xbin/su");
+						AdbUtility.run("chmod 06755 /system/xbin/su");
+						AdbUtility.run("chown root.shell /system/xbin/busybox");
+						AdbUtility.run("chmod 755 /system/xbin/busybox");
+						MyLogger.getLogger().info("Cleaning hack");
+						AdbUtility.run("rm /data/local.prop");
+						AdbUtility.run("rm /data/local/tmp");
+						AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
+						MyLogger.getLogger().info("Rebooting device. Please wait. Your device is now rooted");
+						Devices.getCurrent().reboot();
+					}
+					else {
+						AdbUtility.run("rm /data/local.prop");
+						AdbUtility.run("rm /data/local/tmp");
+						AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
+						MyLogger.getLogger().info("Hack did not work. Cleaning and rebooting");
+						Devices.getCurrent().reboot();
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
 	}
 	
 	public void doRootzergRush() {
@@ -1241,11 +1338,16 @@ public class FlasherGUI extends JFrame {
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(true);
 					Devices.waitForReboot(true);
-					MyLogger.getLogger().info("Running part2 of Root Exploit");
-					shell = new Shell("rootit2");
-					shell.run(false);
-					MyLogger.getLogger().info("Finished!.");
-					MyLogger.getLogger().info("Root should be available after reboot!");		
+					if (Devices.getCurrent().hasRoot()) {
+						MyLogger.getLogger().info("Running part2 of Root Exploit");
+						shell = new Shell("rootit2");
+						shell.run(false);
+						MyLogger.getLogger().info("Finished!.");
+						MyLogger.getLogger().info("Root should be available after reboot!");
+					}
+					else {
+						MyLogger.getLogger().error("The part1 exploit did not work");
+					}
 				}
 				catch (Exception e) {
 					MyLogger.getLogger().error(e.getMessage());}
@@ -1266,11 +1368,16 @@ public class FlasherGUI extends JFrame {
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(false);
 					Devices.waitForReboot(true);
-					MyLogger.getLogger().info("Running part2 of Root Exploit");
-					shell = new Shell("rootit2");
-					shell.run(false);
-					MyLogger.getLogger().info("Finished!.");
-					MyLogger.getLogger().info("Root should be available after reboot!");		
+					if (Devices.getCurrent().hasRoot()) {
+						MyLogger.getLogger().info("Running part2 of Root Exploit");
+						shell = new Shell("rootit2");
+						shell.run(false);
+						MyLogger.getLogger().info("Finished!.");
+						MyLogger.getLogger().info("Root should be available after reboot!");		
+					}
+					else {
+						MyLogger.getLogger().error("The part1 exploit did not work");
+					}
 				}
 				catch (Exception e) {
 					MyLogger.getLogger().error(e.getMessage());}
@@ -1350,9 +1457,9 @@ public class FlasherGUI extends JFrame {
 							TextFile t = new TextFile(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd","ASCII");
 							Iterator<String> i = t.getLines().iterator();
 							while (i.hasNext()) {
-								if (!TextFile.exists(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+fsep+i.next())) {
+								if (!TextFile.exists(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+i.next())) {
 									t.close();
-									throw new Exception("File "+OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+fsep+i.next()+" does not exist");
+									throw new Exception("File "+OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+i.next()+" does not exist");
 								}
 							}
 							t.close();
@@ -1362,9 +1469,10 @@ public class FlasherGUI extends JFrame {
 							TextFile t = new TextFile(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd","ASCII");
 							Iterator<String> i = t.getLines().iterator();
 							while (i.hasNext()) {
-								AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+fsep+i.next(), GlobalConfig.getProperty("deviceworkdir"));
+								AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+i.next(), GlobalConfig.getProperty("deviceworkdir"));
 							}
 							t.delete();
+							Devices.getCurrent().doBusyboxHelper();
 							Shell shell1 = new Shell("sysadd");
 							shell1.runRoot();
 							somethingdone = true;
@@ -1374,8 +1482,9 @@ public class FlasherGUI extends JFrame {
 							TextFile t = new TextFile(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsremove","ASCII");
 							Iterator<String> i = t.getLines().iterator();
 							while (i.hasNext()) {
-								AdbUtility.pull("/system/app/"+i.next(),OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved");
+								AdbUtility.pull("/system/app/"+i.next(),OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId());
 							}
+							Devices.getCurrent().doBusyboxHelper();
 							Shell shell2 = new Shell("sysremove");
 							shell2.runRoot();
 							t.delete();
@@ -1396,7 +1505,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 	}
-	
+
 	public void doRebootRecoveryT() {
 		Worker.post(new Job() {
 			public Object run() {
@@ -1573,7 +1682,7 @@ public class FlasherGUI extends JFrame {
 		        		shell = new Shell("instbusybox");
 						shell.setProperty("BUSYBOXINSTALLPATH", Devices.getCurrent().getBusyBoxInstallPath());
 						shell.runRoot();
-				        MyLogger.getLogger().info("Installed version of busybox : " + AdbUtility.getBusyboxVersion(Devices.getCurrent().getBusyBoxInstallPath()));
+				        MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(true));
 				        MyLogger.getLogger().info("Finished");
 	        		}
 	        		else {
@@ -1685,11 +1794,12 @@ public class FlasherGUI extends JFrame {
 			    			if (devid.length()>0) {
 			        			found = true;
 			        			Devices.setCurrent(devid);
-				        		String reply = AskBox.getReplyOf("Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?");
-				        		if (reply.equals("yes")) {
-				        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
-				        			Devices.getCurrent().addRecognitionToList(prop);
-				        		}
+			        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
+			        			if (!Devices.getCurrent().getRecognition().contains(prop)) {
+			        				String reply = AskBox.getReplyOf("Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?");
+			        				if (reply.equals("yes"))
+			        					Devices.getCurrent().addRecognitionToList(prop);
+			        			}
 				        		if (!Devices.isWaitingForReboot())
 				        			MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getId());
 			        		}
@@ -1699,7 +1809,7 @@ public class FlasherGUI extends JFrame {
 		        		}
 		        		if (found) {
 		        			if (!Devices.isWaitingForReboot()) {
-		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion());
+		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
 		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion());
 		        			}
 		        			if (Devices.getCurrent().isRecovery()) {
@@ -1740,6 +1850,10 @@ public class FlasherGUI extends JFrame {
 		        			MyLogger.getLogger().debug("End of identification");
 		        		}
 		        	}
+		        	File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"apps_saved"+File.separator+Devices.getCurrent().getId());
+		        	f.mkdir();
+		        	f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"clean"+File.separator+Devices.getCurrent().getId());
+		        	f.mkdir();
     }
 
     public void doGiveRoot() {
@@ -1814,7 +1928,7 @@ public class FlasherGUI extends JFrame {
 					while (ic.hasNext()) {
 						String app = ic.next();
 						try {
-							AdbUtility.pull("/system/app/"+app, "."+fsep+"custom"+fsep+"apps_saved");
+							AdbUtility.pull("/system/app/"+app, "."+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId());
 						}
 						catch (Exception e) {}
 					}
@@ -1999,6 +2113,7 @@ public class FlasherGUI extends JFrame {
 				Devices.getCurrent().doBusyboxHelper();
 				if (AdbUtility.Sysremountrw()) {
 					MyLogger.getLogger().info("Installing toolbox to device...");
+					Devices.getCurrent().doBusyboxHelper();
 					AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"root"+fsep+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 					Shell shell = new Shell("installftkit");
 					shell.runRoot();

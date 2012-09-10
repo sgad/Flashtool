@@ -35,8 +35,10 @@ public class PropertiesFile {
         catch (Exception e) {
         	try {
         		props = new Properties();
-        		Reader in = new InputStreamReader(PropertiesFile.class.getClassLoader().getResourceAsStream(rname), "UTF-8");
-        		props.load(in);
+        		if (rname.length()>0) {
+        			Reader in = new InputStreamReader(PropertiesFile.class.getClassLoader().getResourceAsStream(rname), "UTF-8");
+        			props.load(in);
+        		}
         	}
         	catch (Exception e1) {
         	}
@@ -80,5 +82,9 @@ public class PropertiesFile {
 	
 	public void load(InputStream is) throws Exception {
 		props.load(is);
+	}
+	
+	public void remove(String key) {
+		props.remove(key);
 	}
 }

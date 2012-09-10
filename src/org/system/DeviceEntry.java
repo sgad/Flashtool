@@ -76,7 +76,7 @@ public class DeviceEntry {
 	}
 	
 	private void setKernelVersion() {
-		_entry.setProperty("kernel.version", AdbUtility.getKernelVersion(isBusyboxInstalled()));
+		_entry.setProperty("kernel.version", AdbUtility.getKernelVersion(isBusyboxInstalled(false)));
 	}
 	
 	public String getKernelVersion() {
@@ -123,11 +123,12 @@ public class DeviceEntry {
 		return _entry.getProperty("busyboxinstallpath");
 	}
 	
-	public String getInstalledBusyboxVersion() {
-		if (Devices.getCurrent().isBusyboxInstalled()) {
+	public String getInstalledBusyboxVersion(boolean force) {
+		if (Devices.getCurrent().isBusyboxInstalled(force)) {
 			return AdbUtility.getBusyboxVersion(getBusyBoxInstallPath());
 		}
 		else 
+			hasBusybox=false;
 			return "N/A";
 
 	}
@@ -207,14 +208,14 @@ public class DeviceEntry {
 		return "./devices/"+_entry.getProperty("internalname")+"/charger";
 	}
 
-	public boolean isBusyboxInstalled() {
-    	if (hasBusybox==null)
+	public boolean isBusyboxInstalled(boolean force) {
+    	if (hasBusybox==null || force)
     		hasBusybox = (AdbUtility.getBusyboxVersion(getBusyBoxInstallPath()).length()>0);
     	return hasBusybox.booleanValue();
     }
 
     public void doBusyboxHelper() throws Exception {
-    	if (!isBusyboxInstalled()) {
+    	if (!isBusyboxInstalled(false)) {
     		AdbUtility.push(getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
     		Shell shell = new Shell("busyhelper");
     		shell.run(true);
@@ -222,7 +223,12 @@ public class DeviceEntry {
     }
 
     public void reboot() throws Exception {
-    	Shell s = new Shell("reboot");
-    	s.runRoot(false);
+    	if (hasRoot()) {
+	    	Shell s = new Shell("reboot");
+	    	s.runRoot(false);
+    	}
+    	else {
+    		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getAdbPath(),"reboot"},false);
+    	}
     }
 }

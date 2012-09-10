@@ -248,7 +248,7 @@ public class FlasherConsole {
     		}
     		if (found) {
     			if (!Devices.isWaitingForReboot()) {
-    				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion());
+    				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
     				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion());
     			}
     			if (Devices.getCurrent().isRecovery()) {

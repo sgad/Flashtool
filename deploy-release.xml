@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.3.0"/>
+	<property name="version" value="0.9.4.0"/>
 	
 	<target name="all" depends="core release,devices,JRE"/>
 
@@ -61,6 +61,7 @@
 		<mkdir dir ="../Deploy/FlashTool/custom/sin"/>
     	<mkdir dir="../Deploy/FlashTool/firmwares"/>
         <mkdir dir ="../Deploy/FlashTool/custom/clean"/>
+		<mkdir dir ="../Deploy/FlashTool/custom/clean/X10"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
         <mkdir dir="../Deploy/FlashTool/drivers"/>
@@ -80,12 +81,15 @@
             <fileset dir="./firmwares"
                 excludes="**/.svn"/>
         </copy>
-		<copy file="./src/org/adb/config/x10list.properties" todir="../Deploy/FlashTool/custom/clean"/>
-    	<copy file="./src/org/adb/config/customlist.properties" todir="../Deploy/FlashTool/custom/clean"/>
+		<copy file="./src/org/adb/config/X10list.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
+    	<copy file="./src/org/adb/config/X10customlist.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
     	<copy file="./romupdates/psneuter.tar.uue" todir="../Deploy/FlashTool/custom/root"/>
     	<copy file="./romupdates/zergrush.tar.uue" todir="../Deploy/FlashTool/custom/root"/>
 		<copy file="./romupdates/ftkit.tar" todir="../Deploy/FlashTool/custom/root"/>
-        <copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
+	    <copy todir="../Deploy/FlashTool/custom/root">
+	       <fileset dir="./romupdates" excludes="**/.svn"/>
+	    </copy>
+		<copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
 		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
         <copy file="./linux/FlashTool" todir="../Deploy/FlashTool"/>
 		<copy file="./linux/FlashToolConsole" todir="../Deploy/FlashTool"/>

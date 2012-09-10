@@ -78,12 +78,20 @@ public class AdbUtility  {
 	}
 	
 	public static HashSet<String> listSysApps() throws Exception {
-		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "ls /system/app/*"},false);
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "ls /system/app/*apk"},false);
 		String[] result = command.getStdOut().split("\n");
 		HashSet<String> set = new HashSet<String>();
 		for (int i=0;i<result.length;i++) {
 			String apk = result[i].substring(result[i].lastIndexOf('/')+1);
-			set.add(apk.substring(0,apk.lastIndexOf(".apk")+4));
+			if (!apk.contains("No such file or directory"))
+				set.add(apk.substring(0,apk.lastIndexOf(".apk")+4));
+		}
+		command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "ls /system/app/*odex"},false);
+		result = command.getStdOut().split("\n");
+		for (int i=0;i<result.length;i++) {
+			String apk = result[i].substring(result[i].lastIndexOf('/')+1);
+			if (!apk.contains("No such file or directory"))
+				set.add(apk.substring(0,apk.lastIndexOf(".odex")+5));
 		}
 		return set;
 	}

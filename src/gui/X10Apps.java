@@ -15,16 +15,17 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.adb.AdbUtility;
+import org.system.Devices;
 import org.system.OS;
 import org.system.PropertiesFile;
 
 public class X10Apps {
 
 	private static String fsep = OS.getFileSeparator();
-	private PropertiesFile deviceList=new PropertiesFile("","."+fsep+"custom"+fsep+"clean"+fsep+"x10list.properties");
-	private PropertiesFile customList=new PropertiesFile("","."+fsep+"custom"+fsep+"clean"+fsep+"customlist.properties");
-	private Properties x10List = new Properties();
-	private Properties safeList;
+	private PropertiesFile deviceList=new PropertiesFile("","."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+Devices.getCurrent().getId()+"list.properties");
+	private PropertiesFile customList=new PropertiesFile("","."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+Devices.getCurrent().getId()+"customlist.properties");
+	//private Properties x10List = new Properties();
+	private PropertiesFile safeList;
 	private HashSet<String> currentList;
 	private String currentProfile="";
 	private Properties realnames = new Properties();
@@ -33,7 +34,7 @@ public class X10Apps {
 	// Copies src file to dst file.
 	// If the dst file does not exist, it is created
 	private void copyToAppsSaved(File src) throws IOException {
-		File dst = new File("./custom/apps_saved/"+src.getName());
+		File dst = new File("./custom/apps_saved/"+Devices.getCurrent().getId()+fsep+src.getName());
 		if (!dst.exists()) {
 		    InputStream in = new FileInputStream(src);
 		    OutputStream out = new FileOutputStream(dst);
@@ -62,7 +63,6 @@ public class X10Apps {
 			copyToAppsSaved(apk);
 			customList.setProperty(apk.getName(), desc);
 			customList.write("UTF-8");
-			x10List.setProperty(apk.getName(), desc);
 			realnames.setProperty(desc, apk.getName());
 			rescan();
 		}
@@ -79,13 +79,12 @@ public class X10Apps {
 			deviceList.setProperty(apkname,desc);
 			deviceList.write("UTF-8");
 		}
-		x10List.setProperty(apkname,desc);
 		realnames.setProperty(desc, apkname);
 		rescan();
 	}
 	
 	private void rescan() {
-		File[] dirlist = (new File("."+fsep+"custom"+fsep+"clean")).listFiles();
+		File[] dirlist = (new File("."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId())).listFiles();
 		for (int i=0;i<dirlist.length;i++) {
 			if (dirlist[i].getName().contains("safelist")) {
 				String key = dirlist[i].getName().replace((CharSequence)"safelist", (CharSequence)"");
@@ -103,16 +102,26 @@ public class X10Apps {
 	public X10Apps() {
 		try {
 			currentList = AdbUtility.listSysApps();
-			Allsafelist.put("default",new PropertiesFile());
+			Iterator ic = currentList.iterator();
+			while (ic.hasNext()) {
+				String next = (String)ic.next();
+				if (!deviceList.getProperties().containsKey(next))
+					deviceList.setProperty(next, next);
+			}
+			deviceList.write("UTF-8");
+			safeList = new PropertiesFile();
 			Iterator i = deviceList.getProperties().keySet().iterator();
 			while (i.hasNext()) {
 				String key = (String)i.next();
-				x10List.setProperty(key,deviceList.getProperty(key));
+				safeList.setProperty(key, "unsafe");
 			}
+			currentProfile="default";
+			Allsafelist.put("default",safeList);
+			if (!new File("."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+"safelist"+currentProfile+".properties").exists())
+				saveProfile(currentProfile);
 			Iterator i1 = customList.getProperties().keySet().iterator();
 			while (i1.hasNext()) {
 				String key = (String)i1.next();
-				x10List.setProperty(key,customList.getProperty(key));
 			}
 			rescan();
 		}
@@ -122,20 +131,18 @@ public class X10Apps {
 	
 	public void setProfile(String profile) {
 		currentProfile=profile;
-		safeList = (Properties)Allsafelist.get(profile).getProperties().clone();
+		safeList = Allsafelist.get(profile);
 		fillSet();
 		deviceList.write("UTF-8");
 		customList.write("UTF-8");
 	}
 
 	public void saveProfile() {
-		Allsafelist.get(currentProfile).setProperties(safeList);
 		Allsafelist.get(currentProfile).write("UTF-8");
 	}
 
 	public void saveProfile(String name) {
-		Allsafelist.get(currentProfile).setProperties(safeList);
-		Allsafelist.get(currentProfile).write("."+fsep+"custom"+fsep+"clean"+fsep+"safelist"+name+".properties","UTF-8");
+		Allsafelist.get(currentProfile).write("."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+"safelist"+name+".properties","UTF-8");
 		rescan();
 		setProfile(name.toLowerCase());
 	}
@@ -145,30 +152,24 @@ public class X10Apps {
 			Iterator<String> i = currentList.iterator();
 			while (i.hasNext()) {
 				String apk = i.next();
-				if (x10List.getProperty(apk)==null) {
-					x10List.setProperty(apk,apk);
-				}
 				if (safeList.getProperty(apk)==null) {
 					safeList.setProperty(apk,"unsafe");
 				}
 			}
-			Enumeration<Object> e = safeList.keys();
+			Enumeration<Object> e = safeList.getProperties().keys();
 			while (e.hasMoreElements()) {
 				String apk = (String)e.nextElement();
-				if (x10List.getProperty(apk)==null) {
-					x10List.setProperty(apk,apk);
-				}
 			}
-			Iterator<Object> i1 = x10List.keySet().iterator();
+			Iterator<Object> i1 = deviceList.keySet().iterator();
 			while (i1.hasNext()) {
 				String key = (String)i1.next();
-				realnames.setProperty(x10List.getProperty(key), key);
+				realnames.setProperty(deviceList.getProperty(key), key);
 			}
 		}
 		catch (Exception e) {
 		}
 	}
-	
+
 	public Set<String> getProfiles() {
 		return Allsafelist.keySet();
 	}
@@ -178,7 +179,7 @@ public class X10Apps {
 	}
 	
 	public String getRealName(String apk) {
-		return x10List.getProperty(apk);
+		return deviceList.getProperty(apk);
 	}
 	
 	public String getApkName(String realName) {

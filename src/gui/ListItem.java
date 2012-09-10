@@ -3,6 +3,8 @@ package gui;
 import java.awt.Color;
 import java.io.File;
 
+import org.system.Devices;
+
 public class ListItem {
 	
 	private Color _foreground;
@@ -16,7 +18,7 @@ public class ListItem {
     	_realname = realname;
         _foreground = foreground;
         _background = background;
-        isSaved = (new File("./custom/apps_saved/"+apkname).isFile());
+        isSaved = (new File("./custom/apps_saved/"+Devices.getCurrent().getId()+File.separator+apkname).isFile());
     }
     
     public Color getForeground() {

@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import org.lang.Language;
 import org.logger.MyLogger;
+import org.system.Devices;
 import org.system.OS;
 import org.system.Profile;
 import org.system.TextFile;
@@ -166,7 +167,7 @@ public class apkClean extends JDialog {
 								JMenuItem mntmImport = new JMenuItem("Import");
 								mntmImport.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent arg0) {
-										ProfileImport imp = new ProfileImport("./custom/clean");
+										ProfileImport imp = new ProfileImport("./custom/clean"+File.separator+Devices.getCurrent().getId());
 										String profile=imp.getProfile();
 										if (profile.length()>0) {
 											try {
@@ -176,7 +177,7 @@ public class apkClean extends JDialog {
 													JarEntry entry = e.nextElement();
 													if (entry.getName().toLowerCase().endsWith("apk")) {
 														InputStream in = j.getInputStream(entry);
-														String outname = "."+OS.getFileSeparator()+"custom"+OS.getFileSeparator()+"apps_saved"+OS.getFileSeparator()+entry.getName();
+														String outname = "."+OS.getFileSeparator()+"custom"+OS.getFileSeparator()+"apps_saved"+File.separator+Devices.getCurrent().getId()+File.separator+OS.getFileSeparator()+entry.getName();
 														MyLogger.getLogger().debug("Writing Entry to "+outname);
 														OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
 														byte[] buffer = new byte[1024];
@@ -192,7 +193,7 @@ public class apkClean extends JDialog {
 													JarEntry entry = e.nextElement();
 													if (entry.getName().toLowerCase().startsWith("safelist")) {
 														InputStream in = j.getInputStream(entry);
-														String outname = "."+OS.getFileSeparator()+"custom"+OS.getFileSeparator()+"clean"+OS.getFileSeparator()+entry.getName();
+														String outname = "."+OS.getFileSeparator()+"custom"+OS.getFileSeparator()+"clean"+File.separator+Devices.getCurrent().getId()+File.separator+OS.getFileSeparator()+entry.getName();
 														MyLogger.getLogger().debug("Writing Entry to "+outname);
 														OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
 														byte[] buffer = new byte[1024];
@@ -210,7 +211,7 @@ public class apkClean extends JDialog {
 														while (i.hasNext()) {
 															String apk = (String)i.next();
 															String desc = p.getProperty(apk);
-															apps.addApk(new File("./custom/apps_saved/"+apk), desc);
+															apps.addApk(new File("./custom/apps_saved/"+fsep+Devices.getCurrent().getId()+File.separator+apk), desc);
 														}
 														in.close();
 													}

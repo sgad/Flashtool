@@ -49,6 +49,8 @@ import org.system.Shell;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.TextFile;
+import org.system.VersionChecker;
+
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -997,6 +999,9 @@ public class FlasherGUI extends JFrame {
 		phoneWatchdog = new AdbPhoneThread();
 		phoneWatchdog.start();
 		phoneWatchdog.addStatusListener(phoneStatus);
+		VersionChecker vcheck = new VersionChecker();
+		vcheck.setMessageFrame(this);
+		vcheck.start();
 	}
 
 	public void setLanguage() {

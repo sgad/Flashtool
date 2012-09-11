@@ -1,17 +1,24 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import org.lang.Language;
 import org.system.OS;
+import javax.swing.JEditorPane;
 
 public class About extends JDialog {
 
@@ -74,6 +81,23 @@ public class About extends JDialog {
 		lblOs.setHorizontalAlignment(SwingConstants.CENTER);
 		lblOs.setBounds(10, 86, 348, 14);
 		contentPanel.add(lblOs);
+		
+		JEditorPane Homepage = new JEditorPane("text/html", "<a href='http://androxyde.github.com/'>Homepage</a>");  
+				Homepage.setEditable(false);  
+				Homepage.setOpaque(false);  
+				Homepage.addHyperlinkListener(new HyperlinkListener() {  
+				public void hyperlinkUpdate(HyperlinkEvent hle) {  
+				if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+					if (Desktop.isDesktopSupported()) {
+					      try {
+					        Desktop.getDesktop().browse(hle.getURL().toURI());
+					      } catch (Exception e) { /* TODO: error handling */ }
+					    } else { /* TODO: error handling */ }
+				}  
+				}  
+				});  
+		Homepage.setBounds(150, 125, 106, 20);
+		contentPanel.add(Homepage);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -97,5 +121,4 @@ public class About extends JDialog {
 	public void setLanguage() {
 		Language.translate(this);
 	}
-
 }

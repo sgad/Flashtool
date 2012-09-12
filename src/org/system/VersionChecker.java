@@ -16,12 +16,12 @@ public class VersionChecker extends Thread {
 		public void setMessageFrame(JFrame f) {
 			_f = f;
 		}
-	   
+
 		public void run() {
 			System.setProperty("java.net.useSystemProxies", "true");
 			boolean notchecked = true;
 			while (notchecked) {
-		   try {
+			try {
 		       URL oracle = new URL("https://github.com/Androxyde/Flashtool/raw/master/deploy-release.xml");
 		       BufferedReader in = new BufferedReader(
 		       new InputStreamReader(oracle.openStream()));
@@ -36,14 +36,13 @@ public class VersionChecker extends Thread {
 		    			   _f.setTitle(_f.getTitle()+"    --- New version "+version+" available ---");
 		    	   }
 		       in.close();
-		   }
-		   catch (Exception e) {
-			   System.out.println(e.getMessage());
-		   }
-		   try {
-		   sleep(1000);
-		   }
-		   catch (Exception e) {}
+		   	}
+		   	catch (Exception e) {
+		   	}
+		   	try {
+		   		sleep(2000);
+		   	}
+		   	catch (Exception e) {}
 			}
 	   } 
 

@@ -17,6 +17,8 @@ import com.jgoodies.forms.factories.FormFactory;
 
 import flashsystem.HexDump;
 import flashsystem.SinFile;
+import foxtrot.Job;
+import foxtrot.Worker;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -40,12 +42,16 @@ public class SinEditorUI extends JDialog {
 	private JButton btnDumpData;
 	private JButton btnDumpHeader;
 	private JButton btnCreateSin;
+	private JButton okButton;
+	private JDialog _sinui;
+	private JLabel lblProcessing;
 
 
 	/**
 	 * Create the dialog.
 	 */
 	public SinEditorUI() {
+		_sinui = this;
 		setModal(true);
 		setTitle("Sin Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -63,6 +69,8 @@ public class SinEditorUI extends JDialog {
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,},
 			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -141,12 +149,29 @@ public class SinEditorUI extends JDialog {
 			btnDumpData.setEnabled(false);
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					try {
-						sin.dumpImage();
-					}
-					catch (Exception e) {
-						MyLogger.getLogger().error(e.getMessage());
-					}
+					Worker.post(new Job() {
+						public Object run() {
+							try {
+								okButton.setEnabled(false);
+								btnDumpData.setEnabled(false);
+								btnDumpHeader.setEnabled(false);
+								btnCreateSin.setEnabled(false);
+								lblProcessing.setText("Processing action. Please wait");
+								_sinui.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+								sin.dumpImage();
+								okButton.setEnabled(true);
+								btnDumpData.setEnabled(true);
+								btnDumpHeader.setEnabled(true);
+								btnCreateSin.setEnabled(true);
+								lblProcessing.setText("");
+								_sinui.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							}
+							catch (Exception e) {
+								MyLogger.getLogger().error(e.getMessage());
+							}
+							return null;
+						}
+					});
 				}
 			});
 			{
@@ -191,6 +216,10 @@ public class SinEditorUI extends JDialog {
 			contentPanel.add(btnCreateSin, "4, 20");
 		}
 		{
+			lblProcessing = new JLabel("");
+			contentPanel.add(lblProcessing, "2, 22, 7, 1, center, center");
+		}
+		{
 			//JButton btnUseAsTemplate = new JButton("Use as template");
 			//contentPanel.add(btnUseAsTemplate, "4, 20");
 		}
@@ -199,7 +228,7 @@ public class SinEditorUI extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Close");
+				okButton = new JButton("Close");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();

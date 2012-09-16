@@ -225,5 +225,15 @@ public class BytesUtil {
         is.close();
         return bytes;
     }
+	
+	public static byte[] revert(byte[] array) {
+		for (int i = 0, j = array.length - 1; i < j; i++, j--)  
+		{  
+		    byte b = array[i];  
+		    array[i] = array[j];  
+		    array[j] = b;  
+		}
+		return array;
+	}
 
 }

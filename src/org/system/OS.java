@@ -83,6 +83,18 @@ public class OS {
 		}
 	}
 
+	public static String getSHA1(byte[] array) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+			digest.update(array, 0, array.length);
+			byte[] sha1 = digest.digest();
+			return HexDump.toHex(sha1);
+		}
+		catch(NoSuchAlgorithmException nsa) {
+			throw new RuntimeException("Unable to process file for SHA-256", nsa);
+		}
+	}
+
 	public static String getSHA256(File f) {
 		byte[] buffer = new byte[8192];
 		int read = 0;

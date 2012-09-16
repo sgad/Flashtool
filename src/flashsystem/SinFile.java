@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.Vector;
 
 import org.logger.MyLogger;
 import org.system.OS;
@@ -35,6 +36,16 @@ public class SinFile {
 		sinfile = new File(file);
 		processHeader();
 		datatype = getDatatype();
+		if (datatype.equals("yaffs2") || datatype.equals("ext4"))
+			if (sinheader.getPartitionType()==0x0A)
+				sinheader.setBlockSize(131072+4096);
+			else
+				sinheader.setBlockSize(131072);
+		else
+			if (sinheader.getVersion()==2)
+				sinheader.setBlockSize(512);
+			else
+				sinheader.setBlockSize(131072);
 	}
 
 	public String getLongFileName() {
@@ -106,8 +117,6 @@ public class SinFile {
 	}
 	
 	public void dumpImage() throws IOException {
-		Worker.post(new Job() {
-			public Object run() {
 				try {
 					// First I write partition info bytearray in a .partinfo file
 					if (sinheader.hasPartitionInfo()) {
@@ -133,82 +142,48 @@ public class SinFile {
 						fout.write(0xFF);
 					}
 					MyLogger.getLogger().info("Finished Generating container file");
-					RandomAccessFile finblocks = new RandomAccessFile(sinfile,"r");
 					RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
 					// Positionning in files
 					MyLogger.getLogger().info("Extracting data into container");
 					findata.seek(sinheader.getHeaderSize());
-					finblocks.seek(15);
-					byte[] boffset = new byte[4];
-					byte[] blength = new byte[4];
-					byte[] hashsize = new byte[1];
-					boolean isblock = true;
-					// While we read a block (validated by block read hash and data computed hash) we iterate thru files
-					while (isblock) {
-						finblocks.read(boffset);
-						finblocks.read(blength);
-						finblocks.read(hashsize);
-						byte[] payload = new byte[hashsize[0]];
-						finblocks.read(payload);
-						byte[] data = new byte[BytesUtil.getInt(blength)];
+					Vector<SinHashBlock> blocks = sinheader.getHashBlocks();
+					for (int i=0;i<blocks.size();i++) {
+						SinHashBlock b = blocks.elementAt(i);
+						byte[] data = new byte[b.getLength()];
 						findata.read(data);
-						if (HexDump.toHex(payload).equals(OS.getSHA256(data))) {
-							if (sinheader.getNbHashBlocks()>1) {
-								fout.seek(BytesUtil.getLong(boffset));
-								fout.write(data);
-							}
-							else {
-								fout.seek(0);
-								fout.write(data);					
-							}
-						}
-						else {
-							isblock = false;
-						}
+						b.validate(data);
+						fout.seek(blocks.size()==1?0:b.getOffset());
+						fout.write(data);
 					}
 					fout.close();
-					finblocks.close();
 					findata.close();
 					MyLogger.getLogger().info("Data Extraction finished");
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
-				return null;
-			}
-		});
 	}
 
 	private void processHeader() throws IOException {
 		int nbread;
-		byte header[] = new byte[15];
+		byte headersize[] = new byte[4];
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		nbread = fin.read(header);
-		if(nbread != header.length) {
+		fin.seek(2);
+		nbread = fin.read(headersize);
+		if(nbread != headersize.length) {
 			fin.close();
 			throw new IOException("Error in processHeader");
 		}
+		byte[] header = new byte[BytesUtil.getInt(headersize)];
+		fin.seek(0);
+		nbread = fin.read(header);
 		sinheader = new SinFileHeader(header);
-		byte[] firstblock = new byte[9];
-		fin.read(firstblock);
-		sinheader.setFirstBlock(firstblock);
 		if (sinheader.hasPartitionInfo()) {
 			fin.seek(sinheader.getHeaderSize());
-			byte[] partinfo = new byte[sinheader.getPartitionInfoLength()];
-			nbread = fin.read(partinfo);
-			if(nbread != partinfo.length) {
-				fin.close();
-				throw new IOException("Error in processHeader");
-			}
-			sinheader.setPartitionInfo(partinfo);
+			byte[] part = new byte[sinheader.getPartitionInfoLength()];
+			fin.read(part);
+			sinheader.setPartitionInfo(part);
 		}
-		fin.seek(0);
-		header = new byte[sinheader.getHeaderSize()];
-		nbread = fin.read(header);
-		if(nbread != header.length) {
-			fin.close();
-			throw new IOException("Error in processHeader");
-		}
-		sinheader.setHeader(header);
 		fin.close();
     }
 

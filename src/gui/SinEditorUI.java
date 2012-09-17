@@ -55,7 +55,7 @@ public class SinEditorUI extends JDialog {
 		setModal(true);
 		setTitle("Sin Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 346);
+		setBounds(100, 100, 450, 372);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

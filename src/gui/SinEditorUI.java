@@ -51,6 +51,7 @@ public class SinEditorUI extends JDialog {
 	 * Create the dialog.
 	 */
 	public SinEditorUI() {
+		setResizable(false);
 		_sinui = this;
 		setModal(true);
 		setTitle("Sin Editor");

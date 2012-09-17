@@ -136,6 +136,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRootPsneuter;
 	private JMenuItem mntmRootzergRush;
 	private JMenuItem mntmRootEmulator;
+	private JMenuItem mntmRootAdbRestore1;
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
@@ -417,9 +418,25 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
+		mntmRootAdbRestore1 = new JMenuItem("Force AdbRestore via Semc B&R");
+		mntmRootAdbRestore1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (!Devices.getCurrent().hasRoot())
+					try {
+						doRootAdbRestore();
+					}
+					catch (Exception e) {
+						MyLogger.getLogger().error(e.getMessage());
+					}
+				else
+					JOptionPane.showMessageDialog(null, "Your device is already rooted");
+			}
+		});
+
 		mnRoot.add(mntmRootPsneuter);
 		mnRoot.add(mntmRootzergRush);
 		mnRoot.add(mntmRootEmulator);
+		mnRoot.add(mntmRootAdbRestore1);
 		
 		JMenu mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
@@ -1274,10 +1291,62 @@ public class FlasherGUI extends JFrame {
 				if (Devices.getCurrent().getVersion().contains("4.0.3"))
 						doRootEmulator();
 				else
-					JOptionPane.showMessageDialog(null, "No root exploit for this version");
+					if (AdbUtility.exists("/system/app/Backup-Restore.apk") && Devices.getCurrent().getVersion().contains("4.0"))
+						doRootAdbRestore();
+					else
+						JOptionPane.showMessageDialog(null, "No root exploit for this version");
 			}
 	}
-	
+
+	public void doRootAdbRestore() {
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+					AdbUtility.run("chown root.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+					AdbUtility.run("chmod 755 "+GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+					AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
+					AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
+					AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"RootMe.tar", GlobalConfig.getProperty("deviceworkdir")+"/RootMe.tar");
+					AdbUtility.run("mkdir /mnt/sdcard/.semc-fullbackup > /dev/null 2>&1");
+					AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/* > /dev/null 2>&1");
+					AdbUtility.run("cd /mnt/sdcard/.semc-fullbackup/; /data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
+					MyLogger.getLogger().info("Now open your device and run Semc backup&Restore. Restore RootMe backup.");
+					Devices.setWaitForReboot();
+					MyLogger.getLogger().info("Waiting for restore to finish");
+					AdbUtility.run("while ! ln -s /data/local.prop /data/data/com.android.settings/a/file99; do :; done");
+					MyLogger.getLogger().info("Restore worked fine. Continuing ...");
+					Devices.stopWaitForReboot();
+					MyLogger.getLogger().info("Rebooting device. Please Wait");
+					Devices.getCurrent().reboot();
+					Devices.waitForReboot(false);
+					if (Devices.getCurrent().hasRoot()) {
+						MyLogger.getLogger().info("Root achieved. Making it permanent");
+						AdbUtility.run("/data/local/tmp/busybox mount -o remount,rw /system");
+						AdbUtility.run("dd if=/data/local/tmp/su of=/system/xbin/su");
+						AdbUtility.run("chmod 06755 /system/xbin/su");
+						AdbUtility.run("dd if=/data/local/tmp/Superuser.apk of=/system/app/Superuser.apk");
+						AdbUtility.run("chmod 655 /system/app/Superuser.apk");
+						AdbUtility.run("dd if=/data/local/tmp/busybox of=/system/xbin/busybox");
+						AdbUtility.run("chmod 755 /system/xbin/busybox");
+						AdbUtility.run("rm /data/local/tmp/su");
+						AdbUtility.run("rm /data/local/tmp/Superuser.apk");
+						AdbUtility.run("rm /data/local/tmp/busybox");
+						AdbUtility.run("rm /data/local/tmp/RootMe.tar");
+						AdbUtility.run("rm /data/local.prop");
+						AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/RootMe");
+						AdbUtility.run("sync; sync; sync;");
+						MyLogger.getLogger().info("Finished. Now rebooting device");
+						Devices.getCurrent().reboot();
+					}
+				}
+				catch (Exception e) {
+				}
+				return null;
+			}
+		});
+	}
+
 	public void doRootEmulator() {
 		Worker.post(new Job() {
 			public Object run() {

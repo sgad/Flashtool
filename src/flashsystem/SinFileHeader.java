@@ -16,6 +16,7 @@ public class SinFileHeader {
 	private int blocksize;
 	
 	public SinFileHeader(byte[] header) {
+		this.header = header;
 		System.arraycopy(header, 0, version, 0, 1);
 		System.arraycopy(header, 1, nextHeader, 0, 1);
 		System.arraycopy(header, 2, headersize, 0, 4);
@@ -23,7 +24,6 @@ public class SinFileHeader {
 		System.arraycopy(header, 7, sinreserved, 0, 4);
 		System.arraycopy(header, 11, hashlistsize, 0, 4);
 		if (getHashListSize()>0) {
-			try {
 				int hashoffset = 15;
 				int read = 0;
 				byte[] block = new byte[9];
@@ -42,10 +42,6 @@ public class SinFileHeader {
 					if (b.getLength()>0x10)
 						index++;
 				} while (read < BytesUtil.getInt(hashlistsize));
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

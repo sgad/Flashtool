@@ -116,12 +116,22 @@ Section /o "Xperia SX driver for ICS" SEC15
   File /r "Drivers\ADB\Xperia SX driver for ICS\*"
 SectionEnd
 
-Section /o "Flashmode Drivers" SEC16
+Section /o "Xperia SL driver" SEC16
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia SL driver"
+  File /r "Drivers\ADB\Xperia SL driver\*"
+SectionEnd
+
+Section /o "Xperia TX driver" SEC17
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia TX driver"
+  File /r "Drivers\ADB\Xperia TX driver\*"
+SectionEnd
+
+Section /o "Flashmode Drivers" SEC18
   SetOutPath "$TEMP\Flashtool\GordonGate"
   File /r "Drivers\GordonGate\*"
 SectionEnd
 
-Section /o "Fastboot Drivers" SEC17
+Section /o "Fastboot Drivers" SEC19
   SetOutPath "$TEMP\Flashtool\Fastboot"
   File /r "Drivers\FASTBOOT\*"
 SectionEnd

@@ -123,6 +123,10 @@ public class Devices  {
 		waitforreboot=false;
 	}
 	
+	public static void setWaitForReboot() {
+		waitforreboot=true;
+	}
+	
 	public static boolean isWaitingForReboot() {
 		return waitforreboot;
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.5.0"/>
+	<property name="version" value="0.9.6.0"/>
 	
 	<target name="all" depends="core release,devices,JRE"/>
 
@@ -83,9 +83,6 @@
         </copy>
 		<copy file="./src/org/adb/config/X10list.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
     	<copy file="./src/org/adb/config/X10customlist.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
-    	<copy file="./romupdates/psneuter.tar.uue" todir="../Deploy/FlashTool/custom/root"/>
-    	<copy file="./romupdates/zergrush.tar.uue" todir="../Deploy/FlashTool/custom/root"/>
-		<copy file="./romupdates/ftkit.tar" todir="../Deploy/FlashTool/custom/root"/>
 	    <copy todir="../Deploy/FlashTool/custom/root">
 	       <fileset dir="./romupdates" excludes="**/.svn"/>
 	    </copy>

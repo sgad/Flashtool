@@ -240,7 +240,16 @@ public class AdbUtility  {
 	public static void push(String source, String destination) throws Exception {
 		push(source, destination, true);
 	}
-	
+
+	public static void restore(String source) throws Exception {
+		File f = new File(source);
+		if (!f.exists()) throw new AdbException(source+" : Not found");		
+		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"restore",f.getAbsolutePath()},false);
+		if (command.getStatus()!=0) {
+			throw new AdbException(command.getStdOut()+ " " + command.getStdErr());
+		}
+	}
+
 	public static void push(String source, String destination, boolean log) throws Exception {
 		File f = new File(source);
 		if (!f.exists()) throw new AdbException(source+" : Not found");

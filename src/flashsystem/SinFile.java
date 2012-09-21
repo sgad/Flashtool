@@ -1,20 +1,13 @@
 package flashsystem;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.Vector;
-
 import org.logger.MyLogger;
-import org.system.OS;
-import org.system.ProcessBuilderWrapper;
 
-import foxtrot.Job;
-import foxtrot.Worker;
 
 public class SinFile {
 
@@ -36,16 +29,18 @@ public class SinFile {
 		sinfile = new File(file);
 		processHeader();
 		datatype = getDatatype();
-		if (datatype.equals("yaffs2") || datatype.equals("ext4"))
-			if (sinheader.getPartitionType()==0x0A)
-				sinheader.setBlockSize(131072+4096);
-			else
-				sinheader.setBlockSize(131072);
+		if (sinheader.getVersion()==1) {
+			int cursize = sinheader.getHashBlocks().get(1).getLength();
+			sinheader.setBlockSize(cursize);
+			if (sinheader.getPartitionType()==0x0A) {
+				for (int i=0;i<sinheader.getHashBlocks().size();i++) {
+					sinheader.getHashBlocks().get(i).setSpare(cursize%131072);
+				}
+			}
+				
+		}
 		else
-			if (sinheader.getVersion()==2)
-				sinheader.setBlockSize(512);
-			else
-				sinheader.setBlockSize(131072);
+			sinheader.setBlockSize(512);
 	}
 
 	public String getLongFileName() {
@@ -135,6 +130,7 @@ public class SinFile {
 					f.delete();
 					RandomAccessFile fout = new RandomAccessFile(f,"rw");
 					MyLogger.getLogger().info("Generating container file");
+					MyLogger.getLogger().info("Output file size : " + sinheader.getOutfileLengthString());
 					for (long i = 0; i<sinheader.getOutfileLength()/empty.length; i++) {
 						fout.write(empty);
 					}
@@ -160,6 +156,7 @@ public class SinFile {
 					MyLogger.getLogger().info("Data Extraction finished");
 				}
 				catch (Exception e) {
+					MyLogger.getLogger().error("Error while extracting data : "+e.getMessage());
 					e.printStackTrace();
 				}
 	}
@@ -185,6 +182,7 @@ public class SinFile {
 			sinheader.setPartitionInfo(part);
 		}
 		fin.close();
+		
     }
 
 	public byte[] getPartitionInfoBytes() throws IOException {
@@ -219,12 +217,15 @@ public class SinFile {
 				}
 			}
 			while (isnull) {
-				byte b = (byte)fin.read();
-				if (b!=0) isnull=false;
+				fin.read(ident);
+				for (int i=0;i<ident.length;i++) {
+					if (ident[i]!=0) {
+						isnull=false;
+					}
+				}
 			}
-			byte[] ident1 = new byte[52];
-			fin.read(ident1);
-			ident1 = new byte[4];
+			fin.seek(fin.getFilePointer()-16+0x38);
+			byte[] ident1 = new byte[2];
 			fin.read(ident1);
 			fin.close();
 			if (HexDump.toHex(ident1).contains("53, EF")) return "ext4";

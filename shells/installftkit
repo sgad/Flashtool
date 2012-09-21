@@ -1,5 +1,13 @@
 export PATH=DEVICEWORKDIR:$PATH
 
-(cd /;busybox tar xf DEVICEWORKDIR/ftkit.tar)
+export ISRO=$(busybox mount|busybox grep /system|busybox grep ro)
 
+if busybox test -n "$ISRO"
+then
+    busybox mount -o remount,rw /system
+    (cd /;busybox tar xf DEVICEWORKDIR/ftkit.tar)
+    busybox mount -o remount,ro /system
+else
+    (cd /;busybox tar xf DEVICEWORKDIR/ftkit.tar)
+fi
 busybox rm -r DEVICEWORKDIR/ftkit.tar

@@ -1,18 +1,27 @@
 package flashsystem;
 
+import org.logger.MyLogger;
+
 public class SinPartInfo {
 
 	byte[] partinfo=null;
+	int sinversion;
+	long blockcount;
 
 	public SinPartInfo() {
 	}
 
-	public SinPartInfo(byte[] array) {
-		partinfo = array;
+	public SinPartInfo(byte[] array, int version) {
+		setPartInfo(array,version);
 	}
 
-	public void setPartInfo(byte[] array) {
+	public void setPartInfo(byte[] array, int version) {
 		partinfo = array;
+		sinversion = version;
+		byte[] nbblocks = new byte[4];
+		System.arraycopy(partinfo, 12, nbblocks, 0, 4);
+		BytesUtil.revert(nbblocks);
+		blockcount=BytesUtil.getLong(nbblocks);
 	}
 
 	public byte[] getPartInfo() {
@@ -26,12 +35,6 @@ public class SinPartInfo {
 	
 	public long getNbPartitionBlocks() {
 		if (partinfo == null) return 0;
-		byte[] nbblocks = new byte[4];
-		System.arraycopy(partinfo, 12, nbblocks, 0, 4);
-		int res = BytesUtil.getInt(nbblocks);
-		
-		if ((res < 0)|| (res>64*1024))
-			BytesUtil.revert(nbblocks);
-		return BytesUtil.getLong(nbblocks);
+		return blockcount;
 	}
 }

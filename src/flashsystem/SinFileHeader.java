@@ -2,6 +2,8 @@ package flashsystem;
 
 import java.util.Vector;
 
+import org.logger.MyLogger;
+
 public class SinFileHeader {
 
 	private byte[] version = new byte[1]; 
@@ -14,6 +16,8 @@ public class SinFileHeader {
 	private byte[] header;
 	private Vector<SinHashBlock> blocks = new Vector<SinHashBlock>();
 	private int blocksize;
+	private String unit="";
+	private long partitionsize;
 	
 	public SinFileHeader(byte[] header) {
 		this.header = header;
@@ -32,7 +36,7 @@ public class SinFileHeader {
 					System.arraycopy(header, hashoffset, block, 0, block.length);
 					hashoffset+=block.length;
 					read+=block.length;
-					SinHashBlock b = new SinHashBlock(block,index,getPartitionType()==0x0A?4096:0);
+					SinHashBlock b = new SinHashBlock(block,index);
 					byte[] hash = new byte[b.getHashSize()];
 					System.arraycopy(header, hashoffset, hash, 0, hash.length);
 					hashoffset+=hash.length;
@@ -54,7 +58,7 @@ public class SinFileHeader {
 	}
 	
 	public void setPartitionInfo(byte[] partinfo) {
-		partitioninfo.setPartInfo(partinfo);
+		partitioninfo.setPartInfo(partinfo,getVersion());
 	}
 	
 	public byte[] getPartitionInfo() {
@@ -63,12 +67,26 @@ public class SinFileHeader {
 	
 	public void setBlockSize(int bksize) {
 		blocksize = bksize;
+		partitionsize = partitioninfo.getNbPartitionBlocks()*blocksize;
+		long gig = 1024*1024*1024;
+		long meg = 1024*1024;
+		if (partitionsize/gig>0) {
+			unit = unit+Long.toString(partitionsize/gig)+"."+Long.toString((partitionsize%gig)/meg)+"Gb";
+		}
+		else {
+			unit = unit+Long.toString(partitionsize/meg)+"."+Long.toString((partitionsize%meg)/1024)+"Mb";
+		}
+		MyLogger.getLogger().debug("Sin version "+getVersion()+" ; Partition block count : " + partitioninfo.getNbPartitionBlocks()+ " ; Partition block size : "+blocksize+" ; Partition size : "+unit);
 	}
 	
 	public long getOutfileLength() {
-		return partitioninfo.getNbPartitionBlocks()*blocksize;
+		return partitionsize;
 	}
-	
+
+	public String getOutfileLengthString() {
+		return unit;
+	}
+
 	public int getNbHashBlocks() {
 		return blocks.size();
 	}

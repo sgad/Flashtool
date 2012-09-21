@@ -9,9 +9,9 @@ public class SinHashBlock {
 	int hashsize;
 	byte[] hash;
 	int blockindex;
-	int spare;
+	int spare=0;
 
-	public SinHashBlock(byte[] hashblock, int index, int spare) {
+	public SinHashBlock(byte[] hashblock, int index) {
 		this.spare = spare;
 		byte[] offset = new byte[4];
 		byte[] length = new byte[4];
@@ -21,6 +21,10 @@ public class SinHashBlock {
 		blength = BytesUtil.getInt(length);
 		hashsize=hashblock[8];
 		blockindex=index;
+	}
+	
+	public void setSpare(int spare) {
+		this.spare = spare;
 	}
 	
 	public int getHashSize() {
@@ -59,6 +63,6 @@ public class SinHashBlock {
 	}
 	
 	public String toString() {
-		return "Block "+blockindex+" ; Data size : "+getLength()+" ; Data hash size "+getHashSize()+" ; Dest offset : "+getOffset();
+		return "Block "+blockindex+" ; Data size : "+getLength()+" ; Data hash size "+getHashSize()+" ; Dest offset : "+getOffset()+" ; Spare size : " + spare;
 	}
 }

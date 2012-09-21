@@ -63,8 +63,7 @@ public class firmSelect extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTable tableFirm;
 	private DefaultTableModel modelFirm;
-	private DefaultTableModel model_1;
-	private XTableColumnModel tableColumnModel = new XTableColumnModel(); 
+	private DefaultTableModel model_1; 
 	private Bundle selected=null;
 	private String result;
 	private boolean retcode = false;
@@ -87,9 +86,9 @@ public class firmSelect extends JDialog {
 		modelFirm.addColumn("Branding");
 		tableFirm.setModel(modelFirm);
 		tableFirm.getRowSorter().toggleSortOrder(1);
-		tableFirm.setColumnModel(tableColumnModel);
+		tableFirm.setColumnModel(new XTableColumnModel());
 		tableFirm.createDefaultColumnsFromModel();
-		tableColumnModel.setColumnVisible(tableColumnModel.getColumnByModelIndex(0), false);
+		((XTableColumnModel)tableFirm.getColumnModel()).setColumnVisible(((XTableColumnModel)tableFirm.getColumnModel()).getColumnByModelIndex(0), false);
     	File dir = new File(folderSource.getText());
 	    File[] chld = dir.listFiles(new FtfFilter(filename));
 	    for(int i = 0; i < chld.length; i++) {
@@ -132,14 +131,16 @@ public class firmSelect extends JDialog {
 		model_1.addColumn("File");
 		tablesin.setModel(model_1);
 		tablesin.getRowSorter().toggleSortOrder(0);
-		Enumeration<String> e = selected.getMeta().getAllEntries(true);
-		while (e.hasMoreElements()) {
-			String elem = e.nextElement();
-			model_1.addRow(new String[]{elem});
-	    	MyLogger.getLogger().debug("Adding "+elem+" to the content of "+result);
-	    }
-	    if (model_1.getRowCount()>0)
-	    	tablesin.setRowSelectionInterval(0, 0);
+		if (result!=null) {
+			Enumeration<String> e = selected.getMeta().getAllEntries(true);
+			while (e.hasMoreElements()) {
+				String elem = e.nextElement();
+				model_1.addRow(new String[]{elem});
+		    	MyLogger.getLogger().debug("Adding "+elem+" to the content of "+result);
+		    }
+		    if (model_1.getRowCount()>0)
+		    	tablesin.setRowSelectionInterval(0, 0);
+		}
 	}
 	
 	/**

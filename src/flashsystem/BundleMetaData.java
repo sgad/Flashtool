@@ -2,6 +2,7 @@ package flashsystem;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 import org.jdom.Element;
@@ -10,7 +11,7 @@ import org.jdom.output.XMLOutputter;
 
 public class BundleMetaData {
 
-	Properties _categ = new Properties();
+	Hashtable<String, Vector<String>> _categ = new Hashtable<String, Vector<String>>();
 	Properties _ftoint = new Properties();
 	Properties _inttof = new Properties();
 	Properties _pathtof = new Properties();
@@ -48,15 +49,15 @@ public class BundleMetaData {
 		return _catorders.getProperty(Integer.toString(order));
 	}
 	
-	public Enumeration getCategories() {
+	public Enumeration<String> getCategories() {
 		return _categ.keys();
 	}
 	
-	public Enumeration getWipe() {
+	public Enumeration<String> getWipe() {
 		Vector<String> list = new Vector<String>();
-		Enumeration categlist = _categ.keys();
+		Enumeration<String> categlist = _categ.keys();
 		while (categlist.hasMoreElements()) {
-			String key = (String)categlist.nextElement();
+			String key = categlist.nextElement();
 			if (_categwipe.containsKey(key)) {
 				list.add(key);
 			}
@@ -72,11 +73,11 @@ public class BundleMetaData {
 		return _categex.getProperty(categ);
 	}
 	
-	public Enumeration getExclude() {
+	public Enumeration<String> getExclude() {
 		Vector<String> list = new Vector<String>();
-		Enumeration categlist = _categ.keys();
+		Enumeration<String> categlist = _categ.keys();
 		while (categlist.hasMoreElements()) {
-			String key = (String)categlist.nextElement();
+			String key = categlist.nextElement();
 			if (_categex.containsKey(key)) {
 				list.add(key);
 			}
@@ -121,15 +122,15 @@ public class BundleMetaData {
 	
 	public void add(String intname, String categorie) throws Exception {
 		Vector<String> list;
-		Enumeration elem = _categ.keys();
+		Enumeration<String> elem = _categ.keys();
 		while (elem.hasMoreElements()) {
-			String lcateg = (String)elem.nextElement();
-			if (((Vector<String>)_categ.get(lcateg)).contains(intname))
+			String lcateg = elem.nextElement();
+			if ((_categ.get(lcateg)).contains(intname))
 				if (!lcateg.equals(categorie))
 					throw new Exception("A file cannot be affected to more  than one category");
 		}
 		if (_categ.containsKey(categorie)) {
-			list = (Vector<String>)_categ.get(categorie);
+			list = _categ.get(categorie);
 		}
 		else {
 			list = new Vector<String>();
@@ -157,11 +158,11 @@ public class BundleMetaData {
 
 	public String toString() {
 		String result="";
-		Enumeration elem = _categ.keys();
+		Enumeration<String> elem = _categ.keys();
 		while (elem.hasMoreElements()) {
-			String categ = (String)elem.nextElement(); 
+			String categ = elem.nextElement(); 
 			result = result + categ+"\n";
-			Vector<String> list = (Vector<String>)_categ.get(categ);
+			Vector<String> list = _categ.get(categ);
 			Enumeration<String> listelem = list.elements();
 			while (listelem.hasMoreElements()) {
 				result = result+"   "+listelem.nextElement()+"\n";
@@ -187,10 +188,10 @@ public class BundleMetaData {
 	}
 
 	public String getCategorie(String name) {
-		Enumeration elems = _categ.keys();
+		Enumeration<String> elems = _categ.keys();
 		while (elems.hasMoreElements()) {
-			String categ = (String)elems.nextElement();
-			Vector<String> list = (Vector<String>)_categ.get(categ);
+			String categ = elems.nextElement();
+			Vector<String> list = _categ.get(categ);
 			if (list.contains(name)) return categ;
 		}
 		return "";
@@ -198,14 +199,14 @@ public class BundleMetaData {
 
 	public Enumeration<String> getAllEntries(boolean checkSelected) {
 		Vector<String> result = new Vector<String>();
-		Enumeration elem = _categ.keys();
+		Enumeration<String> elem = _categ.keys();
 		while (elem.hasMoreElements()) {
-			String categ = (String)elem.nextElement();
+			String categ = elem.nextElement();
 			boolean toAdd = true;
 			if (checkSelected)
 				 toAdd = _enabled.getProperty(categ).equals("true");
 			if (toAdd) {
-				Vector<String> list = (Vector<String>)_categ.get(categ);
+				Vector<String> list = _categ.get(categ);
 				Enumeration<String> listelem = list.elements();
 				while (listelem.hasMoreElements()) {
 					result.add(listelem.nextElement());
@@ -217,15 +218,15 @@ public class BundleMetaData {
 
 	public Enumeration<String> getEntriesOf(String pcateg,boolean checkSelected) {
 		Vector<String> result = new Vector<String>();
-		Enumeration elem = _categ.keys();
+		Enumeration<String> elem = _categ.keys();
 		while (elem.hasMoreElements()) {
-			String categ = (String)elem.nextElement();
+			String categ = elem.nextElement();
 			if (categ.toUpperCase().equals(pcateg.toUpperCase())) {
 				boolean toAdd = true;
 				if (checkSelected)
 					 toAdd = _enabled.getProperty(categ).equals("true");
 				if (toAdd) {
-					Vector<String> list = (Vector<String>)_categ.get(categ);
+					Vector<String> list = _categ.get(categ);
 					Enumeration<String> listelem = list.elements();
 					while (listelem.hasMoreElements()) {
 						result.add(listelem.nextElement());
@@ -238,10 +239,10 @@ public class BundleMetaData {
 
 	public Enumeration<String> getEntries() {
 		Vector<String> result = new Vector<String>();
-		Enumeration elem = _categ.keys();
+		Enumeration<String> elem = _categ.keys();
 		while (elem.hasMoreElements()) {
-			String categ = (String)elem.nextElement();
-			Vector<String> list = (Vector<String>)_categ.get(categ);
+			String categ = elem.nextElement();
+			Vector<String> list = _categ.get(categ);
 			Enumeration<String> listelem = list.elements();
 			while (listelem.hasMoreElements()) {
 				result.add(listelem.nextElement());

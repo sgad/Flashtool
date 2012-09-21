@@ -32,6 +32,10 @@ import java.io.IOException;
 
 public class SinEditorUI extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textSin;
 	private JTextField textPartition;
@@ -119,7 +123,7 @@ public class SinEditorUI extends JDialog {
 						btnDumpHeader.setEnabled(true);
 						btnCreateSin.setEnabled(true);
 						}
-						catch (Exception e) {}
+						catch (Exception e) {e.printStackTrace();}
 					}
 				}
 			});

@@ -1,6 +1,6 @@
 package flashsystem;
 
-public class TaParseException extends Exception{
+public class TaParseException extends Exception {
     /**
 	 * 
 	 */

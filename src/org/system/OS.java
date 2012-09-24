@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.logger.MyLogger;
+
 import flashsystem.HexDump;
 
 public class OS {
@@ -28,6 +30,18 @@ public class OS {
 		    os = "mac";
 		  }
 		  return os;
+	}
+	
+	public static void unyaffs(String yaffsfile, String folder) {
+		try {
+			File f = new File(folder);
+			if (!f.exists()) f.mkdir();
+			else if (f.isFile()) throw new IOException("destination must be a folder");
+			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs."+getName(),yaffsfile,folder},false);
+		}
+		catch (Exception e) {
+			MyLogger.getLogger().warn("Failed : "+e.getMessage());
+		}
 	}
 	
 	public static String getAdbPath() {

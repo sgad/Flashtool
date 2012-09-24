@@ -1,5 +1,7 @@
 package flashsystem;
 
+import java.lang.Byte;
+
 public class TaEntry {
 
 	String _partition="";

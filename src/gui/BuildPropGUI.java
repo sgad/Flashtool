@@ -25,6 +25,7 @@ import org.adb.AdbUtility;
 import org.apache.commons.io.IOUtils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.lang.Language;
 import org.logger.MyLogger;
@@ -277,8 +278,13 @@ public class BuildPropGUI extends JFrame implements ActionListener {
 	         boolean matchCase = matchCaseCB.isSelected();
 	         boolean wholeWord = false;
 	         boolean regex = regexCB.isSelected();
-	         boolean found = SearchEngine.find(textArea, text, forward,
-	               matchCase, wholeWord, regex);
+	         SearchContext ctx = new SearchContext();
+	         ctx.setSearchFor(text);
+	         ctx.setSearchForward(forward);
+	         ctx.setWholeWord(wholeWord);
+	         ctx.setRegularExpression(regex);
+	         ctx.setMatchCase(matchCase);
+	         boolean found = SearchEngine.find(textArea, ctx);
 	         if (!found) {
 	            JOptionPane.showMessageDialog(this, "Text not found");
 	         }
@@ -293,13 +299,17 @@ public class BuildPropGUI extends JFrame implements ActionListener {
 	         boolean matchCase = matchCaseCB.isSelected();
 	         boolean wholeWord = false;
 	         boolean regex = regexCB.isSelected();
-	         boolean found = SearchEngine.find(textArea, text, forward,
-	               matchCase, wholeWord, regex);
+	         SearchContext ctx = new SearchContext();
+	         ctx.setSearchFor(text);
+	         ctx.setSearchForward(forward);
+	         ctx.setWholeWord(wholeWord);
+	         ctx.setRegularExpression(regex);
+	         ctx.setMatchCase(matchCase);
+	         boolean found = SearchEngine.find(textArea, ctx);
 	         if (!found) {
 	            JOptionPane.showMessageDialog(this, "Text not found");
 	         }
 	      }
-
 	   }
 
 }

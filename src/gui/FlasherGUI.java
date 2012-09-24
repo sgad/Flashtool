@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
@@ -60,6 +62,7 @@ import java.util.zip.Deflater;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JMenuBar;
@@ -136,11 +139,12 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRootPsneuter;
 	private JMenuItem mntmRootzergRush;
 	private JMenuItem mntmRootEmulator;
-	private JMenuItem mntmRootAdbRestore1;
+	private JMenuItem mntmRootAdbRestore;
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
 	private JMenuItem mntmElfUnpack;
+	private JMenuItem mntmYaffs2Unpack;
 	private JMenuItem mntmDevicesAdd;
 	private JMenuItem mntmDevicesRemove;
 	private JMenuItem mntmDevicesEdit;
@@ -375,7 +379,8 @@ public class FlasherGUI extends JFrame {
 				catch (Exception e1) {}
 			}
 		});
-		mntmElfUnpack = new JMenuItem("ELF Extractor");
+
+		mntmElfUnpack = new JMenuItem("ELF");
 		mntmElfUnpack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -384,7 +389,17 @@ public class FlasherGUI extends JFrame {
 				catch (Exception e1) {}
 			}
 		});
-		
+
+		mntmYaffs2Unpack = new JMenuItem("Yaffs2");
+		mntmYaffs2Unpack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doYaffs2Unpack();
+				}
+				catch (Exception e1) {}
+			}
+		});
+
 		JMenu mnRoot = new JMenu("Root");
 		mnAdvanced.add(mnRoot);
 
@@ -418,8 +433,8 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
-		mntmRootAdbRestore1 = new JMenuItem("Force AdbRestore hack");
-		mntmRootAdbRestore1.addActionListener(new ActionListener() {
+		mntmRootAdbRestore = new JMenuItem("Force AdbRestore hack");
+		mntmRootAdbRestore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Devices.getCurrent().hasRoot())
 					try {
@@ -436,7 +451,7 @@ public class FlasherGUI extends JFrame {
 		mnRoot.add(mntmRootPsneuter);
 		mnRoot.add(mntmRootzergRush);
 		mnRoot.add(mntmRootEmulator);
-		mnRoot.add(mntmRootAdbRestore1);
+		mnRoot.add(mntmRootAdbRestore);
 		
 		JMenu mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
@@ -532,7 +547,10 @@ public class FlasherGUI extends JFrame {
 		});
 		
 		mnAdvanced.add(mntmSinEdit);
-		mnAdvanced.add(mntmElfUnpack);		
+		JMenu mnExtracts = new JMenu("Extractors");
+		mnExtracts.add(mntmElfUnpack);
+		mnExtracts.add(mntmYaffs2Unpack);
+		mnAdvanced.add(mnExtracts);		
 		mnAdvanced.add(mntmBuildpropEditor);
 
 		mntmBuildpropRebrand = new JMenuItem("Rebrand");
@@ -1081,6 +1099,27 @@ public class FlasherGUI extends JFrame {
 	public void doElfUnpack() {
 		ElfUnpacker unpack = new ElfUnpacker();
 		unpack.setVisible(true);
+	}
+
+	public void doYaffs2Unpack() {
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					String file = chooseYaffs2();
+					if (!file.equals("ERROR")) {
+						int index = file.lastIndexOf(".yaffs2");
+						String folder = file.substring(0, index)+"_content";
+						MyLogger.getLogger().info("Extracting " + file + " to " + folder);
+						OS.unyaffs(file, folder);
+						MyLogger.getLogger().info("Extraction finished");
+					}
+					else {
+						MyLogger.getLogger().info("Canceled");
+					}						
+					} catch (Exception e) {}
+					return null;
+				}
+			});
 	}
 
 	public void doCleanUninstall() {
@@ -1823,6 +1862,8 @@ public class FlasherGUI extends JFrame {
 			mntmClearCache.setEnabled(false);
 			mntmRootzergRush.setEnabled(false);
 			mntmRootPsneuter.setEnabled(false);
+			mntmRootEmulator.setEnabled(false);
+			mntmRootAdbRestore.setEnabled(false);
 			mntmBuildpropEditor.setEnabled(false);
 			mntmBuildpropRebrand.setEnabled(false);
 			mntmRebootIntoRecoveryT.setEnabled(false);
@@ -1927,6 +1968,11 @@ public class FlasherGUI extends JFrame {
 		        			mntmRootzergRush.setEnabled(true);
 		        			MyLogger.getLogger().debug("mtmRootPsneuter menu");
 		        			mntmRootPsneuter.setEnabled(true);
+		        			MyLogger.getLogger().debug("mtmRootEmulator menu");
+		        			mntmRootEmulator.setEnabled(true);
+		        			MyLogger.getLogger().debug("mtmRootAdbRestore menu");
+		        			mntmRootAdbRestore.setEnabled(true);
+
 		        			boolean flash = Devices.getCurrent().canFlash();
 		        			MyLogger.getLogger().debug("flashBtn button "+flash);
 		        			flashBtn.setEnabled(flash);
@@ -2299,4 +2345,36 @@ public class FlasherGUI extends JFrame {
         }
         folder.delete();    	
     }
+    
+	public String chooseYaffs2() {
+		JFileChooser chooser = new JFileChooser(new java.io.File(".")); 
+
+		FileFilter ff = new FileFilter(){
+			public boolean accept(File f){
+				if(f.isDirectory()) return true;
+				else if(f.getName().endsWith(".yaffs2")) return true;
+				else return false;
+			}
+			public String getDescription(){
+				return "*.yaffs2";
+			}
+		};
+		 
+		chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+		chooser.setFileFilter(ff);
+		
+	    chooser.setDialogTitle("Choose sin file)");
+	    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    //chooser.setFileFilter(newkernelimgFileFilter);
+	    //
+	    // disable the "All files" option.
+	    //
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    //    
+	    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	    	return chooser.getSelectedFile().getAbsolutePath();
+	    }
+	    return "ERROR";
+	}
+
 }

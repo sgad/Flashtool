@@ -55,7 +55,7 @@ public class RootPackageSelect extends JDialog {
 				FormFactory.DEFAULT_ROWSPEC,}));
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				result="L";
+				result="";
 				dispose();
 			}
 		});
@@ -91,7 +91,7 @@ public class RootPackageSelect extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						result="L";
+						result="";
 						dispose();
 					}
 				});

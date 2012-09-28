@@ -169,7 +169,12 @@ public class ElfProgram {
 	}
 	
 	public void printInfo() {
-		String result = String.format("Program Name : "+this.ctype+"\tsize : 0x%08x\tLoad address: 0x%08x", this.p_filesz, this.p_vaddr);
+		String pname = "Program Name : "+this.ctype;
+		String result = "";
+		if (pname.length()>=25)
+			result = String.format(pname+"\tsize : 0x%08x\tLoad address: 0x%08x", this.p_filesz, this.p_vaddr);
+		else
+			result = String.format(pname+"\t\tsize : 0x%08x\tLoad address: 0x%08x", this.p_filesz, this.p_vaddr);
 		MyLogger.getLogger().info(result);
 		/*System.out.printf("PH entry type: %s\n", this.type);
 		System.out.printf("First byte of segment: 0x%08x\tVirtual address: 0x%08x\n", this.p_offset, this.p_vaddr);

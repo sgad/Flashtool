@@ -257,7 +257,7 @@ public class Elf {
 				this.phEntries[i].setContentType("Image");
 			else if (identHex.contains("53, 31, 5F, 52, 50, 4D"))
 				this.phEntries[i].setContentType("rpm.bin");
-			else if (new String(ident).contains("S1_Root"))
+			else if (new String(ident).contains("S1_Root") || new String(ident).contains("S1_SW_Root"))
 				this.phEntries[i].setContentType("cert");
 			else if (ident.length<200) this.phEntries[i].setContentType("bootcmd");
 			else this.phEntries[i].setContentType("");

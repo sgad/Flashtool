@@ -29,18 +29,20 @@ public class SinFile {
 		sinfile = new File(file);
 		processHeader();
 		datatype = getDatatype();
-		if (sinheader.getVersion()==1) {
-			int cursize = sinheader.getHashBlocks().get(1).getLength();
-			sinheader.setBlockSize(cursize);
-			if (sinheader.getPartitionType()==0x0A) {
-				for (int i=0;i<sinheader.getHashBlocks().size();i++) {
-					sinheader.getHashBlocks().get(i).setSpare(cursize%131072);
+		if (sinheader.hasPartitionInfo()) {
+			if (sinheader.getVersion()==1) {
+				int cursize = sinheader.getHashBlocks().get(1).getLength();
+				sinheader.setBlockSize(cursize);
+				if (sinheader.getPartitionType()==0x0A) {
+					for (int i=0;i<sinheader.getHashBlocks().size();i++) {
+						sinheader.getHashBlocks().get(i).setSpare(cursize%131072);
+					}
 				}
+					
 			}
-				
+			else
+				sinheader.setBlockSize(512);
 		}
-		else
-			sinheader.setBlockSize(512);
 	}
 
 	public String getLongFileName() {

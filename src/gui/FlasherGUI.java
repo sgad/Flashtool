@@ -8,13 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
-
-import java.io.ByteArrayInputStream;
 import java.io.File; 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +37,6 @@ import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
 import org.system.Devices;
-import org.system.ElfParser;
 import org.system.FileDrop;
 import org.system.GlobalConfig;
 import org.system.OS;
@@ -52,16 +48,13 @@ import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.TextFile;
 import org.system.VersionChecker;
-
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
 import java.util.zip.Deflater;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -76,17 +69,9 @@ import java.awt.event.WindowEvent;
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
-import flashsystem.BundleMetaData;
-import flashsystem.BytesUtil;
-import flashsystem.Command;
 import flashsystem.FlasherConsole;
-import flashsystem.HexDump;
-import flashsystem.S1Packet;
 import flashsystem.SeusSinTool;
-import flashsystem.SinFile;
 import flashsystem.TaEntry;
-import flashsystem.TaFile;
-import flashsystem.TaParseException;
 import flashsystem.X10flash;
 import gui.EncDecGUI.MyFile;
 import javax.swing.JProgressBar;
@@ -95,7 +80,6 @@ import java.lang.reflect.Constructor;
 import javax.swing.JToolBar;
 import javax.swing.ImageIcon;
 import java.awt.Toolkit;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import linuxlib.JUsb;
@@ -140,6 +124,7 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmRootzergRush;
 	private JMenuItem mntmRootEmulator;
 	private JMenuItem mntmRootAdbRestore;
+	private JMenuItem mntmUnRoot;
 	private JMenuItem mntmBackupSystemApps;
 	private JMenuItem mntmRawIO;
 	private JMenuItem mntmSinEdit;
@@ -447,17 +432,33 @@ public class FlasherGUI extends JFrame {
 					JOptionPane.showMessageDialog(null, "Your device is already rooted");
 			}
 		});
+		
+		mntmUnRoot = new JMenuItem("Unroot device");
+		mntmUnRoot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (Devices.getCurrent().hasRoot())
+					try {
+						doUnroot();
+					}
+					catch (Exception e) {
+						MyLogger.getLogger().error(e.getMessage());
+					}
+				else
+					JOptionPane.showMessageDialog(null, "Your device is not rooted");
+			}
+		});
 
 		mnRoot.add(mntmRootPsneuter);
 		mnRoot.add(mntmRootzergRush);
 		mnRoot.add(mntmRootEmulator);
 		mnRoot.add(mntmRootAdbRestore);
+		mnRoot.add(mntmUnRoot);
 		
 		JMenu mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
 		mnAdvanced.add(mnClean);
 
-		mntmClearCache = new JMenuItem("Clear cache");
+		mntmClearCache = new JMenuItem("Clear dalvik cache");
 		mnClean.add(mntmClearCache);
 		mntmClearCache.setName("mntmClearCache");
 
@@ -1337,64 +1338,81 @@ public class FlasherGUI extends JFrame {
 			}
 	}
 
-	public void doPushRootFiles() throws Exception {
-		AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-		AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
-		AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
-		AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
+	public void doPushRootFiles(String rootpackage, boolean direct) throws Exception {
+		if (!direct) {
+			AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
+			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
+		}
+		else {
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", "/system/xbin");
+			AdbUtility.push(Devices.getCurrent().getBusybox(false), "/system/xbin");
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", "/system/app");
+			AdbUtility.run("chown root.shell /system/xbin/su");
+			AdbUtility.run("chmod 06755 /system/xbin/su");
+			AdbUtility.run("chown root.shell /system/xbin/busybox");
+			AdbUtility.run("chmod 755 /system/xbin/busybox");			
+		}
 	}
-	
 
 	public void doInstallRootFiles() throws Exception {
-		AdbUtility.run("/data/local/tmp/busybox mount -o remount,rw /system && /data/local/tmp/busybox mv /data/local/tmp/su /system/xbin/su && /data/local/tmp/busybox mv /data/local/tmp/Superuser.apk /system/app/Superuser.apk && /data/local/tmp/busybox cp /data/local/tmp/busybox /system/xbin/busybox && chown root.root /system/xbin/su && chmod 06755 /system/xbin/su && chmod 655 /system/app/Superuser.apk && chmod 755 /system/xbin/busybox && rm /data/local.prop && reboot");
+		AdbUtility.run(GlobalConfig.getProperty("deviceworkdir")+"/busybox mount -o remount,rw /system && /data/local/tmp/busybox mv /data/local/tmp/su /system/xbin/su && /data/local/tmp/busybox mv /data/local/tmp/Superuser.apk /system/app/Superuser.apk && /data/local/tmp/busybox cp /data/local/tmp/busybox /system/xbin/busybox && chown root.root /system/xbin/su && chmod 06755 /system/xbin/su && chmod 655 /system/app/Superuser.apk && chmod 755 /system/xbin/busybox && rm /data/local.prop && reboot");
 	}
-	
+
 	public void doRootAdbRestore() {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-					doPushRootFiles();
-					String backuppackage = AdbUtility.run("pm list package -f com.sonyericsson.backuprestore");
-					if (backuppackage.contains("backuprestore")) {
-						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"RootMe.tar", GlobalConfig.getProperty("deviceworkdir")+"/RootMe.tar");
-						AdbUtility.run("mkdir /mnt/sdcard/.semc-fullbackup > /dev/null 2>&1");
-						AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/RootMe* > /dev/null 2>&1");
-						AdbUtility.run("cd /mnt/sdcard/.semc-fullbackup;/data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
-						AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.BackupActivity");
-						MyLogger.getLogger().info("Now open your device and restore \"RootMe\" backup. Waiting ...");						
-					}
-					else {
-						AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"fakebackup.ab");
-						MyLogger.getLogger().info("Please look at your device and click RESTORE!");
-					}
-					String delay = "60";
-					MyLogger.getLogger().info("You have "+delay+" seconds to follow the restore advice");
-					Shell exploit = new Shell("adbrestoreexploit");
-					exploit.setProperty("DELAY", delay);
-					String result = exploit.run(false);
-					if (result.contains("Success")) {
-						MyLogger.getLogger().info("Restore worked fine. Rebooting device. Please wait ...");
-						Devices.getCurrent().reboot();
-						Devices.waitForReboot(false);
-						if (Devices.getCurrent().hasRoot()) {
-							MyLogger.getLogger().info("Root achieved. Installing root files. Device will reboot. Please wait.");
-							doInstallRootFiles();
-							Devices.waitForReboot(false);
-							MyLogger.getLogger().info("Cleaning hack files");
-							AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
-							MyLogger.getLogger().info("Finished.");
+					RootPackageSelect sel = new RootPackageSelect();
+					String pck = sel.getResult();
+					if (pck.length()>0) {
+						doPushRootFiles(pck,false);
+						String backuppackage = AdbUtility.run("pm list package -f com.sonyericsson.backuprestore");
+						if (backuppackage.contains("backuprestore")) {
+							AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"RootMe.tar", GlobalConfig.getProperty("deviceworkdir")+"/RootMe.tar");
+							AdbUtility.run("mkdir /mnt/sdcard/.semc-fullbackup > /dev/null 2>&1");
+							AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/RootMe* > /dev/null 2>&1");
+							AdbUtility.run("cd /mnt/sdcard/.semc-fullbackup;/data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
+							AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.BackupActivity");
+							MyLogger.getLogger().info("Now open your device and restore \"RootMe\" backup. Waiting ...");						
 						}
 						else {
-							MyLogger.getLogger().info("Root hack did not work.");
-							MyLogger.getLogger().info("Cleaning hack files");
+							AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"fakebackup.ab");
+							MyLogger.getLogger().info("Please look at your device and click RESTORE!");
+						}
+						String delay = "60";
+						MyLogger.getLogger().info("You have "+delay+" seconds to follow the restore advice");
+						Shell exploit = new Shell("adbrestoreexploit");
+						exploit.setProperty("DELAY", delay);
+						String result = exploit.run(false);
+						if (result.contains("Success")) {
+							MyLogger.getLogger().info("Restore worked fine. Rebooting device. Please wait ...");
+							Devices.getCurrent().reboot();
+							Devices.waitForReboot(false);
+							if (AdbUtility.hasRootNative(true)) {
+								MyLogger.getLogger().info("Root achieved. Installing root files. Device will reboot. Please wait.");
+								doInstallRootFiles();
+								Devices.waitForReboot(false);
+								MyLogger.getLogger().info("Cleaning hack files");
+								AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
+								MyLogger.getLogger().info("Finished.");
+							}
+							else {
+								MyLogger.getLogger().info("Root hack did not work.");
+								MyLogger.getLogger().info("Cleaning hack files");
+								AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
+							}
+							MyLogger.getLogger().info("Rebooting device. Please wait.");
+							Devices.getCurrent().reboot();
+						}
+						else {
+							MyLogger.getLogger().info("Root hack did not work. Cleaning hack files");
 							AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
 						}
-						MyLogger.getLogger().info("Rebooting device. Please wait.");
-						Devices.getCurrent().reboot();
 					}
 					else {
-						MyLogger.getLogger().info("Root hack did not work. Cleaning hack files");
-						AdbUtility.run("rm /data/local/tmp/busybox;rm -r /mnt/sdcard/.semc-fullbackup/RootMe;rm /data/local/tmp/RootMe.tar;rm /data/local/tmp/su;rm /data/local/tmp/Superuser.apk;rm /data/local/tmp/adbrestoreexploit");
+						MyLogger.getLogger().info("Canceled");
 					}
 				}
 				catch (Exception e) {
@@ -1404,49 +1422,65 @@ public class FlasherGUI extends JFrame {
 		});
 	}
 
+	public void doUnroot() {
+		Worker.post(new Job() {
+			public Object run() {
+				try {
+					MyLogger.getLogger().info("Unrooting device. Once done, device will reboot");
+					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
+					AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
+					Shell unroot = new Shell("unroot");
+					unroot.runRoot();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});		
+	}
+
 	public void doRootEmulator() {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-					MyLogger.getLogger().info("Preparing first part of the hack");
-					AdbUtility.run("cd /data/local && mkdir tmp");
-					AdbUtility.run("cd /data/local/tmp/ && rm *");
-					AdbUtility.run("mv /data/local/tmp /data/local/tmp.bak");
-					AdbUtility.run("ln -s /data /data/local/tmp");
-					MyLogger.getLogger().info("Rebooting device. Please wait");
-					Devices.getCurrent().reboot();
-					Devices.waitForReboot(false);
-					MyLogger.getLogger().info("Preparing second part of the hack");
-					AdbUtility.run("rm /data/local.prop");
-					AdbUtility.run("echo \"ro.kernel.qemu=1\" > /data/local.prop");
-					MyLogger.getLogger().info("Rebooting device. Please wait");
-					Devices.getCurrent().reboot();
-					Devices.waitForReboot(false);
-					if (Devices.getCurrent().hasRoot()) {
-						MyLogger.getLogger().info("Now you have root");
-						MyLogger.getLogger().info("Remounting system r/w");
-						AdbUtility.run("mount -o remount,rw /system");
-						MyLogger.getLogger().info("Installing root package");
-						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", "/system/xbin");
-						AdbUtility.push(Devices.getCurrent().getBusybox(false), "/system/xbin");
-						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", "/system/app");
-						AdbUtility.run("chown root.shell /system/xbin/su");
-						AdbUtility.run("chmod 06755 /system/xbin/su");
-						AdbUtility.run("chown root.shell /system/xbin/busybox");
-						AdbUtility.run("chmod 755 /system/xbin/busybox");
-						MyLogger.getLogger().info("Cleaning hack");
-						AdbUtility.run("rm /data/local.prop");
-						AdbUtility.run("rm /data/local/tmp");
-						AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
-						MyLogger.getLogger().info("Rebooting device. Please wait. Your device is now rooted");
+					RootPackageSelect sel = new RootPackageSelect();
+					String pck = sel.getResult();
+					if (pck.length()>0) {
+						MyLogger.getLogger().info("Preparing first part of the hack");
+						AdbUtility.run("cd /data/local && mkdir tmp");
+						AdbUtility.run("cd /data/local/tmp/ && rm *");
+						AdbUtility.run("mv /data/local/tmp /data/local/tmp.bak");
+						AdbUtility.run("ln -s /data /data/local/tmp");
+						MyLogger.getLogger().info("Rebooting device. Please wait");
 						Devices.getCurrent().reboot();
-					}
-					else {
+						Devices.waitForReboot(false);
+						MyLogger.getLogger().info("Preparing second part of the hack");
 						AdbUtility.run("rm /data/local.prop");
-						AdbUtility.run("rm /data/local/tmp");
-						AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
-						MyLogger.getLogger().info("Hack did not work. Cleaning and rebooting");
+						AdbUtility.run("echo \"ro.kernel.qemu=1\" > /data/local.prop");
+						MyLogger.getLogger().info("Rebooting device. Please wait");
 						Devices.getCurrent().reboot();
+						Devices.waitForReboot(false);
+						if (AdbUtility.hasRootNative(true)) {
+							MyLogger.getLogger().info("Now you have root");
+							MyLogger.getLogger().info("Remounting system r/w");
+							AdbUtility.run("mount -o remount,rw /system");
+							MyLogger.getLogger().info("Installing root package");
+							doPushRootFiles(pck,true);
+							MyLogger.getLogger().info("Cleaning hack");
+							AdbUtility.run("rm /data/local.prop");
+							AdbUtility.run("rm /data/local/tmp");
+							AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
+							MyLogger.getLogger().info("Rebooting device. Please wait. Your device is now rooted");
+							Devices.getCurrent().reboot();
+						}
+						else {
+							AdbUtility.run("rm /data/local.prop");
+							AdbUtility.run("rm /data/local/tmp");
+							AdbUtility.run("mv /data/local/tmp.bak /data/local/tmp");
+							MyLogger.getLogger().info("Hack did not work. Cleaning and rebooting");
+							Devices.getCurrent().reboot();
+						}
 					}
 				}
 				catch (Exception e) {
@@ -1461,23 +1495,34 @@ public class FlasherGUI extends JFrame {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-					Shell shell = new Shell("busyhelper");
-					shell.run(true);
-					AdbUtility.push(new File("."+fsep+"custom"+fsep+"root"+fsep+"zergrush.tar.uue").getAbsolutePath(),GlobalConfig.getProperty("deviceworkdir"));
-					shell = new Shell("rootit");
-					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
-					shell.run(true);
-					Devices.waitForReboot(true);
-					if (Devices.getCurrent().hasRoot()) {
-						MyLogger.getLogger().info("Running part2 of Root Exploit");
-						shell = new Shell("rootit2");
-						shell.run(false);
-						MyLogger.getLogger().info("Finished!.");
-						MyLogger.getLogger().info("Root should be available after reboot!");
-					}
-					else {
-						MyLogger.getLogger().error("The part1 exploit did not work");
+					RootPackageSelect sel = new RootPackageSelect();
+					String pck = sel.getResult();
+					if (pck.length()>0) {
+						OS.decrypt(new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ZergRush"+File.separator+"zergrush.tar.uue.enc"));
+						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ZergRush"+File.separator+"zergrush.tar.uue",GlobalConfig.getProperty("deviceworkdir"));
+						new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ZergRush"+File.separator+"zergrush.tar.uue").delete();
+						doPushRootFiles(pck,false);
+						Shell shell = new Shell("rootit");
+						MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
+						shell.run(true);
+						Devices.waitForReboot(true);
+						if (AdbUtility.hasRootNative(true)) {
+							MyLogger.getLogger().info("Running part2 of Root Exploit");
+							shell = new Shell("rootit2");
+							shell.run(false);
+							MyLogger.getLogger().info("Finished!.");
+							MyLogger.getLogger().info("Root should be available after reboot!");
+						}
+						else {
+							MyLogger.getLogger().error("The part1 exploit did not work");
+							MyLogger.getLogger().info("Cleaning files");
+							AdbUtility.run("rm /data/local/tmp/zergrush");
+							AdbUtility.run("rm /data/local/tmp/busybox");
+							AdbUtility.run("rm /data/local/tmp/Superuser.apk");
+							AdbUtility.run("rm /data/local/tmp/su");
+							AdbUtility.run("rm /data/local/tmp/rootit");
+							AdbUtility.run("rm /data/local/tmp/rootit2");
+						}
 					}
 				}
 				catch (Exception e) {
@@ -1491,27 +1536,39 @@ public class FlasherGUI extends JFrame {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-					Shell shell = new Shell("busyhelper");
-					shell.run(true);
-					AdbUtility.push("."+fsep+"custom"+fsep+"root"+fsep+"psneuter.tar.uue",GlobalConfig.getProperty("deviceworkdir"));
-					shell = new Shell("rootit");
-					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
-					shell.run(false);
-					Devices.waitForReboot(true);
-					if (Devices.getCurrent().hasRoot()) {
-						MyLogger.getLogger().info("Running part2 of Root Exploit");
-						shell = new Shell("rootit2");
+					RootPackageSelect sel = new RootPackageSelect();
+					String pck = sel.getResult();
+					if (pck.length()>0) {
+						OS.decrypt(new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"PsNeuter"+File.separator+"psneuter.tar.uue.enc"));						
+						AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"PsNeuter"+File.separator+"psneuter.tar.uue",GlobalConfig.getProperty("deviceworkdir"));
+						new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"PsNeuter"+File.separator+"psneuter.tar.uue").delete();
+						doPushRootFiles(pck,false);
+						Shell shell = new Shell("rootit");
+						MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 						shell.run(false);
-						MyLogger.getLogger().info("Finished!.");
-						MyLogger.getLogger().info("Root should be available after reboot!");		
-					}
-					else {
-						MyLogger.getLogger().error("The part1 exploit did not work");
+						Devices.waitForReboot(true);
+						if (AdbUtility.hasRootNative(true)) {
+							MyLogger.getLogger().info("Running part2 of Root Exploit");
+							shell = new Shell("rootit2");
+							shell.run(false);
+							MyLogger.getLogger().info("Finished!.");
+							MyLogger.getLogger().info("Root should be available after reboot!");		
+						}
+						else {
+							MyLogger.getLogger().error("The part1 exploit did not work");
+							MyLogger.getLogger().info("Cleaning files");
+							AdbUtility.run("rm /data/local/tmp/psneuter");
+							AdbUtility.run("rm /data/local/tmp/busybox");
+							AdbUtility.run("rm /data/local/tmp/Superuser.apk");
+							AdbUtility.run("rm /data/local/tmp/su");
+							AdbUtility.run("rm /data/local/tmp/rootit");
+							AdbUtility.run("rm /data/local/tmp/rootit2");
+						}
 					}
 				}
 				catch (Exception e) {
-					MyLogger.getLogger().error(e.getMessage());}
+					MyLogger.getLogger().error(e.getMessage());
+				}
 				return null;
 			}
 		});
@@ -1831,9 +1888,9 @@ public class FlasherGUI extends JFrame {
     public void doClearCache() {
 		Worker.post(new Job() {
 			public Object run() {
-	        	try {
-						AdbUtility.clearcache();
-						MyLogger.getLogger().info("Finished");
+	        	try {	
+	        		AdbUtility.clearcache();
+					MyLogger.getLogger().info("Finished. Device will come back online. Please wait.");
 				}
 				catch (Exception e) {}
 	 			return null;
@@ -1864,6 +1921,7 @@ public class FlasherGUI extends JFrame {
 			mntmRootPsneuter.setEnabled(false);
 			mntmRootEmulator.setEnabled(false);
 			mntmRootAdbRestore.setEnabled(false);
+			mntmUnRoot.setEnabled(false);
 			mntmBuildpropEditor.setEnabled(false);
 			mntmBuildpropRebrand.setEnabled(false);
 			mntmRebootIntoRecoveryT.setEnabled(false);
@@ -1943,7 +2001,7 @@ public class FlasherGUI extends JFrame {
 		        		if (found) {
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
-		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion());
+		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
 		        			}
 		        			if (Devices.getCurrent().isRecovery()) {
 		        				MyLogger.getLogger().info("Phone in recovery mode");
@@ -1972,6 +2030,8 @@ public class FlasherGUI extends JFrame {
 		        			mntmRootEmulator.setEnabled(true);
 		        			MyLogger.getLogger().debug("mtmRootAdbRestore menu");
 		        			mntmRootAdbRestore.setEnabled(true);
+		        			MyLogger.getLogger().debug("mtmUnRoot menu");
+		        			mntmUnRoot.setEnabled(true);
 
 		        			boolean flash = Devices.getCurrent().canFlash();
 		        			MyLogger.getLogger().debug("flashBtn button "+flash);
@@ -2266,12 +2326,12 @@ public class FlasherGUI extends JFrame {
     	new File(destDir+File.separator+device).mkdir();
     	JarFile jar = new JarFile(ftd);
     	boolean alldirs=false;
-    	Enumeration e;
+    	Enumeration<JarEntry> e;
     	while (!alldirs) {
 	    	e = jar.entries();
 	    	alldirs=true;
 	    	while (e.hasMoreElements()) {
-	    	    JarEntry file = (JarEntry) e.nextElement();
+	    	    JarEntry file = e.nextElement();
 	    	    File f = new File(destDir + File.separator + file.getName());
 	    	    if (file.isDirectory()) { // if its a directory, create it
 	    	    	if (!f.exists())

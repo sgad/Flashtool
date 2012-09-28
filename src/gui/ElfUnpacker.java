@@ -22,7 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.logger.MyLogger;
-import org.system.ElfParser;
+import org.system.Elf;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,7 +34,7 @@ public class ElfUnpacker extends JDialog {
 	private JTextField textElf;
 	private JTextField textParts;
 	private JButton btnDumpData;
-	private ElfParser elf;
+	private Elf elfobj;
 
 
 	/**
@@ -86,9 +86,9 @@ public class ElfUnpacker extends JDialog {
 								if (sin.getDataType().equals("elf")) {
 									sin.dumpImage();
 									file = sin.getImageFileName();
-									elf = new ElfParser(sin.getImageFileName());
 									textElf.setText(file);
-									textParts.setText(Integer.toString(elf.getNbParts()));
+									elfobj = new Elf(new File(file));
+									textParts.setText(Integer.toString(elfobj.getNumPrograms()));
 									btnDumpData.setEnabled(true);
 									MyLogger.getLogger().info("You can now press the Unpack button to get the elf data content");
 								}
@@ -100,9 +100,9 @@ public class ElfUnpacker extends JDialog {
 								}
 							}
 							else {
-								elf = new ElfParser(file);
 								textElf.setText(file);
-								textParts.setText(Integer.toString(elf.getNbParts()));
+								elfobj = new Elf(new File(file));
+								textParts.setText(Integer.toString(elfobj.getNumPrograms()));
 								btnDumpData.setEnabled(true);
 							}
 						}
@@ -128,7 +128,7 @@ public class ElfUnpacker extends JDialog {
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						elf.unpack();
+						elfobj.unpack();
 					}
 					catch (Exception e) {
 						MyLogger.getLogger().error(e.getMessage());

@@ -96,7 +96,10 @@ public class Devices  {
 	}
 
 	public static void waitForReboot(boolean tobeforced) {
-		MyLogger.getLogger().info("Waiting for device");
+		if (!tobeforced)
+			MyLogger.getLogger().info("Waiting for device");
+		else
+			MyLogger.getLogger().info("Waiting for device. After 60secs, stop waiting will be forced");
 		waitforreboot=true;
 		int count=0;
 		while (waitforreboot) {

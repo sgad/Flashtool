@@ -1,0 +1,16 @@
+#!/system/bin/sh
+
+export PATH=DEVICEWORKDIR:$PATH
+
+DEVICEWORKDIR/busybox mount -o remount,rw /system
+
+for i in $(sh /system/bin/pm list packages -f|DEVICEWORKDIR/busybox grep chainfire|DEVICEWORKDIR/busybox cut -d ":" -f 2|DEVICEWORKDIR/busybox cut -d "=" -f 1)
+do
+   /system/bin/rm -r $i
+done
+
+/system/bin/rm -r /system/bin/su
+/system/bin/rm -r /system/xbin/su
+/system/bin/rm -r DEVICEWORKDIR/busybox
+/system/bin/rm -r /data/dalvik-cache/*
+/system/bin/reboot

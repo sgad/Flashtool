@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.6.0"/>
+	<property name="version" value="0.9.7.0"/>
 	
 	<target name="all" depends="core release,devices,JRE"/>
 
@@ -106,6 +106,8 @@
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2sin" perm="755" />
         <copy file="./linux/unyaffs.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
         <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux" perm="755" />
+        <copy file="./linux/unyaffs.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
+        <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
 		<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="./libs"
 				excludes="**/.svn"/>

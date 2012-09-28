@@ -23,8 +23,8 @@ fi
 
 if busybox test $RCU -eq 0
 then
-	echo "Copying su to /system/bin"
-	dd if=DEVICEWORKDIR/su of=/system/bin/su
+	echo "Copying su to /system/xbin"
+	dd if=DEVICEWORKDIR/su of=/system/xbin/su
 	export RCU=$?
 else
 	echo FTError $RES
@@ -52,7 +52,7 @@ fi
 
 if busybox test $RCU -eq 0
 then
-	chown root.root /system/bin/su
+	chown root.root /system/xbin/su
 	export RCU=$?
 else
 	echo FTError $RES
@@ -79,8 +79,7 @@ fi
 
 if busybox test $RCU -eq 0
 then
-	chown root.shell /system/bin/su
-	chmod 06755 /system/bin/su
+	chmod 06755 /system/xbin/su
 	export RCU=$?
 else
 	echo FTError $RES
@@ -99,8 +98,6 @@ fi
 if busybox test $RCU -eq 0
 then
 	/system/xbin/busybox --install -s /system/xbin
-	rm /system/xbin/su
-	busybox ln -sf /system/bin/su /system/xbin/su
 	export RCU=$?
 else
 	echo FTError $RES

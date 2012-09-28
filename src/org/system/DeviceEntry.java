@@ -25,7 +25,7 @@ public class DeviceEntry {
 	}
 
 	public boolean hasRoot() {
-		if (AdbUtility.hasRootNative()) return AdbUtility.hasRootNative();
+		if (AdbUtility.hasRootNative(false)) return AdbUtility.hasRootNative(false);
 		return AdbUtility.hasRootPerms();
 	}
 
@@ -163,12 +163,17 @@ public class DeviceEntry {
 	
 	private void setVersion () {
 		_entry.setProperty("android.release",DeviceProperties.getProperty("ro.build.version.release"));
+		_entry.setProperty("android.build",DeviceProperties.getProperty("ro.build.id"));
 	}
 	
 	public String getVersion() {
 		return _entry.getProperty("android.release");
 	}
-	
+
+	public String getBuildId() {
+		return _entry.getProperty("android.build");
+	}
+
 	public boolean canFlash() {
 		return _entry.getProperty("canflash").equals("true");
 	}

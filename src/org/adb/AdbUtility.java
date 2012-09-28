@@ -62,9 +62,9 @@ public class AdbUtility  {
 		return shpath;
 	}
 
-	public static boolean hasRootNative() {
+	public static boolean hasRootNative(boolean force) {
 		try {
-			if (rootnative) return true;
+			if (!force && rootnative) return true;
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell","id"},false);
 			rootnative=command.getStdOut().contains("uid=0");
 		}
@@ -189,7 +189,7 @@ public class AdbUtility  {
 	}
 	
 	public static boolean hasRootPerms() {
-		if (hasRootNative()) return true;
+		if (hasRootNative(false)) return true;
 		if (rootperms) return true;
 		try {
 			Shell shell = new Shell("checkperms");
@@ -284,13 +284,13 @@ public class AdbUtility  {
 	}
 	
 	public static void mount(String mountpoint,String options, String type) throws Exception {
-		if (hasRootNative()) {
+		if (hasRootNative(false)) {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell","mount -o "+options+" -t "+type+" "+mountpoint},false);			
 		}
 	}
 	
 	public static void umount(String mountpoint) throws Exception {
-		if (hasRootNative()) {
+		if (hasRootNative(false)) {
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "umount "+mountpoint},false);
 		}		
 	}
@@ -380,7 +380,7 @@ public class AdbUtility  {
 	}
 
 	public static void clearcache() throws Exception {
-		MyLogger.getLogger().info("Clearing dalvik cache");
+		MyLogger.getLogger().info("Clearing dalvik cache and rebooting");
 		Shell shell = new Shell("clearcache");
 		shell.runRoot(false);
 	}

@@ -3,7 +3,7 @@ export PATH=DEVICEWORKDIR:$PATH
 echo "Cleaning rootit files"
 busybox rm -f DEVICEWORKDIR/rootit
 busybox rm -f DEVICEWORKDIR/psneuter
-busybox rm -f DEVICEWORKDIR/zergRush
+busybox rm -f DEVICEWORKDIR/zergrush
 busybox rm -f DEVICEWORKDIR/sh
 busybox rm -f DEVICEWORKDIR/boomsh
 

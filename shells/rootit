@@ -2,7 +2,7 @@ export PATH=DEVICEWORKDIR:$PATH
 chmod 755 DEVICEWORKDIR/busybox
 
 busybox rm -f DEVICEWORKDIR/psneuter
-busybox rm -f DEVICEWORKDIR/zergRush
+busybox rm -f DEVICEWORKDIR/zergrush
 busybox rm -f DEVICEWORKDIR/sh
 busybox rm -f DEVICEWORKDIR/boomsh
 
@@ -14,6 +14,6 @@ fi
 
 if busybox [ -e DEVICEWORKDIR/zergrush.tar.uue ]
 then
-	(cd DEVICEWORKDIR;busybox uudecode -o zergrush.tar zergrush.tar.uue;busybox tar xpf zergrush.tar;chmod 755 zergRush;busybox rm zergrush.tar*)
-	DEVICEWORKDIR/zergRush
+	(cd DEVICEWORKDIR;busybox uudecode -o zergrush.tar zergrush.tar.uue;busybox tar xpf zergrush.tar;chmod 755 zergrush;busybox rm zergrush.tar*)
+	DEVICEWORKDIR/zergrush
 fi

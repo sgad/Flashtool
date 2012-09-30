@@ -219,8 +219,9 @@ public class SinFile {
 				}
 			}
 			while (isnull) {
-				fin.read(ident);
-				for (int i=0;i<ident.length;i++) {
+				read = fin.read(ident);
+				if (read==-1) throw new Exception ("End of file");
+				for (int i=0;i<read;i++) {
 					if (ident[i]!=0) {
 						isnull=false;
 					}
@@ -232,7 +233,7 @@ public class SinFile {
 			fin.close();
 			if (HexDump.toHex(ident1).contains("53, EF")) return "ext4";
 			return "unknown";
-		} catch (IOException e) {
+		} catch (Exception e) {
 			fin.close();
 			return "unknown";
 		}

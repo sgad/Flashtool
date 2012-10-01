@@ -1,11 +1,8 @@
 export PATH=DEVICEWORKDIR:$PATH
 
-pm list packages -f>DEVICEWORKDIR/packagelist
 for i in `busybox cat DEVICEWORKDIR/listappsremove`
 do
    busybox rm /system/app/$i
-   PACKAGE=`busybox cat DEVICEWORKDIR/packagelist|busybox grep $i|busybox cut -d "=" -f 2`
-   pm uninstall $PACKAGE
 done
+
 busybox rm DEVICEWORKDIR/listappsremove
-busybox rm DEVICEWORKDIR/packagelist

@@ -1426,11 +1426,15 @@ public class FlasherGUI extends JFrame {
 		Worker.post(new Job() {
 			public Object run() {
 				try {
-					MyLogger.getLogger().info("Unrooting device. Once done, device will reboot");
+					MyLogger.getLogger().info("Unrooting device. Once done, device will reboot");					
+					AdbUtility.run("pm list packages -f>/data/local/tmp/listpackages");
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 					AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 					Shell unroot = new Shell("unroot");
 					unroot.runRoot();
+					AdbUtility.run("pm uninstall com.noshufou.android.su");
+					AdbUtility.resetRoot();
+					Devices.getCurrent().reboot();
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -1651,11 +1655,9 @@ public class FlasherGUI extends JFrame {
 								}
 							}
 							t.close();
-						}
-						if (TextFile.exists(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd")) {
 							AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd", GlobalConfig.getProperty("deviceworkdir"));
-							TextFile t = new TextFile(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd","ASCII");
-							Iterator<String> i = t.getLines().iterator();
+							t = new TextFile(OS.getWorkDir()+fsep+"custom"+fsep+"clean"+fsep+"listappsadd","ASCII");
+							i = t.getLines().iterator();
 							while (i.hasNext()) {
 								AdbUtility.push(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+fsep+i.next(), GlobalConfig.getProperty("deviceworkdir"));
 							}
@@ -1675,6 +1677,15 @@ public class FlasherGUI extends JFrame {
 							Devices.getCurrent().doBusyboxHelper();
 							Shell shell2 = new Shell("sysremove");
 							shell2.runRoot();
+							i = t.getLines().iterator();
+							while (i.hasNext()) {
+								String file = i.next();
+								if (file.endsWith("apk")) {
+									String pckname = APKUtility.getPackageName(OS.getWorkDir()+fsep+"custom"+fsep+"apps_saved"+File.separator+Devices.getCurrent().getId()+File.separator+file);
+									MyLogger.getLogger().info("Removing "+pckname+" from device");
+									AdbUtility.uninstall(pckname, true);
+								}
+							}
 							t.delete();
 							somethingdone = true;
 						}

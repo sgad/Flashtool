@@ -27,6 +27,11 @@ public class AdbUtility  {
 	private static String adbpath = OS.getAdbPath();
 	private static String shpath ="";
 
+	public static void resetRoot() {
+		rootnative=false;
+		rootperms=false;
+	}
+	
 	public static String getShellPath() {
 		return shellpath;
 	}

@@ -229,7 +229,8 @@ public class SinFile {
 			}
 			fin.seek(fin.getFilePointer()-16+0x38);
 			byte[] ident1 = new byte[2];
-			fin.read(ident1);
+			read = fin.read(ident1);
+			if (read==-1) throw new Exception ("End of file");
 			fin.close();
 			if (HexDump.toHex(ident1).contains("53, EF")) return "ext4";
 			return "unknown";

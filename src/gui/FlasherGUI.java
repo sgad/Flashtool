@@ -1346,9 +1346,9 @@ public class FlasherGUI extends JFrame {
 			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 		}
 		else {
-			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"su", "/system/xbin");
 			AdbUtility.push(Devices.getCurrent().getBusybox(false), "/system/xbin");
-			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"4.0"+File.separator+"Superuser.apk", "/system/app");
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"su", "/system/xbin");
+			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"Superuser.apk", "/system/app");
 			AdbUtility.run("chown root.shell /system/xbin/su");
 			AdbUtility.run("chmod 06755 /system/xbin/su");
 			AdbUtility.run("chown root.shell /system/xbin/busybox");
@@ -1432,7 +1432,10 @@ public class FlasherGUI extends JFrame {
 					AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 					Shell unroot = new Shell("unroot");
 					unroot.runRoot();
-					AdbUtility.run("pm uninstall com.noshufou.android.su");
+					String supersu = APKUtility.getPackageName(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+"Supersu"+File.separator+"Superuser.apk");
+					String superuser = APKUtility.getPackageName(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+"Superuser"+File.separator+"Superuser.apk");
+					AdbUtility.run("pm uninstall "+supersu);
+					AdbUtility.run("pm uninstall "+superuser);
 					AdbUtility.resetRoot();
 					Devices.getCurrent().reboot();
 				}

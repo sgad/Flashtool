@@ -7,6 +7,13 @@ import java.io.IOException;
 
 import org.logger.MyLogger;
 
+import se.marell.libusb.LibUsbBusyException;
+import se.marell.libusb.LibUsbInvalidParameterException;
+import se.marell.libusb.LibUsbNoDeviceException;
+import se.marell.libusb.LibUsbNotFoundException;
+import se.marell.libusb.LibUsbOtherException;
+import se.marell.libusb.LibUsbPermissionException;
+
 import linuxlib.JUsb;
 
 public class USBFlashLinux {
@@ -18,9 +25,32 @@ public class USBFlashLinux {
 		try {
 			MyLogger.getLogger().info("Opening device for R/W");
 			JUsb.open();
-		}catch (Exception e) {
-			if (lastreply == null) throw new IOException("Unable to read from device");
+			MyLogger.getLogger().info("Device ready for R/W.");
 		}
+		catch (LibUsbNoDeviceException e1) {
+			e1.printStackTrace();
+			throw new IOException("No plugged device");
+		}
+		catch (LibUsbPermissionException e2) {
+			e2.printStackTrace();
+			throw new IOException("No permissions on device");
+		}
+		catch (LibUsbNotFoundException e3) {
+			e3.printStackTrace();
+			throw new IOException("Device not found");
+		}
+		catch (LibUsbBusyException e4) {
+			e4.printStackTrace();
+			throw new IOException("Device busy with another process");
+		}
+		catch (LibUsbInvalidParameterException e5) {
+			e5.printStackTrace();
+			throw new IOException("Device opened with invalid parameters");
+		}
+		catch (LibUsbOtherException e6) {
+			e6.printStackTrace();
+			throw new IOException("Unable to read from device");
+		}		
 	}
 
 	public static void linuxWriteS1(S1Packet p) throws IOException,X10FlashException {

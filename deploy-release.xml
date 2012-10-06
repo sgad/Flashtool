@@ -40,7 +40,7 @@
         <jar destfile="../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.FlasherGUI"/>
-                <attribute name="Class-Path" value=". x10flasher.jar x10flasher_lib/x10flasher-res.jar x10flasher_lib/AXMLPrinter2.jar x10flasher_lib/com.sonyericsson.cs_ma3_common_2.10.9.13.jar x10flasher_lib/commons-io-2.4.jar x10flasher_lib/foxtrot-core-4.0.jar x10flasher_lib/HexLib.jar x10flasher_lib/jdom-1.1.1.jar x10flasher_lib/jgoodies-common-1.4.0.jar x10flasher_lib/jgoodies-forms-1.6.0.jar x10flasher_lib/jgoodies-looks-2.5.2.jar x10flasher_lib/jna-3.4.2.jar x10flasher_lib/jopt-simple-4.3.jar x10flasher_lib/libusb.jar x10flasher_lib/log4j-1.2.17.jar x10flasher_lib/nsisant-1.3.jar x10flasher_lib/platform-3.4.2.jar x10flasher_lib/rsyntaxtextarea-2.0.4.1.jar"/>
+                <attribute name="Class-Path" value=". x10flasher.jar x10flasher_lib/x10flasher-res.jar x10flasher_lib/AXMLPrinter2.jar x10flasher_lib/com.sonyericsson.cs_ma3_common_2.10.9.13.jar x10flasher_lib/commons-io-2.4.jar x10flasher_lib/foxtrot-core-4.0.jar x10flasher_lib/HexLib.jar x10flasher_lib/jdom-1.1.1.jar x10flasher_lib/jgoodies-common-1.4.0.jar x10flasher_lib/jgoodies-forms-1.6.0.jar x10flasher_lib/jgoodies-looks-2.5.2.jar x10flasher_lib/jna-3.4.2.jar x10flasher_lib/jopt-simple-4.3.jar x10flasher_lib/libusb-1.0.jar x10flasher_lib/log4j-1.2.17.jar x10flasher_lib/nsisant-1.3.jar x10flasher_lib/platform-3.4.2.jar x10flasher_lib/rsyntaxtextarea-2.0.4.1.jar"/>
                 <attribute name="Implementation-Version" value="Version ${version} built on ${TODAY}"/>
             	<attribute name="Internal-Version" value="${version}"/>
             </manifest>
@@ -88,26 +88,24 @@
 	    </copy>
 		<copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
 		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
-        <copy file="./linux/FlashTool" todir="../Deploy/FlashTool"/>
-		<copy file="./linux/FlashToolConsole" todir="../Deploy/FlashTool"/>
+	    <copy file="./ProgramExe/FlashTool" todir="../Deploy/FlashTool"/>
+	    <copy file="./ProgramExe/FlashToolConsole" todir="../Deploy/FlashTool"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
+            <fileset dir="./linux"
+                excludes="**/.svn"/>
+        </copy>
 		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
     	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-        <copy file="./linux/adb.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.linux" perm="755" />
-		<copy file="./linux/adb.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
-		<copy file="./linux/fastboot.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.linux" perm="755" />
-        <copy file="./linux/fastboot.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
-		<copy file="./linux/bin2elf" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2elf" perm="755" />
-		<copy file="./linux/bin2sin" todir="../Deploy/FlashTool/x10flasher_lib"/>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2sin" perm="755" />
-        <copy file="./linux/unyaffs.linux" todir="../Deploy/FlashTool/x10flasher_lib"/>
         <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux" perm="755" />
-        <copy file="./linux/unyaffs.mac" todir="../Deploy/FlashTool/x10flasher_lib"/>
         <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib64/libusb-1.0.so.0.1.0" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib32/libusb-1.0.so.0.1.0" perm="755" />
 		<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="./libs"
 				excludes="**/.svn"/>

@@ -398,17 +398,24 @@ public class X10flash {
 		if (printProps)
 			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
     }
-    
+
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
     	MyLogger.initProgress(_bundle.getMaxProgress());
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");
+    		try {
 			MyLogger.getLogger().info("Reading device information");
 			USBFlash.readS1Reply();
 			phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
 			MyLogger.getLogger().info("Phone ready for flashmode operations.");
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    			MyLogger.getLogger().info("Unable to read from phone after having opened it.");
+    			MyLogger.getLogger().info("trying to continue anyway");
+    		}
     	    cmd = new Command(_bundle.simulate());
     	    hookDevice(false);
     		found = true;

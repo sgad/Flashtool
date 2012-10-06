@@ -37,13 +37,21 @@ then
              export JAVA_HOME=./x10flasher_lib/linjre32
         fi
         echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
-        if test -e ${JAVA_HOME}/bin/java
-        then
-             $JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
-        else
-             echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
-             echo "Set the variable to a valid Java installation"
-        fi
+    fi
+    if test -e ${JAVA_HOME}/bin/java
+    then
+         if test "${system64}" = "x86_64"
+         then
+             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
+             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusb-1.0.so
+         else
+             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32:$LD_LIBRARY_PATH
+             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusb-1.0.so
+         fi
+         $JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
+    else
+         echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
+         echo "Set the variable to a valid Java installation"
     fi
 else
     chmod 755 ./x10flasher_lib/adb.mac

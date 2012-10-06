@@ -33,9 +33,16 @@ public class JUsb {
 	private static String VendorId = "";
 	private static String DeviceId = "";
 	private static String Serial = "";
+	public static String version = "";
 	
 	public static void init() throws LibUsbNoDeviceException, LibUsbPermissionException, LibUsbOtherException {
 		us = new LibUsbSystem(false, 0);
+		try {
+			version = "LibUSB version "+us.getLibUsb().libusb_get_version();
+		}
+		catch (UnsatisfiedLinkError e) {
+			version = "LibUSB version below 1.0.9. Cannot determine";
+		}
 	}
 	
 	public static void fillDevice() {

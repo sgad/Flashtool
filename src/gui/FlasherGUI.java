@@ -217,6 +217,7 @@ public class FlasherGUI extends JFrame {
 			setSystemLookAndFeel();
 			runAdb();
 			MyLogger.getLogger().info("Flashtool "+About.getVersion());
+			if (JUsb.version.length()>0) MyLogger.getLogger().info(JUsb.version);
 			MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
 			String userdir = System.getProperty("user.dir");
 			String pathsep = System.getProperty("path.separator");

@@ -1,22 +1,13 @@
 package org.system;
 
 import gui.FlasherGUI;
-
 import java.util.Enumeration;
 import java.util.Iterator;
-
 import linuxlib.JUsb;
-
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.logger.MyLogger;
-
-import se.marell.libusb.LibUsbNoDeviceException;
-import se.marell.libusb.LibUsbOtherException;
-import se.marell.libusb.LibUsbPermissionException;
-
 import com.sun.jna.platform.win32.WinBase;
-
 import win32lib.JKernel32;
 import win32lib.JsetupAPi;
 import win32lib.SetupApi.HDEVINFO;
@@ -109,7 +100,7 @@ public class Device {
     public static DeviceIdent getConnectedDeviceLinux() {
     	DeviceIdent id = new DeviceIdent();
     	try {
-    		JUsb.fillDevice();
+    		JUsb.fillDevice(true);
     		if (JUsb.getVendorId().equals("0FCE")) {
 	    		id.addDevId(JUsb.getVendorId(),JUsb.getProductId(),JUsb.getSerial());
 	        }

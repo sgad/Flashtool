@@ -167,7 +167,15 @@ public class FlasherGUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		if (OS.getName()!="windows") JUsb.init();
+		try {
+			if (OS.getName()!="windows") JUsb.init();
+		}
+		catch (UnsatisfiedLinkError e) {
+			e.printStackTrace();
+			System.out.println("libusbx 1.0 not installed. 1.0.14 version mandatory");
+			System.out.println("It can be downloaded on http://www.libusbx.org");
+			System.exit(1);
+		}
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );

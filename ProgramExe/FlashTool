@@ -15,16 +15,31 @@ then
     chmod 755 ./x10flasher_lib/bin2sin
     if [ "$(whoami)" != "root" ]
     then
-        if grep -rl "0fce" /etc/udev/ >/dev/null
-        then
-            echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
-            echo "if Flashing didn't work well, run flashtool as root"
-        else
-            echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
-            echo "The user must be granted access to adb/flashmode/fastboot"
-            echo "If you are unsure what to do, run flashtool as root"
-            exit 1
-        fi
+	export HASRULES="false"
+	if test -d /etc/udev/rules.d
+	then
+        	if grep -rl "0fce" /etc/udev/rules.d >/dev/null
+        	then
+			export HASRULES="true"
+		fi
+	fi
+	if test -d /lib/udev/rules.d
+	then
+        	if grep -rl "0fce" /lib/udev/rules.d >/dev/null
+        	then
+			export HASRULES="true"
+		fi
+	fi
+	if test "$HASRULES" = "true"
+	then
+    		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
+       		echo "if Flashing didn't work well, run flashtool as root"
+       	else
+       		echo "Not running as root and there is no Sony/SonyEriccson Vendor ID on your udev rules"   
+       		echo "The user must be granted access to adb/flashmode/fastboot"
+       		echo "If you are unsure what to do, run flashtool as root"
+       		exit 1
+       	fi
     else
         echo "Running as root."
     fi
@@ -59,10 +74,10 @@ else
     chmod 755 ./x10flasher_lib/unyaffs.mac
     if test "${system64}" = "x86_64"
     then
-        export LD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$LD_LIBRARY_PATH
+        export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$LD_LIBRARY_PATH
         ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
     else
-        export LD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$LD_LIBRARY_PATH
+        export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$LD_LIBRARY_PATH
         ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
     fi
     java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar

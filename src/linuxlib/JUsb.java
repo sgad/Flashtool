@@ -4,26 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+import libusb.UsbDevList;
+import libusb.UsbDevice;
+import libusb.UsbSystem;
+
 import org.logger.MyLogger;
 
 import flashsystem.BytesUtil;
 import flashsystem.HexDump;
-
-import se.marell.libusb.LibUsbBusyException;
-import se.marell.libusb.LibUsbInvalidParameterException;
-import se.marell.libusb.LibUsbNoDeviceException;
-import se.marell.libusb.LibUsbNotFoundException;
-import se.marell.libusb.LibUsbOtherException;
-import se.marell.libusb.LibUsbOverflowException;
-import se.marell.libusb.LibUsbPermissionException;
-import se.marell.libusb.LibUsbPipeException;
-import se.marell.libusb.LibUsbSystem;
-import se.marell.libusb.LibUsbTimeoutException;
-import se.marell.libusb.LibUsbTransmissionException;
-import se.marell.libusb.UsbDevice;
-import se.marell.libusb.UsbSystem;
-import se.marell.libusb.VendorProductVisitor;
-
 
 public class JUsb {
 	
@@ -35,41 +23,21 @@ public class JUsb {
 	private static String Serial = "";
 	public static String version = "";
 	
-	public static void init() throws LibUsbNoDeviceException, LibUsbPermissionException, LibUsbOtherException {
-		us = new LibUsbSystem(false, 0);
-		try {
-			version = "LibUSB version "+us.getLibUsb().libusb_get_version();
-		}
-		catch (UnsatisfiedLinkError e) {
-			version = "LibUSB version below 1.0.9. Cannot determine";
-		}
+	public static void init() {
+		us = new UsbSystem();
 	}
 	
-	public static void fillDevice() {
+	public static void fillDevice(boolean destroy) {
 		dev = getDevice();
 		if (dev!=null) {
-			VendorId = HexDump.toHex(dev.getIdVendor()).toUpperCase();
-			DeviceId = HexDump.toHex(dev.getIdProduct()).toUpperCase();
-			try {
+			VendorId = dev.getVendor().toUpperCase();
+			DeviceId = dev.getProduct().toUpperCase();
+			Serial = "";
+			if (destroy) {
 				dev.open();
-				Serial = dev.get_string_ascii((byte)3);
+				Serial = dev.getSerial();
 				dev.close();
-			} catch (LibUsbNoDeviceException e) {
-				dev=null;
-				VendorId = "";
-				DeviceId = "";
-				Serial = "";
-			} catch (LibUsbPermissionException e) {
-				MyLogger.getLogger().error("No permission on device. Add valid udev rules");
-				dev=null;
-				VendorId = "";
-				DeviceId = "";
-				Serial = "";
-			} catch (LibUsbOtherException e) {
-				dev=null;
-				VendorId = "";
-				DeviceId = "";
-				Serial = "";
+				dev.destroy();
 			}
 		}
 		else {
@@ -91,32 +59,17 @@ public class JUsb {
 		return Serial;
 	}
 	
-	private static UsbDevice getDevice() {
-		UsbDevice device=null;		
-		ArrayList<UsbDevice> devices = new ArrayList<UsbDevice>();
-		try {
-			devices = (ArrayList<UsbDevice>)us.visitUsbDevices(new VendorProductVisitor(0xfce));
-		} catch (LibUsbNoDeviceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LibUsbPermissionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LibUsbOtherException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    if (devices.size()> 0 ) {
-	    	device = devices.get(0);
+	public static UsbDevice getDevice() {
+		UsbDevice device=null;
+		UsbDevList ulist = us.getDevices("0fce");
+	    if (ulist.size()> 0 ) {
+	    	device = ulist.get(0);
 	    }
 	    return device;
 	}
 	
-	public static void open() throws LibUsbNoDeviceException, LibUsbPermissionException, LibUsbOtherException, LibUsbNotFoundException, LibUsbBusyException, LibUsbInvalidParameterException {
-  	  	dev.open();
-  	  	if (dev.kernel_driver_active(0))
-  	  		dev.detach_kernel_driver(0);
-  	  	dev.claim_interface(0);		
+	public static void open() {
+  	  	dev.openAndClaim(0);
 	}
 	
 	public static void writeBytes(byte[] towrite) throws Exception {
@@ -124,49 +77,29 @@ public class JUsb {
   	  	boolean hasData = true;
   	  	int loop = 0;
   	  	while (hasData) {
-  	  			try {
-					int read = in.read(data);
-					if (read > 0) {
-	  	  				dev.bulk_write(0x01, BytesUtil.getReply(data, read), 0);
-					}
-					else hasData=false;
-				} catch (LibUsbTimeoutException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (LibUsbPipeException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (LibUsbNoDeviceException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (LibUsbTransmissionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (LibUsbOtherException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				int read = in.read(data);
+				if (read > 0) {
+	  	  			dev.bulkWrite(BytesUtil.getReply(data, read));
 				}
+				else hasData=false;
   	  	}
   	  	in.close();
 	}
 
-	public static void close() throws Exception {
-  	  	dev.release_interface(0);
-  	  	dev.close();		
+	public static void close() {
+		dev.releaseAndClose();
 	}
 	
-	public static byte[] readBytes() throws LibUsbTimeoutException, LibUsbPipeException, LibUsbOverflowException, LibUsbNoDeviceException, LibUsbOtherException {
-		int read = dev.bulk_read(0x81, data, 0);
-		return BytesUtil.getReply(data, read);
+	public static byte[] readBytes() {
+		return dev.bulkRead();
 	}
 
-	public static byte[] readBytes(int timeout) throws LibUsbTimeoutException, LibUsbPipeException, LibUsbOverflowException, LibUsbNoDeviceException, LibUsbOtherException {
-		int read = dev.bulk_read(0x81, data, timeout);
-		return BytesUtil.getReply(data, read);
+	public static byte[] readBytes(int timeout) {
+		return dev.bulkRead();
 	}
 
 	public static void cleanup() throws Exception {
-		us.cleanup();
+		us.endSystem();
 	}
 
 }

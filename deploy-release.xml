@@ -3,25 +3,10 @@
 	
 	<property name="version" value="0.9.8.0"/>
 	
-	<target name="all" depends="core release,devices,JRE"/>
+	<target name="all" depends="core release,devices"/>
 
 	<target name="devices" depends="E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,WT19 Device,X10 Device,LT26 Device, LT22 Device, LT28 Device, MT27 Device, ST25 Device, ST27 Device, LT26w Device, ST21 Device, MT28 Device, LT30 Device"/>
 	
-	<target name="JRE">
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
-		<unzip src="jre/winjre.zip" dest="../Deploy/FlashTool/x10flasher_lib"/>
-		<untar src="jre/linjre.tar" dest="../Deploy/FlashTool/x10flasher_lib"/>
-		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre64/bin" perm="755" includes="**/*"/>
-		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre32/bin" perm="755" includes="**/*"/>
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linjre32/lib/jexec" perm="755"/>
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linjre64/lib/jexec" perm="755"/>
-		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre64/lib" perm="755" includes="**/*.so"/>
-		<chmod dir="../Deploy/FlashTool/x10flasher_lib/linjre32/lib" perm="755" includes="**/*.so"/>
-	</target>
-
 	<target name="clean">
     	<mkdir dir="../Deploy"/>
     	<delete dir="../Deploy/FlashTool"/>
@@ -59,7 +44,7 @@
     	<mkdir dir ="../Deploy/FlashTool/custom/features"/>
 		<mkdir dir ="../Deploy/FlashTool/custom/ta"/>
 		<mkdir dir ="../Deploy/FlashTool/custom/sin"/>
-    	<mkdir dir="../Deploy/FlashTool/firmwares"/>
+    	<mkdir dir ="../Deploy/FlashTool/firmwares"/>
         <mkdir dir ="../Deploy/FlashTool/custom/clean"/>
 		<mkdir dir ="../Deploy/FlashTool/custom/clean/X10"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
@@ -86,33 +71,12 @@
 	    <copy todir="../Deploy/FlashTool/custom/root">
 	       <fileset dir="./romupdates" excludes="**/.svn"/>
 	    </copy>
-		<copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
-		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
-	    <copy file="./ProgramExe/FlashTool" todir="../Deploy/FlashTool"/>
-	    <copy file="./ProgramExe/FlashToolConsole" todir="../Deploy/FlashTool"/>
 		<copy todir="../Deploy/FlashTool/x10flasher_lib">
-            <fileset dir="./linux"
-                excludes="**/.svn"/>
-        </copy>
-		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
-    	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.linux" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.linux" perm="755" />
+	    	<fileset dir="./libs" excludes="**/.svn"/>
+	    </copy>
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2elf" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2sin" perm="755" />
-        <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
         <chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib64/libusb-1.0.so.0.1.0" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib32/libusb-1.0.so.0.1.0" perm="755" />
-		<copy todir="../Deploy/FlashTool/x10flasher_lib">
-    		<fileset dir="./libs"
-				excludes="**/.svn"/>
-    	</copy>
-    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
-    		<fileset dir="./win32"/>
-    	</copy>
     </target>
 
     <target name="E15 Device">

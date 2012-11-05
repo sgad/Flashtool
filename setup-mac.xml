@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Create Mac Package">
 
-	<target name="all" depends="loadprops, JRE, dotar"/>
-	
-	<target name="JRE">
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
+	<target name="all" depends="loadprops, binaries, dotar"/>
+
+	<target name="clean">
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
         <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
-        <delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/adb.linux"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.linux"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
-        <delete file="../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
+    	<delete dir="../Deploy/FlashTool/x10flasher_lib/linjre32"/>
+    	<delete dir="../Deploy/FlashTool/x10flasher_lib/linjre64"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/macjre64"/>
 		<delete file="../Deploy/FlashTool/FlashTool.exe"/>
-        <delete file="../Deploy/FlashTool/FlashTool64.exe"/>
-        <delete file="../Deploy/FlashTool/config.properties"/>
+	    <delete file="../Deploy/FlashTool/FlashTool64.exe"/>
+		<delete file="../Deploy/FlashTool/FlashToolConsole"/>
+		<delete file="../Deploy/FlashTool/FlashTool"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/7z.exe"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.exe"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf.exe"/>
@@ -26,12 +23,43 @@
 		<delete file="../Deploy/FlashTool/x10flasher_lib/AdbWinApi.dll"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/AdbWinUsbApi.dll"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/cygwin1.dll"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.linux"/>
+        <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.linux"/>
+	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
+	    <delete file="../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/linux"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
+        <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
+	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/mac"/>
+        <delete file="../Deploy/FlashTool/config.properties"/>
+	</target>
+
+	<target name="JRE">
+	</target>
+
+	<target name="binaries" depends="clean, JRE">
+	    <copy file="./ProgramExe/FlashTool" todir="../Deploy/FlashTool"/>
+	    <copy file="./ProgramExe/FlashToolConsole" todir="../Deploy/FlashTool"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib">
+            <fileset dir="./mac"
+                excludes="**/.svn"/>
+        </copy>
+		<chmod file="../Deploy/FlashTool/FlashTool" perm="755" />
+    	<chmod file="../Deploy/FlashTool/FlashToolConsole" perm="755"/>
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/adb.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/mac/lib64/libusb-1.0.0.dylib" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/mac/lib32/libusb-1.0.0.dylib" perm="755" />
 	</target>
 
 	<target name="loadprops">
         <loadmf jar="../Deploy/FlashTool/x10flasher.jar" prefix=""/>
     </target>
 
+	
 	<target name="dotar">
 		<exec executable="tar" dir="../Deploy">
 		    <arg value="cf"/>

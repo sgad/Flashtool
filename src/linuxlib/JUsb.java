@@ -34,10 +34,16 @@ public class JUsb {
 			DeviceId = dev.getProduct().toUpperCase();
 			Serial = "";
 			if (destroy) {
+				try {
 				dev.open();
 				Serial = dev.getSerial();
-				dev.close();
 				dev.destroy();
+				} catch (Exception e) {
+					VendorId = "";
+					DeviceId = "";
+					Serial = "";
+					dev.destroy();
+				}
 			}
 		}
 		else {
@@ -68,7 +74,7 @@ public class JUsb {
 	    return device;
 	}
 	
-	public static void open() {
+	public static void open() throws Exception {
   	  	dev.openAndClaim(0);
 	}
 	

@@ -12,7 +12,7 @@ public class USBFlashLinux {
 	private static int lastflags;
 	private static byte[] lastreply;
 	
-	public static void linuxOpen(String pid) throws IOException {
+	public static void linuxOpen(String pid) throws IOException, Exception  {
 			MyLogger.getLogger().info("Opening device for R/W");
 			JUsb.fillDevice(false);
 			JUsb.open();

@@ -21,28 +21,29 @@ public class UsbSystem {
   {
     Pointer[] p = new Pointer[1];
     try {
-    	try {
-    		libusb_version v = LibUsbLibrary.libUsb.libusb_get_version();
-    		if (v.major!=(short)1 || v.minor!=(short)0 || v.micro<(short)14) {
-    			System.out.println("Minimum libusb version is 1.0.14. Found "+v.major + "." + v.minor + "." + v.micro);
-    			System.out.println("It can be downloaded on http://www.libusbx.org");
-    			System.exit(1);
-    		}
-    	}
-    	catch (UnsatisfiedLinkError e) {
-    		System.out.println("A libusb was found but not with the right version. Minimum libusb version is 1.0.14");
+	    int result = LibUsbLibrary.libUsb.libusb_init(p);
+	    checkError("init", result);
+	    this.context = p[0];
+	    //LibUsbLibrary.libUsb.libusb_set_debug(this.context, 4);
+    }
+    catch (UnsatisfiedLinkError e) {
+		System.out.println("Libusb not found. Minimum libusb version is 1.0.14");
+		System.out.println("It can be downloaded on http://www.libusbx.org");
+		System.exit(1);
+    }
+	try {
+		libusb_version v = LibUsbLibrary.libUsb.libusb_get_version();
+		if (v.major!=(short)1 || v.minor!=(short)0 || v.micro<(short)14) {
+			System.out.println("Minimum libusb version is 1.0.14. Found "+v.major + "." + v.minor + "." + v.micro);
 			System.out.println("It can be downloaded on http://www.libusbx.org");
 			System.exit(1);
-    	}
-    }
-    catch (Exception e) {
-    	System.out.println("Your libusb version cannot be queried. Expecting 1.0.14 minimum. Exiting");
-    	System.exit(1);
-    }
-    int result = LibUsbLibrary.libUsb.libusb_init(p);
-    checkError("init", result);
-    this.context = p[0];
-    //LibUsbLibrary.libUsb.libusb_set_debug(this.context, 4);
+		}
+	}
+	catch (UnsatisfiedLinkError e) {
+		System.out.println("A libusb was found but not with the right version. Minimum libusb version is 1.0.14");
+		System.out.println("It can be downloaded on http://www.libusbx.org");
+		System.exit(1);
+	}
   }
 
   public UsbDevList getDevices(String vendorid) {

@@ -71,6 +71,8 @@ public class CustomFlashUI extends JDialog {
 					}
 					catch (IOException ioe) {
 					}
+					catch (Exception e) {
+					}
 				}
 			});
 			contentPanel.add(btnNewButton, "2, 2, left, center");

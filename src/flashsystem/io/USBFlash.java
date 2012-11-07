@@ -11,7 +11,7 @@ import org.system.OS;
 
 public class USBFlash {
 
-	public static void open(String pid) throws IOException {
+	public static void open(String pid) throws IOException, Exception {
 		DeviceChangedListener.pause(true);
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsOpen(pid);

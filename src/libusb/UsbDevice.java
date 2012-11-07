@@ -65,18 +65,22 @@ public class UsbDevice
 		  refcount--;
 	  }
   }
-
-  public void open() {
+  
+  public void open() throws Exception {
     Pointer[] dev_handle = new Pointer[1];
     int result = LibUsbLibrary.libUsb.libusb_open(this.usb_device, dev_handle);
 	  int retries=0;
 	  int maxretries=5;
+	  if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NO_DEVICE || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NOT_FOUND || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_OTHER)
+		  throw new Exception("Error while querying the device");
 	  if (result <0) {
 		  while (retries<maxretries) {
 			  try {
 			  Thread.sleep(500);
 			  } catch (Exception e) {};
 			  result = LibUsbLibrary.libUsb.libusb_open(this.usb_device, dev_handle);
+			  if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NO_DEVICE || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NOT_FOUND || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_OTHER)
+				  throw new Exception("Error while querying the device");
 			  if (result==0) retries=maxretries;
 			  retries++;
 		  }			  
@@ -89,7 +93,7 @@ public class UsbDevice
     else this.handle=null;
   }
 
-  public void openAndClaim(int iface) {
+  public void openAndClaim(int iface) throws Exception {
 	  open();
 	  claimInterface(iface);
   }

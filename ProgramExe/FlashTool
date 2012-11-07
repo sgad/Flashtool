@@ -55,7 +55,8 @@ then
     fi
     if test -e ${JAVA_HOME}/bin/java
     then
-         if test "${system64}" = "x86_64"
+	 export VER64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bits|wc -l)
+         if test "${VER64}" = "1"
          then
              export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
              ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusb-1.0.so

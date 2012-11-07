@@ -72,13 +72,9 @@ else
     chmod 755 ./x10flasher_lib/adb.mac
     chmod 755 ./x10flasher_lib/fastboot.mac
     chmod 755 ./x10flasher_lib/unyaffs.mac
-    if test "${system64}" = "x86_64"
-    then
-        export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$LD_LIBRARY_PATH
-        ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
-    else
-        export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$LD_LIBRARY_PATH
-        ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
-    fi
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$DYLD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
+    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
+    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
     java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
 fi

@@ -151,7 +151,7 @@ Function .onInit
   "Software\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" \
   "UninstallString"
   StrCmp $R0 "" done
- 
+
   MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
   "$(^Name) is already installed. $\n$\nClick `OK` to remove the \
   previous version or `Cancel` to cancel this upgrade." \
@@ -161,8 +161,11 @@ Function .onInit
 ;Run the uninstaller
 uninst:
   ClearErrors
-  ExecWait '$R0 _?=$INSTDIR' ;Do not copy the uninstaller to a temp file
- 
+  ReadRegStr $R1 HKLM \
+  "Software\$(^Name)" \
+  "Path"
+  ExecWait '$R0 _?=$R1' ; Do not copy the uninstaller to $TEMP or $INSTDIR
+   
   IfErrors no_remove_uninstaller done
     ;You can either use Delete /REBOOTOK in the uninstaller or add some code
     ;here to remove the uninstaller. Use a registry key to check

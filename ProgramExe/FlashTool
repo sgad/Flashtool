@@ -64,7 +64,14 @@ then
              export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32:$LD_LIBRARY_PATH
              ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusb-1.0.so
          fi
-         $JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
+         ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
+         ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+	 if test "$ISJAVA6" = "1" -o "$ISJAVA7" = "1"
+	 then
+         	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
+	 else
+		echo "Java version must be 1.6 or 1.7"
+	 fi
     else
          echo "No Java in specified path in JAVA_HOME=${JAVA_HOME}"
          echo "Set the variable to a valid Java installation"
@@ -77,5 +84,12 @@ else
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
     ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
     ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
-    java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
+    ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
+    ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
+    if test "$ISJAVA6" = "1" -o "$ISJAVA7" = "1"
+    then
+    	java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
+    else
+	echo "Java version must be 1.6 or 1.7"
+    fi
 fi

@@ -288,6 +288,7 @@ public class FlasherGUI extends JFrame {
 		menuBar.add(mnFile);
 
 		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
+		mntmSwitchPro.setName("switchpro");
 		mnFile.add(mntmSwitchPro);
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.setName("mntmExit");
@@ -654,6 +655,7 @@ public class FlasherGUI extends JFrame {
 		mnHelp.setName("mnHelp");
 		mnPlugins = new JMenu("Plugins");
 		JMenu mnDevices = new JMenu("Devices");
+		mnDevices.setName("devices");
 		mntmDevicesAdd = new JMenuItem("Add");
 		mntmDevicesAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

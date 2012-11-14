@@ -64,9 +64,9 @@ then
              export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32:$LD_LIBRARY_PATH
              ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusb-1.0.so
          fi
-         ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
-         ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
-	 if test "$ISJAVA6" = "1" -o "$ISJAVA7" = "1"
+         ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
+         ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
 	 then
          	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
 	 else
@@ -86,7 +86,7 @@ else
     ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
     ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
     ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
-    if test "$ISJAVA6" = "1" -o "$ISJAVA7" = "1"
+    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
     then
     	java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
     else

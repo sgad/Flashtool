@@ -7,7 +7,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 public abstract interface LibUsbLibrary extends Library
 {
-  public static final LibUsbLibrary libUsb = (LibUsbLibrary)Native.loadLibrary("usb-1.0", LibUsbLibrary.class);
+  public static final LibUsbLibrary libUsb = (LibUsbLibrary)Native.loadLibrary("usbx-1.0", LibUsbLibrary.class);
   public static final int LIBUSB_ISO_SYNC_TYPE_MASK = 12;
   public static final int LIBUSB_ISO_USAGE_TYPE_MASK = 48;
   public static final int LIBUSBX_API_VERSION = 16777471;

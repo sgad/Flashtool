@@ -23,13 +23,6 @@ then
 			export HASRULES="true"
 		fi
 	fi
-	if test -d /lib/udev/rules.d
-	then
-        	if grep -rl "0fce" /lib/udev/rules.d >/dev/null
-        	then
-			export HASRULES="true"
-		fi
-	fi
 	if test "$HASRULES" = "true"
 	then
     		echo "Not running as root but Sony/SonyEriccson Vendor ID found on your udev rules"
@@ -55,15 +48,10 @@ then
     fi
     if test -e ${JAVA_HOME}/bin/java
     then
-	 export VER64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bits|wc -l)
-         if test "${VER64}" = "1"
-         then
-             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
-             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusb-1.0.so
-         else
-             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32:$LD_LIBRARY_PATH
-             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusb-1.0.so
-         fi
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
          ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
 	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0

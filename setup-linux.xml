@@ -63,8 +63,8 @@
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux" perm="755" />
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2elf" perm="755" />
 		<chmod file="../Deploy/FlashTool/x10flasher_lib/bin2sin" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib64/libusb-1.0.so.0.1.0" perm="755" />
-		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib32/libusb-1.0.so.0.1.0" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib64/libusbx-1.0.so.0.1.0" perm="755" />
+		<chmod file="../Deploy/FlashTool/x10flasher_lib/linux/lib32/libusbx-1.0.so.0.1.0" perm="755" />
 	</target>
 	
 	<target name="loadprops">

@@ -14,6 +14,9 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+
+import org.lang.Language;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -35,6 +38,7 @@ public class BootModeSelectGUI extends JDialog {
 	public BootModeSelectGUI() {
 		setResizable(false);
 		setTitle("Mode Selector");
+		setName("BootModeSelectGUI");
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModal(true);
 		setBounds(100, 100, 247, 173);
@@ -93,6 +97,7 @@ public class BootModeSelectGUI extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setName("cancelButton");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						result="";
@@ -113,7 +118,13 @@ public class BootModeSelectGUI extends JDialog {
 	}
 
 	public String selectMode() {
+		setLanguage();
 		setVisible(true);
 		return result;
 	}
+	
+	public void setLanguage() {
+		Language.translate(this);
+	}
+
 }

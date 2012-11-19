@@ -299,6 +299,7 @@ public class FlasherGUI extends JFrame {
 		menuBar.add(mnAdvanced);
 		mnDev = new JMenu("Advanced");
 		mnDev.setVisible(false);
+		mnDev.setName("mnDev");
 		menuBar.add(mnDev);
 
 		JMenu mnLang = new JMenu("Language");
@@ -335,6 +336,7 @@ public class FlasherGUI extends JFrame {
 		});
 
 			mntmDumpProperties = new JMenuItem("TA Editor");
+			mntmDumpProperties.setName("mntmDumpProperties");
 			mntmDumpProperties.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -344,6 +346,7 @@ public class FlasherGUI extends JFrame {
 				}
 			});
 			mntmRawIO = new JMenuItem("Raw I/O Module");
+			mntmRawIO.setName("mntmRawIO");
 			mntmRawIO.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -353,6 +356,7 @@ public class FlasherGUI extends JFrame {
 				}
 			});
 			JMenuItem mntmTaBackupRestore = new JMenuItem("TA Backup & Restore");
+			mntmTaBackupRestore.setName("mntmTaBackupRestore");
 			mntmTaBackupRestore.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -361,11 +365,13 @@ public class FlasherGUI extends JFrame {
 					catch (Exception e1) {}
 				}
 			});
-
-			mnDev.add(mntmDumpProperties);
-			mnDev.add(mntmTaBackupRestore);
+			JMenu mnTA = new JMenu("TA");
+			mnTA.add(mntmDumpProperties);
+			mnTA.add(mntmTaBackupRestore);
+			mnDev.add(mnTA);
 			mnDev.add(mntmRawIO);
 		mntmSinEdit = new JMenuItem("SIN Editor");
+		mntmSinEdit.setName("mntmSinEdit");
 		mntmSinEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -396,9 +402,11 @@ public class FlasherGUI extends JFrame {
 		});
 
 		JMenu mnRoot = new JMenu("Root");
+		mnRoot.setName("mnRoot");
 		mnAdvanced.add(mnRoot);
 
 		mntmRootPsneuter = new JMenuItem("Force psneuter");
+		mntmRootPsneuter.setName("mntmRootPsneuter");
 		mntmRootPsneuter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Devices.getCurrent().hasRoot())
@@ -409,6 +417,7 @@ public class FlasherGUI extends JFrame {
 		});
 
 		mntmRootzergRush = new JMenuItem("Force zergRush");
+		mntmRootzergRush.setName("mntmRootzergRush");
 		mntmRootzergRush.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Devices.getCurrent().hasRoot())
@@ -419,6 +428,7 @@ public class FlasherGUI extends JFrame {
 		});
 
 		mntmRootEmulator = new JMenuItem("Force Emulator");
+		mntmRootEmulator.setName("mntmRootEmulator");
 		mntmRootEmulator.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Devices.getCurrent().hasRoot())
@@ -429,6 +439,7 @@ public class FlasherGUI extends JFrame {
 		});
 
 		mntmRootAdbRestore = new JMenuItem("Force AdbRestore hack");
+		mntmRootAdbRestore.setName("mntmRootAdbRestore");
 		mntmRootAdbRestore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Devices.getCurrent().hasRoot())
@@ -444,6 +455,7 @@ public class FlasherGUI extends JFrame {
 		});
 		
 		mntmUnRoot = new JMenuItem("Unroot device");
+		mntmUnRoot.setName("mntmUnRoot");
 		mntmUnRoot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (Devices.getCurrent().hasRoot())
@@ -495,6 +507,7 @@ public class FlasherGUI extends JFrame {
 		
 		
 		mntmSetDefaultRecovery = new JMenuItem("Set default recovery");
+		mntmSetDefaultRecovery.setName("mntmSetDefaultRecovery");
 		mntmSetDefaultRecovery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				doSetDefaultRecovery();
@@ -559,6 +572,7 @@ public class FlasherGUI extends JFrame {
 		
 		mnAdvanced.add(mntmSinEdit);
 		JMenu mnExtracts = new JMenu("Extractors");
+		mnExtracts.setName("mnExtracts");
 		mnExtracts.add(mntmElfUnpack);
 		mnExtracts.add(mntmYaffs2Unpack);
 		mnAdvanced.add(mnExtracts);		
@@ -597,6 +611,7 @@ public class FlasherGUI extends JFrame {
 		mnAdvanced.add(mntmBundleCreation);
 
 		JMenu mnReboot = new JMenu("Reboot");
+		mnReboot.setName("mnReboot");
 		mnAdvanced.add(mnReboot);
 		
 		JMenu mnRRecovery = new JMenu("Recovery");
@@ -605,6 +620,7 @@ public class FlasherGUI extends JFrame {
 		mnReboot.add(mnRKernel);
 
 		mntmRebootDefaultRecovery = new JMenuItem("Reboot default version");
+		mntmRebootDefaultRecovery.setName("mntmRebootDefaultRecovery");
 		mntmRebootDefaultRecovery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				doRebootRecovery();
@@ -613,6 +629,7 @@ public class FlasherGUI extends JFrame {
 		mnRRecovery.add(mntmRebootDefaultRecovery);
 
 		mntmRebootIntoRecoveryT = new JMenuItem("Reboot specific version");
+		mntmRebootIntoRecoveryT.setName("mntmRebootIntoRecoveryT");
 		mntmRebootIntoRecoveryT.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				doRebootRecoveryT();
@@ -625,6 +642,7 @@ public class FlasherGUI extends JFrame {
 		mntmSetDefaultRecovery.setEnabled(false);
 
 		mntmSetDefaultKernel = new JMenuItem("Set default kernel");
+		mntmSetDefaultKernel.setName("mntmSetDefaultKernel");
 		mntmSetDefaultKernel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doSetDefaultKernel();
@@ -634,6 +652,7 @@ public class FlasherGUI extends JFrame {
 		mntmSetDefaultKernel.setEnabled(false);
 
 		mntmRebootDefaultKernel = new JMenuItem("Reboot default version");
+		mntmRebootDefaultKernel.setName("mntmRebootDefaultKernel");
 		mntmRebootDefaultKernel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doReboot();
@@ -643,6 +662,7 @@ public class FlasherGUI extends JFrame {
 
 		mntmRebootDefaultKernel.setEnabled(false);
 		mntmRebootCustomKernel = new JMenuItem("Reboot specific version");
+		mntmRebootCustomKernel.setName("mntmRebootCustomKernel");
 		mntmRebootCustomKernel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doRebootKexec();
@@ -657,6 +677,7 @@ public class FlasherGUI extends JFrame {
 		JMenu mnDevices = new JMenu("Devices");
 		mnDevices.setName("devices");
 		mntmDevicesAdd = new JMenuItem("Add");
+		mntmDevicesAdd.setName("mntmDevicesAdd");
 		mntmDevicesAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				DeviceEditorUI edit = new DeviceEditorUI();
@@ -664,6 +685,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 		mntmDevicesRemove = new JMenuItem("Remove");
+		mntmDevicesRemove.setName("mntmDevicesRemove");
 		mntmDevicesRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Devices.listDevices(true);
@@ -682,6 +704,7 @@ public class FlasherGUI extends JFrame {
 		});
 		
 		mntmDevicesEdit = new JMenuItem("Edit");
+		mntmDevicesEdit.setName("mntmDevicesEdit");
 		mntmDevicesEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Devices.listDevices(true);
@@ -696,6 +719,7 @@ public class FlasherGUI extends JFrame {
 		});		
 		
 		mntmDevicesExport = new JMenuItem("Export");
+		mntmDevicesExport.setName("mntmDevicesExport");
 		mntmDevicesExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Devices.listDevices(true);
@@ -714,6 +738,7 @@ public class FlasherGUI extends JFrame {
 		});
 
 		mntmDevicesImport = new JMenuItem("Import");
+		mntmDevicesImport.setName("mntmDevicesImport");
 		mntmDevicesImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
         				Worker.post(new Job() {
@@ -842,7 +867,8 @@ public class FlasherGUI extends JFrame {
 		mntmSwitchPro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
-				mntmSwitchPro.setText(ispro?"Switch Pro":"Switch SImple");
+				mntmSwitchPro.setName(ispro?"switchpro":"switchsimple");
+				setLanguage();
 				GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
 				mnDev.setVisible(!ispro);
 			}
@@ -886,25 +912,29 @@ public class FlasherGUI extends JFrame {
 		contentPane.add(toolBar, "2, 2, left, fill");
 
 		flashBtn = new JButton("");
-		flashBtn.setToolTipText("Flash");
+		flashBtn.setName("flashBtn");
+		flashBtn.setToolTipText(Language.getMessage("flashBtnTT"));
 		flashBtn.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/flash_32.png")));
 		toolBar.add(flashBtn);
 		
 				btnRoot = new JButton("");
-				btnRoot.setToolTipText("Root");
+				btnRoot.setName("btnRoot");
+				btnRoot.setToolTipText(Language.getMessage("btnRootTT"));
 				btnRoot.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/root_32.png")));
 				toolBar.add(btnRoot);
 				btnRoot.setEnabled(false);
 				
 						btnAskRootPerms = new JButton("");
+						btnAskRootPerms.setName("btnAskRootPerms");
 						btnAskRootPerms.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/askroot_32.png")));
-						btnAskRootPerms.setToolTipText("Ask Root Perms");
+						btnAskRootPerms.setToolTipText(Language.getMessage("btnAskRootPermsTT"));
 						toolBar.add(btnAskRootPerms);
 						btnAskRootPerms.setBackground(SystemColor.control);
 						btnAskRootPerms.setEnabled(false);
 						
 								btnCleanroot = new JButton("");
-								btnCleanroot.setToolTipText("Clean (Root Needed)");
+								btnCleanroot.setName("btnCleanroot");
+								btnCleanroot.setToolTipText(Language.getMessage("btnCleanrootTT"));
 								btnCleanroot.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/clean_32.png")));
 								toolBar.add(btnCleanroot);
 								
@@ -915,13 +945,15 @@ public class FlasherGUI extends JFrame {
 										});
 										btnCleanroot.setEnabled(false);
 										custBtn = new JButton("");
+										custBtn.setName("custBtn");
 										custBtn.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/customize_32.png")));
-										custBtn.setToolTipText("APK Installer");
+										custBtn.setToolTipText(Language.getMessage("custBtnTT"));
 										toolBar.add(custBtn);
 										custBtn.setEnabled(false);
 														
 														btnXrecovery = new JButton("");
-														btnXrecovery.setToolTipText("Recovery Installer");
+														btnXrecovery.setName("btnXrecovery");
+														btnXrecovery.setToolTipText(Language.getMessage("btnXrecoveryTT"));
 														btnXrecovery.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/recovery_32.png")));
 														toolBar.add(btnXrecovery);
 														btnXrecovery.addActionListener(new ActionListener() {
@@ -932,7 +964,8 @@ public class FlasherGUI extends JFrame {
 														btnXrecovery.setEnabled(false);
 														
 														btnKernel = new JButton("");
-														btnKernel.setToolTipText("Kernel Installer");
+														btnKernel.setName("btnKernel");
+														btnKernel.setToolTipText(Language.getMessage("btnKernelTT"));
 														btnKernel.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/kernel_32.png")));
 														toolBar.add(btnKernel);
 														btnKernel.addActionListener(new ActionListener() {
@@ -974,7 +1007,7 @@ public class FlasherGUI extends JFrame {
 		JButton btnDonate = new JButton("");
 		toolBar_1.add(btnDonate);
 		btnDonate.setIcon(new ImageIcon(FlasherGUI.class.getResource("/gui/ressources/icons/paypal.png")));
-		btnDonate.setToolTipText("Donate");
+		btnDonate.setToolTipText(Language.getMessage("btnDonateTT"));
 		//btnDonate.setName("btnDonate");
 		btnDonate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

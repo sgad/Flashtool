@@ -80,10 +80,10 @@ public class firmSelect extends JDialog {
 		boolean hasElements = false;
 		hasCmd25.clear();
 		modelFirm = new DefaultTableModel();
-		modelFirm.addColumn("File");
-		modelFirm.addColumn("Device");
-		modelFirm.addColumn("Version");
-		modelFirm.addColumn("Branding");
+		modelFirm.addColumn(Language.getMessage("firmselect_modelFirm_file"));
+		modelFirm.addColumn(Language.getMessage("firmselect_modelFirm_device"));
+		modelFirm.addColumn(Language.getMessage("firmselect_modelFirm_version"));
+		modelFirm.addColumn(Language.getMessage("firmselect_modelFirm_branding"));
 		tableFirm.setModel(modelFirm);
 		tableFirm.getRowSorter().toggleSortOrder(1);
 		tableFirm.setColumnModel(new XTableColumnModel());
@@ -128,7 +128,7 @@ public class firmSelect extends JDialog {
 	
 	public void refreshContent() {
 		model_1 = new DefaultTableModel();
-		model_1.addColumn("File");
+		model_1.addColumn(Language.getMessage("firmselect_modelFirm_file"));
 		tablesin.setModel(model_1);
 		tablesin.getRowSorter().toggleSortOrder(0);
 		if (result!=null) {
@@ -250,7 +250,7 @@ public class firmSelect extends JDialog {
 					addCheckBoxesWipe();
 					addCheckBoxesExclupde();
 					initMiscCheckBoxes();
-					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+					addCheckBoxesMisc(Language.getMessage("meta_noverif"),selected.hasCmd25(),new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							selected.setCmd25(selected.hasCmd25()?"false":"true");
 						}
@@ -270,7 +270,7 @@ public class firmSelect extends JDialog {
 					addCheckBoxesWipe();
 					addCheckBoxesExclupde();
 					initMiscCheckBoxes();
-					addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+					addCheckBoxesMisc(Language.getMessage("meta_noverif"),selected.hasCmd25(),new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							selected.setCmd25(selected.hasCmd25()?"false":"true");
 						}
@@ -284,6 +284,10 @@ public class firmSelect extends JDialog {
 		JScrollPane scrollPaneFirmwareContent = new JScrollPane();
 			contentPanel.add(scrollPaneFirmwareContent, "4, 6, 1, 11, fill, fill");
 				tablesin = new JTable(model_1);
+				tablesin.setShowVerticalLines(false);
+				tablesin.setShowHorizontalLines(false);
+				tablesin.setShowGrid(false);
+				tablesin.setRowSelectionAllowed(false);
 				tablesin.setAutoCreateRowSorter(true);
 				scrollPaneFirmwareContent.setViewportView(tablesin);
 							
@@ -309,6 +313,7 @@ public class firmSelect extends JDialog {
 									FormFactory.RELATED_GAP_ROWSPEC,}));
 							
 							JLabel lblNewLabel = new JLabel("Wipe :");
+							lblNewLabel.setName("firmSelect_lblWipe");
 							panel.add(lblNewLabel, "2, 2, left, center");
 							
 							JScrollPane scrollPaneWipe = new JScrollPane();
@@ -318,6 +323,7 @@ public class firmSelect extends JDialog {
 							scrollPaneWipe.setViewportView(panelWipe);
 							
 							JLabel lblNewLabel_1 = new JLabel("Exclude :");
+							lblNewLabel_1.setName("firmSelect_lblExclude");
 							panel.add(lblNewLabel_1, "2, 6");
 							JScrollPane scrollPaneExclude = new JScrollPane();
 							panel.add(scrollPaneExclude, "2, 8, fill, fill");
@@ -325,6 +331,7 @@ public class firmSelect extends JDialog {
 							scrollPaneExclude.setViewportView(panelExclude);							
 							
 							JLabel lblNewLabel_2 = new JLabel("Misc :");
+							lblNewLabel_2.setName("firmSelect_lblMisc");
 							panel.add(lblNewLabel_2, "2, 10");
 							
 							JScrollPane scrollPaneMisc = new JScrollPane();
@@ -400,7 +407,7 @@ public class firmSelect extends JDialog {
 				addCheckBoxesWipe();
 				addCheckBoxesExclupde();
 				initMiscCheckBoxes();
-				addCheckBoxesMisc("No final verification",selected.hasCmd25(),new ActionListener() {
+				addCheckBoxesMisc(Language.getMessage("meta_noverif"),selected.hasCmd25(),new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						selected.setCmd25(selected.hasCmd25()?"false":"true");
 					}

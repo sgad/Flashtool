@@ -8,6 +8,7 @@ import java.util.Vector;
 import org.jdom.Element;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
+import org.lang.Language;
 
 public class BundleMetaData {
 
@@ -21,16 +22,16 @@ public class BundleMetaData {
 	Properties _catorders = new Properties();
 	
 	public BundleMetaData() {
-		_categex.setProperty("SYSTEM", "Exclude system");
-		_categex.setProperty("BASEBAND", "Exclude baseband");
-		_categex.setProperty("KERNEL", "Exclude kernel");
-		_categex.setProperty("PARTITION", "Exclude partition");
-		_categex.setProperty("NONE", "Exclude uncategorized");
-		_categex.setProperty("FOTA", "Exclude Fota");
-		_categex.setProperty("TA", "Exclude TA");
-		_categwipe.setProperty("DATA", "Wipe data");
-		_categwipe.setProperty("CACHE", "Wipe cache");
-		_categwipe.setProperty("LOG", "Wipe apps log");
+		_categex.setProperty("SYSTEM", Language.getMessage("meta_system"));
+		_categex.setProperty("BASEBAND", Language.getMessage("meta_baseband"));
+		_categex.setProperty("KERNEL", Language.getMessage("meta_kernel"));
+		_categex.setProperty("PARTITION", Language.getMessage("meta_partition"));
+		_categex.setProperty("NONE", Language.getMessage("meta_uncategorized"));
+		_categex.setProperty("FOTA", Language.getMessage("meta_fota"));
+		_categex.setProperty("TA", Language.getMessage("meta_ta"));
+		_categwipe.setProperty("DATA", Language.getMessage("meta_data"));
+		_categwipe.setProperty("CACHE", Language.getMessage("meta_cache"));
+		_categwipe.setProperty("LOG", Language.getMessage("meta_log"));
 		_catorders.setProperty("1", "KERNEL");
 		_catorders.setProperty("2", "FOTA");
 		_catorders.setProperty("3", "BASEBAND");

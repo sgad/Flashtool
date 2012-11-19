@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+
 import org.system.PropertiesFile;
 import java.util.Enumeration;
 
@@ -65,14 +67,15 @@ public final class Language {
 		
 		if (root instanceof JMenu)
 			components = ((JMenu)root).getMenuComponents();
-		else components = root.getComponents();
+		else
+			components = root.getComponents();
 		
 	    for (Component com : components) {
 	        if (com instanceof Container) {
 	        	translate((Container)com);
 	        }
 	    }
-	    
+
 	    if (root.getName() != null) {
 	    	if (root instanceof JMenu)
 	    		((JMenu) root).setText(Language.getMessage(root.getName()));
@@ -80,8 +83,14 @@ public final class Language {
 	    		if (!((JMenuItem) root).getName().startsWith("rdbtnmntm"))
 	    				((JMenuItem) root).setText(Language.getMessage(root.getName()));
 	    	}
-	    	if (root instanceof JButton)
-	    		((JButton) root).setText(Language.getMessage(root.getName()));
+	    	if (root instanceof JButton) {
+	    		JButton b = (JButton) root;
+	    		if (b.getText().length()>0)
+	    			b.setText(Language.getMessage(b.getName()));
+	    		if (b.getToolTipText()!=null) {
+	    			b.setToolTipText(Language.getMessage(b.getName()+"TT"));
+	    		}
+	    	}
 			if (root instanceof JLabel)
 				((JLabel)root).setText(Language.getMessage(root.getName()));			
 	    	if (root instanceof JFrame)

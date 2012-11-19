@@ -52,7 +52,7 @@ public class JUsb {
 			Serial = "";			
 		}
 	}
-	
+
 	public static String getVendorId() {
 		return VendorId;
 	}
@@ -93,7 +93,8 @@ public class JUsb {
 	}
 
 	public static void close() {
-		dev.releaseAndClose();
+		if (dev!=null)
+			dev.releaseAndClose();
 	}
 	
 	public static byte[] readBytes() {

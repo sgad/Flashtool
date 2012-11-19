@@ -79,11 +79,13 @@ public class UsbDevice
 			  Thread.sleep(500);
 			  } catch (Exception e) {};
 			  result = LibUsbLibrary.libUsb.libusb_open(this.usb_device, dev_handle);
-			  if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NO_DEVICE || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NOT_FOUND || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_OTHER)
+			  if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NO_DEVICE || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_NOT_FOUND || result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_OTHER) {
+				  this.handle=null;
 				  throw new Exception("Error while querying the device");
+			  }
 			  if (result==0) retries=maxretries;
 			  retries++;
-		  }			  
+		  }
 	  }
     UsbSystem.checkError("Open", result);
     if (result == 0) {
@@ -105,17 +107,24 @@ public class UsbDevice
   
   public String getSerial() {
     byte[] buffer = new byte[256];
-    int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iSerialNumber, buffer, buffer.length);
-    if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_INVALID_PARAM) return "";
-    UsbSystem.checkError("libusb_get_string_descriptor_ascii", result);
-    return new String(buffer);
+    if (handle!=null) {
+    	int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iSerialNumber, buffer, buffer.length);
+    	if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_INVALID_PARAM) return "";
+    	UsbSystem.checkError("libusb_get_string_descriptor_ascii", result);
+    	return new String(buffer);
+    }
+    else return "";    
   }
 
   public String getManufacturer() {
     byte[] buffer = new byte[256];
-    int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iManufacturer, buffer, buffer.length);
-    UsbSystem.checkError("libusb_get_string_descriptor_ascii", result);
-    return new String(buffer);
+    if (handle!=null) {
+	    int result = LibUsbLibrary.libUsb.libusb_get_string_descriptor_ascii(this.handle, this.iManufacturer, buffer, buffer.length);
+	    if (result == LibUsbLibrary.libusb_error.LIBUSB_ERROR_INVALID_PARAM) return "";
+	    UsbSystem.checkError("libusb_get_string_descriptor_ascii", result);
+	    return new String(buffer);
+    }
+    else return "";
   }
 
   public void setConfiguration() {

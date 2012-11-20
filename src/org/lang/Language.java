@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 
+import org.system.Devices;
 import org.system.PropertiesFile;
 import java.util.Enumeration;
 
@@ -80,8 +81,17 @@ public final class Language {
 	    	if (root instanceof JMenu)
 	    		((JMenu) root).setText(Language.getMessage(root.getName()));
 	    	if (root instanceof JMenuItem) {
-	    		if (!((JMenuItem) root).getName().startsWith("rdbtnmntm"))
-	    				((JMenuItem) root).setText(Language.getMessage(root.getName()));
+	    		if (!((JMenuItem) root).getName().startsWith("rdbtnmntm")) {
+	    			JMenuItem menu = (JMenuItem) root;
+	    			if (menu.getName().equals("mnMyDevice")) {
+	    				if (Devices.getCurrent()!=null)
+	    					menu.setText(Language.getMessage(root.getName())+" "+Devices.getCurrent().getId());
+	    				else
+	    					menu.setText(Language.getMessage(root.getName()));
+	    			}
+	    			else
+	    				menu.setText(Language.getMessage(root.getName()));
+	    		}
 	    	}
 	    	if (root instanceof JButton) {
 	    		JButton b = (JButton) root;

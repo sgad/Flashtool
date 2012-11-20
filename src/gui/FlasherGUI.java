@@ -141,6 +141,7 @@ public class FlasherGUI extends JFrame {
 	private String ftfname="";
 	//private StatusListener phoneStatus;
 	private JMenu mnDev;
+	private JMenu mnMyDevice;
 
 	private static void setSystemLookAndFeel() {
 		try {
@@ -287,6 +288,11 @@ public class FlasherGUI extends JFrame {
 		mnFile.setName("mnFile");
 		menuBar.add(mnFile);
 
+		mnMyDevice = new JMenu("My");
+		mnMyDevice.setName("mnMyDevice");
+		mnMyDevice.setVisible(false);
+		menuBar.add(mnMyDevice);
+
 		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
 		mntmSwitchPro.setName("switchpro");
 		mnFile.add(mntmSwitchPro);
@@ -403,7 +409,7 @@ public class FlasherGUI extends JFrame {
 
 		JMenu mnRoot = new JMenu("Root");
 		mnRoot.setName("mnRoot");
-		mnAdvanced.add(mnRoot);
+		mnMyDevice.add(mnRoot);
 
 		mntmRootPsneuter = new JMenuItem("Force psneuter");
 		mntmRootPsneuter.setName("mntmRootPsneuter");
@@ -478,7 +484,7 @@ public class FlasherGUI extends JFrame {
 		
 		JMenu mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
-		mnAdvanced.add(mnClean);
+		mnMyDevice.add(mnClean);
 
 		mntmClearCache = new JMenuItem("Clear dalvik cache");
 		mnClean.add(mntmClearCache);
@@ -503,7 +509,7 @@ public class FlasherGUI extends JFrame {
 		});*/
 
 		JMenu mnXrecovery = new JMenu("Recovery");
-		mnAdvanced.add(mnXrecovery);
+		mnMyDevice.add(mnXrecovery);
 		
 		
 		mntmSetDefaultRecovery = new JMenuItem("Set default recovery");
@@ -529,7 +535,7 @@ public class FlasherGUI extends JFrame {
 		
 
 		JMenu mnKernel = new JMenu("Kernel");
-		mnAdvanced.add(mnKernel);
+		mnMyDevice.add(mnKernel);
 
 		//mntmInstallBootkit = new JMenuItem("Install bootkit");
 		//mntmInstallBootkit.addActionListener(new ActionListener() {
@@ -542,7 +548,7 @@ public class FlasherGUI extends JFrame {
 		
 		mntmBackupSystemApps = new JMenuItem("Backup System Apps");
 		mntmBackupSystemApps.setName("mntmBackupSystemApps");
-		mnAdvanced.add(mntmBackupSystemApps);
+		mnMyDevice.add(mntmBackupSystemApps);
 		mntmBackupSystemApps.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				doBackupSystem();
@@ -559,7 +565,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 		mnXrecovery.add(mntmInstallOnline);*/
-		mnAdvanced.add(mntmInstallBusybox);
+		mnMyDevice.add(mntmInstallBusybox);
 
 		mntmBuildpropEditor = new JMenuItem("Build.prop Editor");
 		mntmBuildpropEditor.setName("mntmBuildpropEditor");
@@ -576,7 +582,7 @@ public class FlasherGUI extends JFrame {
 		mnExtracts.add(mntmElfUnpack);
 		mnExtracts.add(mntmYaffs2Unpack);
 		mnAdvanced.add(mnExtracts);		
-		mnAdvanced.add(mntmBuildpropEditor);
+		mnMyDevice.add(mntmBuildpropEditor);
 
 		mntmBuildpropRebrand = new JMenuItem("Rebrand");
 		//mntmBuildpropRebrand.setName("mntmBuildpropEditor");
@@ -585,7 +591,7 @@ public class FlasherGUI extends JFrame {
 				doRebrand();
 			}
 		});
-		mnAdvanced.add(mntmBuildpropRebrand);
+		mnMyDevice.add(mntmBuildpropRebrand);
 		
 		mnAdvanced.add(mntmEncryptDecrypt);
 
@@ -612,7 +618,7 @@ public class FlasherGUI extends JFrame {
 
 		JMenu mnReboot = new JMenu("Reboot");
 		mnReboot.setName("mnReboot");
-		mnAdvanced.add(mnReboot);
+		mnMyDevice.add(mnReboot);
 		
 		JMenu mnRRecovery = new JMenu("Recovery");
 		JMenu mnRKernel = new JMenu("Kernel");
@@ -1996,6 +2002,7 @@ public class FlasherGUI extends JFrame {
 			custBtn.setEnabled(false);
 			//mntmCleanUninstalled.setEnabled(false);
 	    	mntmBackupSystemApps.setEnabled(false);
+	    	mnMyDevice.setVisible(false);
     	}
 	}
  
@@ -2057,6 +2064,8 @@ public class FlasherGUI extends JFrame {
 			        		}
 		        		}
 		        		if (found) {
+		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
+		        			mnMyDevice.setVisible(true);
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
 		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());

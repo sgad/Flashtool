@@ -463,4 +463,14 @@
 		</copy>
     </target>
 
+	<target name="Langs only">
+        <delete dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+    	<mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
+		<copy todir="../Deploy/FlashTool/x10flasher_lib/langs">
+			<fileset dir="./src/org/lang/ressources"
+				excludes="**/.svn"/>
+		</copy>
+    </target>
+
+
 </project>

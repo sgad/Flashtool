@@ -15,6 +15,9 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+
+import org.lang.Language;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -36,6 +39,7 @@ public class RootPackageSelect extends JDialog {
 	 */
 	public RootPackageSelect() {
 		setTitle("Root package");
+		setName("RootPackageSelect");
 		setModal(true);
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
@@ -99,11 +103,16 @@ public class RootPackageSelect extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
+		setLanguage();
 	}
 
 	public String getResult() {
 		setVisible(true);
 		return result;
+	}
+	
+	public void setLanguage() {
+		Language.translate(this);
 	}
 
 }

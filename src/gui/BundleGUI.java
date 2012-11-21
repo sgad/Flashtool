@@ -219,6 +219,7 @@ public class BundleGUI extends JDialog {
 				panel.add(panel_1, "2, 8, 3, 1, left, fill");
 				{
 					chckbxICS = new JCheckBox("Disable Final Verification Check");
+					chckbxICS.setName("meta_noverif");
 					panel_1.add(chckbxICS);
 				}
 			}
@@ -333,7 +334,7 @@ public class BundleGUI extends JDialog {
 						retcode=(version.getText().length()>0&&device.getText().length()>0&&branding.getText().length()>0 && root.getChildCount()>=1);
 						if (retcode)
 							if ((new File("./firmwares/"+device.getText()+"_"+version.getText()+"_"+branding.getText()+".ftf")).exists())
-								JOptionPane.showMessageDialog(null, "You already used this device/version/branding for another bundle");
+								JOptionPane.showMessageDialog(null, Language.getMessage("msgdlg_already"));
 							else {
 								if (root.getChildAt(0).getChildCount()==1) {
 									String md5 = OS.getMD5(new File(folderSource.getText()+OS.getFileSeparator()+meta.getExternal(root.getChildAt(0).getChildAt(0).toString()))).toUpperCase();
@@ -346,7 +347,7 @@ public class BundleGUI extends JDialog {
 											if (md5.equals(entry.getLoaderUnlockedMD5())) found = true;
 									}
 									if (found) {
-										JOptionPane.showMessageDialog(null, "A Bundle cannot contain only a loader");
+										JOptionPane.showMessageDialog(null, Language.getMessage("msgdlg_loader"));
 									}
 									else {
 										dispose();
@@ -355,7 +356,7 @@ public class BundleGUI extends JDialog {
 								else dispose();
 							}
 						else {
-							JOptionPane.showMessageDialog(null, "You must fill all fields and have at least one file in the firmware list");
+							JOptionPane.showMessageDialog(null, Language.getMessage("msgdlg_least"));
 						}
 					}
 				});

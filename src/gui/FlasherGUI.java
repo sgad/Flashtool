@@ -294,7 +294,8 @@ public class FlasherGUI extends JFrame {
 		menuBar.add(mnMyDevice);
 
 		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
-		mntmSwitchPro.setName("switchpro");
+		boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
+		mntmSwitchPro.setName(ispro?"switchsimple":"switchpro");
 		mnFile.add(mntmSwitchPro);
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.setName("mntmExit");

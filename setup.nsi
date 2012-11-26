@@ -63,6 +63,18 @@ ShowUninstDetails show
 Section -Flashtool SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
+    RmDir /r /REBOOTOK $SMPROGRAMS\$StartMenuGroup
+    RmDir /r /REBOOTOK $INSTDIR\x10flasher_lib
+    RmDir /r /REBOOTOK $INSTDIR\drivers
+    RmDir /r /REBOOTOK $INSTDIR\devices
+    RmDir /r /REBOOTOK $INSTDIR\custom\features
+    RmDir /r /REBOOTOK $INSTDIR\custom\root
+    RmDir /r /REBOOTOK $INSTDIR\custom\shells
+    Delete /REBOOTOK $INSTDIR\FlashTool.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool64.exe
+    Delete /REBOOTOK $INSTDIR\FlashTool
+    Delete /REBOOTOK $INSTDIR\FlashToolConsole
+    Delete /REBOOTOK $INSTDIR\x10flasher.jar
     File /r ..\Deploy\FlashTool\*
     WriteRegStr HKLM "${REGKEY}\Components" Flashtool 1
 SectionEnd
@@ -147,33 +159,6 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-  ReadRegStr $R0 HKLM \
-  "Software\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" \
-  "UninstallString"
-  StrCmp $R0 "" done
-
-  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-  "$(^Name) is already installed. $\n$\nClick `OK` to remove the \
-  previous version or `Cancel` to cancel this upgrade." \
-  IDOK uninst
-  Abort
- 
-;Run the uninstaller
-uninst:
-  ClearErrors
-  ReadRegStr $R1 HKLM \
-  "Software\$(^Name)" \
-  "Path"
-  ExecWait '$R0 _?=$R1' ; Do not copy the uninstaller to $TEMP or $INSTDIR
-   
-  IfErrors no_remove_uninstaller done
-    ;You can either use Delete /REBOOTOK in the uninstaller or add some code
-    ;here to remove the uninstaller. Use a registry key to check
-    ;whether the user has chosen to uninstall. If you are using an uninstaller
-    ;components page, make sure all sections are uninstalled.
-  no_remove_uninstaller:
- 
-done:
 FunctionEnd
 
 # Uninstaller functions

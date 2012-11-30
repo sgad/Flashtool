@@ -164,11 +164,26 @@ public class SinFile {
 	}
 
 	private void processHeader() throws IOException {
+		byte magic[] = new byte[4];
 		int nbread;
 		byte headersize[] = new byte[4];
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		fin.seek(2);
-		nbread = fin.read(headersize);
+		nbread = fin.read(magic);
+		if (nbread != magic.length) {
+			fin.close();
+			throw new IOException("Error in processHeader");			
+		}
+		MyLogger.getLogger().info("Magic : "+HexDump.toHex(magic));
+		if (HexDump.toHex(magic).equals("[03, 53, 49, 4E]")) {
+			MyLogger.getLogger().info("New sin file");
+			nbread = fin.read(headersize);
+			MyLogger.getLogger().info("Size : "+HexDump.toHex(headersize)+ "("+(int)BytesUtil.getLong(headersize)+")");
+		}
+		else {
+			MyLogger.getLogger().info("Old sin file");
+			fin.seek(2);
+			nbread = fin.read(headersize);
+		}
 		if(nbread != headersize.length) {
 			fin.close();
 			throw new IOException("Error in processHeader");
@@ -184,7 +199,6 @@ public class SinFile {
 			sinheader.setPartitionInfo(part);
 		}
 		fin.close();
-		
     }
 
 	public byte[] getPartitionInfoBytes() throws IOException {

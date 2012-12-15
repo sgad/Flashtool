@@ -98,7 +98,6 @@ public class Command {
     				}catch (Exception e) {}
     			}
 	    		S1Packet p = new S1Packet(command,data,ongoing);
-	    		MyLogger.getLogger().debug("OUT : " + p);
 	    		try {
 	    			USBFlash.writeS1(p);
 	    			p.release();

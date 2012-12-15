@@ -34,6 +34,7 @@ public class USBFlashWin32 {
 	}
 
 	public static boolean windowsWriteS1(S1Packet p) throws IOException,X10FlashException {
+		MyLogger.getLogger().debug("Writing packet to phone");
 		if (p.getDataLength()>=65536) {
 				byte[] part1 = new byte[65536];
 				byte[] part2 = new byte[p.getByteArray().length-65536];
@@ -44,6 +45,7 @@ public class USBFlashWin32 {
 		}
 		else
 			JKernel32.writeBytes(p.getByteArray());
+		MyLogger.getLogger().debug("OUT : " + p);
 		return true;
 	}
 
@@ -54,6 +56,7 @@ public class USBFlashWin32 {
 	
     public static  void windowsReadS1Reply() throws X10FlashException, IOException
     {
+    	MyLogger.getLogger().debug("Reading packet from phone");
     	S1Packet p=null;
 		boolean finished = false;
 		while (!finished) {

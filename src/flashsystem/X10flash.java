@@ -373,7 +373,9 @@ public class X10flash {
 		    setFlashState(true);
 		    sendPartition();
 		    sendTAFiles();
+		    openTA(2);
 			sendImages();
+			closeTA();
         	setFlashState(false);
         	closeDevice(0x01);
 			MyLogger.getLogger().info("Flashing finished.");

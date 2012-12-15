@@ -39,6 +39,9 @@ public class Command {
 	public static final byte[] TA_DEVID5 = {
 		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0x9E
 	};
+	public static final byte[] DISABLEFINALVERIF = {
+		0x00, 0x01, 0x00, 0x00, 0x00, 0x01
+	};
 
 	static final int CMD01 = 1;
 	static final int CMD04 = 4;
@@ -49,6 +52,8 @@ public class Command {
 	static final int CMD10 = 10;
 	static final int CMD12 = 12;
 	static final int CMD13 = 13;
+	static final int CMD25 = 25;
+	
 	
 	static final byte[] VALNULL = new byte[0];
 	static final byte[] VAL1 = new byte[] {1};

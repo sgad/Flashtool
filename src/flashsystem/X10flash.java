@@ -48,6 +48,7 @@ public class X10flash {
 	    		openTA(2);
 	    	}
 	    	else {
+	    		closeTA();
 	    		openTA(2);
 	    		cmd.send(Command.CMD13, Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
 	    		closeTA();
@@ -368,14 +369,12 @@ public class X10flash {
 		    sendLoader();
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
-		    	cmd.send((byte)0x19, new byte[] {0x00, 0x01, 0x00, 0x00, 0x00, 0x01}, false);
+		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);
 		    }
 		    setFlashState(true);
 		    sendPartition();
 		    sendTAFiles();
-		    openTA(2);
 			sendImages();
-			closeTA();
         	setFlashState(false);
         	closeDevice(0x01);
 			MyLogger.getLogger().info("Flashing finished.");

@@ -176,9 +176,8 @@ public class S1Packet {
 		}
 	}
 
-	public String toString() {
-	    if (data == null) return ""; 	
-	    return "Data : \t"+new String(data)+"\n"+"CRC32 : \t"+HexDump.toHex(crc32);
+	public String toString() { 	
+	    return "CommandID : "+getCommand()+" / Flags : "+this.getFlagsAsString()+" / Data length : "+this.getDataLength()+" / Data CRC32 : "+HexDump.toHex(crc32);
 	}
 	
 	public byte[] calculatedCRC32() {

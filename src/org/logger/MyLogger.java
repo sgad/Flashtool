@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import javax.swing.JProgressBar;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 
 
 public class MyLogger {
@@ -20,6 +21,7 @@ public class MyLogger {
 	static long maxstepsconsole = 0;
 	static long currentstepconsole = 0;
 	static String lastaction = "";
+	public static String curlevel;
 
 	public static void registerProgressBar(JProgressBar bar) {
 		_bar = bar;
@@ -68,7 +70,11 @@ public class MyLogger {
 
 	public static void updateProgress() {
 					if (FlasherGUI.guimode) {
-						_bar.setValue(_bar.getValue()+1);
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								_bar.setValue(_bar.getValue()+1);
+							}
+						});
 					}
 					else {
 						currentstepconsole++;
@@ -79,6 +85,7 @@ public class MyLogger {
 	}
 
 	public static void setLevel(String level) {
+		curlevel = level.toLowerCase();
 		try {
 			isinit = true;
 			//redirectSystemStreams();

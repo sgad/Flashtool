@@ -28,6 +28,8 @@ public class X10flash {
     private Bundle _bundle;
     private Command cmd;
     private LoaderInfo phoneprops = null;
+    private String firstRead = "";
+    private String cmd01string = "";
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -36,12 +38,21 @@ public class X10flash {
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {
-	    		//cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
-	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);    		
+	    		openTA(2);
+	    		cmd.send(Command.CMD13,Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
+	    		closeTA();
+	    		openTA(2);
+	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING,false);
+	    		closeTA();
+	    		openTA(2);
 	    	}
 	    	else {
-	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
+	    		openTA(2);
 	    		cmd.send(Command.CMD13, Command.TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
+	    		closeTA();
+	    		openTA(2);
+	    		cmd.send(Command.CMD13, Command.TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED,false);
+	    		closeTA();
 	    	}
     }
 
@@ -165,10 +176,21 @@ public class X10flash {
     private void processHeader(SinFile sin) throws X10FlashException {
     	try {
     		MyLogger.getLogger().info("    Checking header");
-	    	cmd.send(Command.CMD05,sin.getHeaderBytes(),false);
-	        if (USBFlash.getLastFlags() == 0)
-	        	getLastError();
-	    	}
+    		int nbparts = sin.getSinHeader().getHeaderSize() / (int)sin.getChunkSize();
+    		int remain = sin.getSinHeader().getHeaderSize() % (int)sin.getChunkSize();
+    		byte[] looppart = new byte[(int)sin.getChunkSize()];
+    		for (int i=0;i<nbparts;i++) {
+    			System.arraycopy(sin.getHeaderBytes(), (int)(i*sin.getChunkSize()), looppart, 0, (int)sin.getChunkSize());
+    			cmd.send(Command.CMD05,looppart,true);
+        		if (USBFlash.getLastFlags() == 0)
+        			getLastError();
+    		}
+    		byte[] remaining = new byte[remain];
+			System.arraycopy(sin.getHeaderBytes(), sin.getSinHeader().getHeaderSize()-remain, remaining, 0, remain);
+    		cmd.send(Command.CMD05,remaining,false);
+    		if (USBFlash.getLastFlags() == 0)
+    			getLastError();
+	    }
     	catch (IOException ioe) {
     		throw new X10FlashException("Error in processHeader : "+ioe.getMessage());
     	}
@@ -182,8 +204,11 @@ public class X10flash {
     	try {
 	    	processHeader(sin);
 	    	MyLogger.getLogger().info("    Flashing data");
+	    	MyLogger.getLogger().debug("Number of parts to send : "+sin.getNbChunks()+" / Part size : "+sin.getChunkSize());
 			for (int j=0;j<sin.getNbChunks();j++) {
-				cmd.send(Command.CMD06, sin.getChunckBytes(j), (sin.getNbChunks()<(j+1)));
+				int cur = j+1;
+				MyLogger.getLogger().debug("Sending part "+cur+" of "+sin.getNbChunks());
+				cmd.send(Command.CMD06, sin.getChunckBytes(j), !((j+1)==sin.getNbChunks()));
 			}
 			if (USBFlash.getLastFlags() == 0)
 				getLastError();
@@ -315,21 +340,36 @@ public class X10flash {
 		}
     }
     
+    public void getDevInfo() throws IOException, X10FlashException {
+    	cmd.send(Command.CMD12, Command.TA_DEVID1, false);
+    	String info = "Current device : "+cmd.getLastReplyString();
+    	cmd.send(Command.CMD12, Command.TA_DEVID2, false);
+    	info = info + " - "+cmd.getLastReplyString();
+    	cmd.send(Command.CMD12, Command.TA_DEVID3, false);
+    	info = info + " - "+cmd.getLastReplyString();
+    	cmd.send(Command.CMD12, Command.TA_DEVID4, false);
+    	info = info + " - "+cmd.getLastReplyString();
+    	cmd.send(Command.CMD12, Command.TA_DEVID5, false);
+    	info = info + " - "+cmd.getLastReplyString();
+    	MyLogger.getLogger().info(info);
+    }
+    
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
+		    openTA(2);
+		    getDevInfo();
+		    closeTA();
 		    sendLoader();
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
 		    	cmd.send((byte)0x19, new byte[] {0x00, 0x01, 0x00, 0x00, 0x00, 0x01}, false);
 		    }
-		    openTA(2);
 		    setFlashState(true);
 		    sendPartition();
 		    sendTAFiles();
 			sendImages();
         	setFlashState(false);
-        	closeTA();
         	closeDevice(0x01);
 			MyLogger.getLogger().info("Flashing finished.");
 			MyLogger.getLogger().info("Please unplug and start your phone");
@@ -391,12 +431,18 @@ public class X10flash {
 
     public void hookDevice(boolean printProps) throws X10FlashException,IOException {
 		cmd.send(Command.CMD01, Command.VALNULL, false);
-		phoneprops.update(cmd.getLastReplyString());
+		cmd01string = cmd.getLastReplyString();
+		MyLogger.getLogger().debug(cmd01string);
+		phoneprops.update(cmd01string);
 		if (getPhoneProperty("ROOTING_STATUS")==null) phoneprops.setProperty("ROOTING_STATUS", "UNROOTABLE"); 
 		if (phoneprops.getProperty("VER").startsWith("r"))
 			phoneprops.setProperty("ROOTING_STATUS", "ROOTED");
-		if (printProps)
+		if (printProps) {
+			MyLogger.getLogger().debug("After loader command reply (hook) : "+cmd01string);
 			MyLogger.getLogger().info("Loader : "+phoneprops.getProperty("LOADER_ROOT")+" - Version : "+phoneprops.getProperty("VER")+" / Bootloader status : "+phoneprops.getProperty("ROOTING_STATUS"));
+		}
+		else
+			MyLogger.getLogger().debug("First command reply (hook) : "+cmd01string);
     }
 
     public boolean openDevice(boolean simulate) {
@@ -406,10 +452,12 @@ public class X10flash {
     	try {
     		USBFlash.open("ADDE");
     		try {
-			MyLogger.getLogger().info("Reading device information");
-			USBFlash.readS1Reply();
-			phoneprops = new LoaderInfo(new String (USBFlash.getLastReply()));
-			MyLogger.getLogger().info("Phone ready for flashmode operations.");
+				MyLogger.getLogger().info("Reading device information");
+				USBFlash.readS1Reply();
+				firstRead = new String (USBFlash.getLastReply());
+				phoneprops = new LoaderInfo(firstRead);
+				MyLogger.getLogger().debug(firstRead);
+				
     		}
     		catch (Exception e) {
     			e.printStackTrace();
@@ -418,6 +466,7 @@ public class X10flash {
     		}
     	    cmd = new Command(_bundle.simulate());
     	    hookDevice(false);
+    	    MyLogger.getLogger().info("Phone ready for flashmode operations.");
     		found = true;
     	}
     	catch (Exception e){

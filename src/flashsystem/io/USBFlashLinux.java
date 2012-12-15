@@ -5,6 +5,8 @@ import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 import java.io.IOException;
 import org.logger.MyLogger;
+
+import win32lib.JKernel32;
 import linuxlib.JUsb;
 
 public class USBFlashLinux {
@@ -21,6 +23,15 @@ public class USBFlashLinux {
 
 	public static void linuxWriteS1(S1Packet p) throws IOException,X10FlashException {
 		try {
+			if (p.getDataLength()>=65536) {
+				byte[] part1 = new byte[65536];
+				byte[] part2 = new byte[p.getByteArray().length-65536];
+				System.arraycopy(p.getByteArray(), 0, part1, 0, 65536);
+				System.arraycopy(p.getByteArray(), 65536, part2, 0, part2.length);
+				JUsb.writeBytes(part1);
+				JUsb.writeBytes(part2);
+		}
+		else
 			JUsb.writeBytes(p.getByteArray());
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -53,6 +64,7 @@ public class USBFlashLinux {
 				finished=!p.hasMoreToRead();
 			}
 			p.validate();
+			MyLogger.getLogger().debug("IN : " + p);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

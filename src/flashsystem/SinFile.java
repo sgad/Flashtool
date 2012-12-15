@@ -173,14 +173,10 @@ public class SinFile {
 			fin.close();
 			throw new IOException("Error in processHeader");			
 		}
-		MyLogger.getLogger().info("Magic : "+HexDump.toHex(magic));
 		if (HexDump.toHex(magic).equals("[03, 53, 49, 4E]")) {
-			MyLogger.getLogger().info("New sin file");
 			nbread = fin.read(headersize);
-			MyLogger.getLogger().info("Size : "+HexDump.toHex(headersize)+ "("+(int)BytesUtil.getLong(headersize)+")");
 		}
 		else {
-			MyLogger.getLogger().info("Old sin file");
 			fin.seek(2);
 			nbread = fin.read(headersize);
 		}
@@ -188,6 +184,7 @@ public class SinFile {
 			fin.close();
 			throw new IOException("Error in processHeader");
 		}
+		MyLogger.getLogger().debug("Header size : "+BytesUtil.getInt(headersize));
 		byte[] header = new byte[BytesUtil.getInt(headersize)];
 		fin.seek(0);
 		nbread = fin.read(header);

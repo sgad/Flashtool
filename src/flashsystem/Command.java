@@ -11,33 +11,35 @@ public class Command {
 
     private boolean _simulate;
 
-	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
-		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
-		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
-		(byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00};*/ 
-	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
-	    (byte)0x00, (byte)0x00, (byte)0x09, (byte)0x62,
-	    (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
-	    (byte)0x00};*/ 
+	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	     = { 
+		0x00, 0x00, 0x09, 0x62, 0x00, 0x00, 0x00, 0x01, 0x00}; 
     public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_ONGOING	 = {
-    	(byte)0x00, (byte)0x00, (byte)0x27, (byte)0x74,
-    	(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
-    	(byte)0x01};
-	/*public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
-		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
-		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x04,
-		(byte)0xAA, (byte)0x00, (byte)0x00, (byte)0x00};*/ 
+    	0x00, 0x00, 0x27, 0x74, 0x00, 0x00, 0x00, 0x01, 0x01};
 	public static final byte[] TA_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED		 = {
-		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xB3,
-		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
-		(byte)0xAA}; 
-
+		0x00, 0x00, 0x27, 0x74, 0x00, 0x00, 0x00, 0x01, 0x00};
 	public static final byte[] TA_EDREAM_FLASH_STARTUP_SHUTDOWN_RESULT_FINISHED = {
-		(byte)0x00, (byte)0x00, (byte)0x27, (byte)0x74,
-		(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
-		(byte)0x00};
+		0x00, 0x00, 0x08, (byte)0xB3, 0x00, 0x00, 0x00, 0x01, (byte)0xAA};
 
+	public static final byte[] TA_DEVID1 = {
+		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0xA2
+	};
+
+	public static final byte[] TA_DEVID2 = {
+		(byte)0x00, (byte)0x00, (byte)0x13, (byte)0x24
+	};
 	
+	public static final byte[] TA_DEVID3 = {
+		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0x9D
+	};
+	
+	public static final byte[] TA_DEVID4 = {
+		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0x9A
+	};
+	
+	public static final byte[] TA_DEVID5 = {
+		(byte)0x00, (byte)0x00, (byte)0x08, (byte)0x9E
+	};
+
 	static final int CMD01 = 1;
 	static final int CMD04 = 4;
 	static final int CMD05 = 5;
@@ -85,7 +87,13 @@ public class Command {
 
     private void writeCommand(int command, byte data[], boolean ongoing) throws X10FlashException, IOException {
     	if (!_simulate) {
+    			if (MyLogger.curlevel.equals("debug")) {
+    				try {
+    					Thread.sleep(125);
+    				}catch (Exception e) {}
+    			}
 	    		S1Packet p = new S1Packet(command,data,ongoing);
+	    		MyLogger.getLogger().debug("OUT : " + p);
 	    		try {
 	    			USBFlash.writeS1(p);
 	    			p.release();
@@ -98,36 +106,15 @@ public class Command {
 	    			p.release();
 	    			throw new IOException(ioe.getMessage());
 	    		}
-	    }	
+	    }
     }
 
     public void send(int cmd, byte data[], boolean ongoing) throws X10FlashException, IOException
     {
-    	int maxdatalen=65536-17;
-		int totallen = data.length;
-    	int nbwrite = totallen/maxdatalen;
-    	int remain = totallen%maxdatalen;
-    	for (int i=0;i<nbwrite;i++) {
-    		int begin = i*maxdatalen;
-    		int end = (i+1)*maxdatalen;
-    		writeCommand(cmd, Arrays.copyOfRange(data, begin, end), true);
-    		MyLogger.getLogger().debug("Reply      : "+getLastReplyString());
-    		MyLogger.getLogger().debug("Reply(Hex) : "+getLastReplyHex());
-    		if (USBFlash.getLastFlags()==0) {
-    			writeCommand(Command.CMD07, Command.VALNULL, false);
-    			throw new X10FlashException(getLastReplyString());
-    		}
-    	}
-    	if (remain>0 || data.length==0) {
-    		int begin = totallen-remain;
-    		int end = totallen;
-    		writeCommand(cmd, Arrays.copyOfRange(data, begin, end), ongoing);
-    		MyLogger.getLogger().debug("Reply      : "+getLastReplyString());
-    		MyLogger.getLogger().debug("Reply(Hex) : "+getLastReplyHex());	
-    		if (USBFlash.getLastFlags()==0) {
-    			writeCommand(Command.CMD07, Command.VALNULL, false);
-    			throw new X10FlashException(getLastReplyString());
-    		}
+    	writeCommand(cmd, data, ongoing);
+    	if (USBFlash.getLastFlags()==0) {
+    		writeCommand(Command.CMD07, Command.VALNULL, false);
+    		throw new X10FlashException(getLastReplyString());
     	}
     }
 

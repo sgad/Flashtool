@@ -252,14 +252,14 @@ public final class Bundle {
 		    		totalsize = totalsize + 1;
 		    	}
 		    	else if (entry.getName().toUpperCase().endsWith("SIN")) 
-		    		totalsize = totalsize + (entry.getSize()/0x10000)*2;
+		    		totalsize = totalsize + (entry.getSize()/0x10000);
 		    		if (entry.getSize()%0x10000>0)
 		    			totalsize = totalsize+1;
 		    		totalsize = totalsize + 1;
 		    }
 		    if (hasCmd25()) totalsize = totalsize + 1;
 		    if (hasPartition()) totalsize = totalsize + 2;
-		    return totalsize+8;
+		    return totalsize+13;
 	}
 
 	public void open() throws BundleException {

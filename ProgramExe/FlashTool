@@ -70,8 +70,8 @@ else
     chmod 755 ./x10flasher_lib/unyaffs.mac
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$DYLD_LIBRARY_PATH
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
-    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
-    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
     ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
     ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
     if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0

@@ -30,6 +30,7 @@ public class X10flash {
     private LoaderInfo phoneprops = null;
     private String firstRead = "";
     private String cmd01string = "";
+    private boolean taopen = false;
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -319,11 +320,15 @@ public class X10flash {
     }
 
     public void openTA(int partition) throws X10FlashException, IOException{
-    	cmd.send(Command.CMD09, BytesUtil.getBytesWord(partition, 1), false);
+    	if (!taopen)
+    		cmd.send(Command.CMD09, BytesUtil.getBytesWord(partition, 1), false);
+    	taopen = true;
     }
     
     public void closeTA() throws X10FlashException, IOException{
-    	cmd.send(Command.CMD10, Command.VALNULL, false);
+    	if (taopen)
+    		cmd.send(Command.CMD10, Command.VALNULL, false);
+    	taopen = false;
     }
    
     public void sendTAFiles() throws FileNotFoundException, IOException,X10FlashException {

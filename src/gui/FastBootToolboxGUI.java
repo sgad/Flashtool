@@ -419,14 +419,14 @@ public class FastBootToolboxGUI extends JDialog {
 					if(kernel.equals("ERROR")) {
 						MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 					} 
-					else {
-						
+					else {						
 						MyLogger.getLogger().info("Selected kernel (boot.img or kernel.sin): " + kernel);
 						// this wont wait for reply and will move on to next command
 						MyLogger.getLogger().info("HotBooting selected kernel");
 						RunOutputs outputsRun = FastbootUtility.hotBoot(kernel);
 						MyLogger.getLogger().info("FASTBOOT Output: \n " + outputsRun.getStdErr().trim() + "\n");
-						MyLogger.getLogger().info("Device should now start booting with this kernel");
+						if (!outputsRun.getStdErr().trim().contains("FAILED"))
+							MyLogger.getLogger().info("Device should now start booting with this kernel");
 					}
 				}
 				catch (Exception e1) {

@@ -2491,7 +2491,7 @@ public class FlasherGUI extends JFrame {
 		chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
 		chooser.setFileFilter(ff);
 		
-	    chooser.setDialogTitle("Choose sin file)");
+	    chooser.setDialogTitle(Language.getMessage("yaffs2chooser"));
 	    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 	    //chooser.setFileFilter(newkernelimgFileFilter);
 	    //

@@ -21,6 +21,7 @@ import flashsystem.SinFile;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import org.lang.Language;
 import org.logger.MyLogger;
 import org.system.Elf;
 
@@ -42,6 +43,7 @@ public class ElfUnpacker extends JDialog {
 	 */
 	public ElfUnpacker() {
 		setTitle("ELF Unpacker");
+		setName("ElfUnpacker");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 220);
 		getContentPane().setLayout(new BorderLayout());
@@ -67,6 +69,7 @@ public class ElfUnpacker extends JDialog {
 				FormFactory.DEFAULT_ROWSPEC,}));
 		{
 			JLabel lblElfFile = new JLabel("Elf File :");
+			lblElfFile.setName("lblElfFile");
 			contentPanel.add(lblElfFile, "2, 2, 3, 1");
 		}
 		{
@@ -116,6 +119,7 @@ public class ElfUnpacker extends JDialog {
 		}
 		{
 			JLabel lblPartitionInfo = new JLabel("Number of parts :");
+			lblPartitionInfo.setName("lblPartitionInfo");
 			contentPanel.add(lblPartitionInfo, "2, 6, 3, 1");
 		}
 		{
@@ -125,6 +129,7 @@ public class ElfUnpacker extends JDialog {
 		}
 		{
 			btnDumpData = new JButton("Unpack");
+			btnDumpData.setName("btnDumpData");
 			btnDumpData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -143,17 +148,19 @@ public class ElfUnpacker extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Close");
-				okButton.addActionListener(new ActionListener() {
+				JButton closeButton = new JButton("Close");
+				closeButton.setName("closeButton");
+				closeButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
 					}
 				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				closeButton.setActionCommand("OK");
+				buttonPane.add(closeButton);
+				getRootPane().setDefaultButton(closeButton);
 			}
 		}
+		setLanguage();
 	}
 
 	public String chooseElf() {
@@ -174,7 +181,7 @@ public class ElfUnpacker extends JDialog {
 		chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
 		chooser.setFileFilter(ff);
 		
-	    chooser.setDialogTitle("Choose sin file)");
+	    chooser.setDialogTitle(Language.getMessage("elffilechooser"));
 	    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 	    //chooser.setFileFilter(newkernelimgFileFilter);
 	    //
@@ -186,6 +193,10 @@ public class ElfUnpacker extends JDialog {
 	    	return chooser.getSelectedFile().getAbsolutePath();
 	    }
 	    return "ERROR";
+	}
+
+	public void setLanguage() {
+		Language.translate(this);
 	}
 
 }

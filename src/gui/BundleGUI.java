@@ -20,6 +20,8 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import flashsystem.Bundle;
 import flashsystem.BundleMetaData;
+import gui.tools.FirmwareFileFilter;
+import gui.tools.SortedNameListModel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;

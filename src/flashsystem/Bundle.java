@@ -1,6 +1,6 @@
 package flashsystem;
 
-import gui.FirmwareFileFilter;
+import gui.tools.FirmwareFileFilter;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

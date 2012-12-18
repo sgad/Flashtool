@@ -1,4 +1,6 @@
-package gui;
+package gui.tools;
+
+import gui.FlasherGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import gui.X10Apps;
+import gui.tools.X10Apps;
 
 public class Profile {
 	

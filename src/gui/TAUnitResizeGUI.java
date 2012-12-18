@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 
-public class ResizeSelectGUI extends JDialog {
+public class TAUnitResizeGUI extends JDialog {
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class ResizeSelectGUI extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ResizeSelectGUI() {
+	public TAUnitResizeGUI() {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				result="";

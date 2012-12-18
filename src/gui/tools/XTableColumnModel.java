@@ -1,4 +1,4 @@
-package gui;
+package gui.tools;
 
 import javax.swing.table.*;
 import java.util.Vector;
@@ -35,7 +35,7 @@ public class XTableColumnModel extends DefaultTableColumnModel {
     /**
      * Creates an extended table column model.
      */
-    XTableColumnModel() {
+    public XTableColumnModel() {
     }
     
     /**

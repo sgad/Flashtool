@@ -152,7 +152,7 @@ public class TaEditor extends JDialog {
 				JMenuItem mntmResize = new JMenuItem("Resize Unit");
 				mntmResize.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						ResizeSelectGUI resize = new ResizeSelectGUI();
+						TAUnitResizeGUI resize = new TAUnitResizeGUI();
 						String newsize=resize.getUnitSize();
 						if (newsize.length()>0) {
 							ta.resize(Integer.parseInt(newsize));

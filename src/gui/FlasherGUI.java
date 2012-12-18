@@ -74,6 +74,9 @@ import flashsystem.SeusSinTool;
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
 import gui.EncDecGUI.MyFile;
+import gui.tools.LangActionListener;
+import gui.tools.X10Apps;
+
 import javax.swing.JProgressBar;
 import java.awt.SystemColor;
 import java.lang.reflect.Constructor;
@@ -145,7 +148,8 @@ public class FlasherGUI extends JFrame {
 
 	private static void setSystemLookAndFeel() {
 		try {
-			UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+			//UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e) {}
 	}

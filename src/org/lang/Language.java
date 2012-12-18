@@ -1,6 +1,6 @@
 package org.lang;
 
-import gui.XMLFile;
+import gui.tools.XMLFile;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.File;

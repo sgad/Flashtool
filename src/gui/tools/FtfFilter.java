@@ -1,4 +1,4 @@
-package gui;
+package gui.tools;
 
 import java.io.File;
 import java.io.FileFilter;

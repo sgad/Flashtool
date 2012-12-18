@@ -1,6 +1,6 @@
-package gui;
+package gui.tools;
 
-//import java.text.Collator;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import gui.EncDecGUI.MyFile;
+
 /**
  * SortedListModel decorates an unsorted ListModel to provide
  * a sorted model. You can create a SortedListModel from models you
@@ -19,29 +19,20 @@ import gui.EncDecGUI.MyFile;
  *
  * @author John O'Conner
  */
-public class SortedSizeListModel extends AbstractListModel {
+public class SortedNameListModel extends AbstractListModel {
     
-    public class MyComparator implements Comparator<Object> {
-    	public int compare(Object o1, Object o2) {
-    		long result = ((MyFile)o2).length()-((MyFile)o1).length();
-    		if (result >0) return 1;
-    		if (result <0) return -1;
-    		return 0;
-    	}
-    }
-	/**
+    /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-    
-    /**
+	/**
      * Create a SortedListModel from an existing model
      * using a default text comparator for the default Locale. Sort
      * in ascending order.
      * @param model the underlying, unsorted ListModel
      */
-    public SortedSizeListModel(ListModel model) {
+    public SortedNameListModel(ListModel model) {
         this(model, SortOrder.ASCENDING, null);
     }
     
@@ -53,7 +44,7 @@ public class SortedSizeListModel extends AbstractListModel {
      *@param model the unsorted list model
      *@param sortOrder that should be used
      */
-    public SortedSizeListModel(ListModel model, SortOrder sortOrder) {
+    public SortedNameListModel(ListModel model, SortOrder sortOrder) {
         this(model, sortOrder, null);
     }
     
@@ -66,7 +57,7 @@ public class SortedSizeListModel extends AbstractListModel {
      *@param comp
      *
      */
-    public SortedSizeListModel(ListModel model, SortOrder sortOrder, Comparator comp) {
+    public SortedNameListModel(ListModel model, SortOrder sortOrder, Comparator<Object> comp) {
         unsortedModel = model;
         unsortedModel.addListDataListener(new ListDataListener() {
             public void intervalAdded(ListDataEvent e) {
@@ -86,7 +77,7 @@ public class SortedSizeListModel extends AbstractListModel {
         if (comp != null) {
             comparator = comp;
         } else {
-            comparator = new MyComparator();
+            comparator = Collator.getInstance();
         }
         
         // get base model info
@@ -199,10 +190,10 @@ public class SortedSizeListModel extends AbstractListModel {
         }
     }
     
-    public void setComparator(Comparator comp) {
+    public void setComparator(Comparator<Object> comp) {
         if (comp == null) {
             sortOrder = SortOrder.UNORDERED;
-            comparator = new MyComparator();
+            comparator = Collator.getInstance();
             resetModelData();
         } else {
             comparator = comp;
@@ -325,7 +316,7 @@ public class SortedSizeListModel extends AbstractListModel {
     
     private List<SortedListEntry> sortedModel;
     private ListModel unsortedModel;
-    private Comparator comparator;
+    private Comparator<Object> comparator;
     private SortOrder sortOrder;
     
     public enum SortOrder {
@@ -334,12 +325,9 @@ public class SortedSizeListModel extends AbstractListModel {
         DESCENDING;
     }
     
-    class SortedListEntry  implements Comparable {
-        private SortedListEntry() {
-            
-        }
-        
-        public SortedListEntry(int index) {
+    class SortedListEntry  implements Comparable<Object> {
+
+    	public SortedListEntry(int index) {
             this.index = index;
         }
         
@@ -359,6 +347,10 @@ public class SortedSizeListModel extends AbstractListModel {
             // retrieve the element that thatEntry points to in the original
             // model
             Object thatElement = unsortedModel.getElementAt(thatEntry.getIndex());
+            if (comparator instanceof Collator) {
+                thisElement = thisElement.toString();
+                thatElement = thatElement.toString();
+            }
             // compare the base model's elements using the provided comparator
             int comparison = comparator.compare(thisElement, thatElement);
             // convert to descending order as necessary

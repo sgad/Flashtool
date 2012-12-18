@@ -16,6 +16,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import flashsystem.Bundle;
 import flashsystem.BundleEntry;
+import gui.tools.ExcludeActionListener;
+import gui.tools.FtfFilter;
+import gui.tools.WipeActionListener;
+import gui.tools.XTableColumnModel;
+
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTable;

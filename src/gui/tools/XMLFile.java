@@ -1,4 +1,4 @@
-package gui;
+package gui.tools;
 
 import org.jdom.input.SAXBuilder;
 import org.jdom.Document;

@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.XMLRebrand;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;

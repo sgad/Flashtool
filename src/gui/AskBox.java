@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.BoxActionListener;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -117,6 +119,10 @@ public class AskBox extends JDialog {
 
 	public String getResult() {
 		return result;
+	}
+	
+	public void setResult(String presult) {
+		result = presult;
 	}
 
 }

@@ -22,6 +22,7 @@ import org.adb.FastbootUtility;
 import org.lang.Language;
 import org.logger.MyLogger;
 import org.system.Devices;
+import org.system.OS;
 import org.system.RunOutputs;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -52,7 +53,10 @@ public class FastBootToolboxGUI extends JDialog {
 		
 		setTitle("Fastboot Toolbox");
 		setAlwaysOnTop(true);
-		setBounds(100, 100, 754, 299);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 784, 299);
+		else
+			setBounds(100, 100, 714, 299);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

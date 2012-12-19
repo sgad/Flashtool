@@ -41,7 +41,7 @@ public class BootModeSelectGUI extends JDialog {
 		setName("BootModeSelectGUI");
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModal(true);
-		setBounds(100, 100, 247, 173);
+		setBounds(100, 100, 188, 134);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -58,28 +58,28 @@ public class BootModeSelectGUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		{
-			rdbtnNewRadioButton = new JRadioButton("Flashmode");
-			rdbtnNewRadioButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					if (rdbtnNewRadioButton.isSelected()) result = "flashmode";
-					else result="fastboot";
-				}
-			});
-			rdbtnNewRadioButton.setSelected(true);
-			buttonGroup.add(rdbtnNewRadioButton);
-			contentPanel.add(rdbtnNewRadioButton, "4, 4");
+			{
+				rdbtnNewRadioButton = new JRadioButton("Flashmode");
+				rdbtnNewRadioButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						if (rdbtnNewRadioButton.isSelected()) result = "flashmode";
+						else result="fastboot";
+					}
+				});
+				rdbtnNewRadioButton.setSelected(true);
+				buttonGroup.add(rdbtnNewRadioButton);
+				contentPanel.add(rdbtnNewRadioButton, "4, 2");
+			}
 		}
-		{
-			rdbtnNewRadioButton_1 = new JRadioButton("Fastboot mode");
-			rdbtnNewRadioButton_1.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (rdbtnNewRadioButton.isSelected()) result = "flashmode";
-					else result="fastboot";
-				}
-			});
-			buttonGroup.add(rdbtnNewRadioButton_1);
-			contentPanel.add(rdbtnNewRadioButton_1, "4, 6");
-		}
+		rdbtnNewRadioButton_1 = new JRadioButton("Fastboot mode");
+		rdbtnNewRadioButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (rdbtnNewRadioButton.isSelected()) result = "flashmode";
+				else result="fastboot";
+			}
+		});
+		buttonGroup.add(rdbtnNewRadioButton_1);
+		contentPanel.add(rdbtnNewRadioButton_1, "4, 4");
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));

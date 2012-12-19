@@ -3,6 +3,8 @@ package gui;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
+
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -70,6 +72,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JTextPane;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+
 import org.lang.Language;
 import flashsystem.Bundle;
 import flashsystem.BundleException;
@@ -256,6 +260,8 @@ public class FlasherGUI extends JFrame {
 						app.addApplicationListener(frame.getApplicationListener());
 						app.addPreferencesMenuItem();
 						app.setEnabledPreferencesMenu(true);
+						BufferedImage img = ImageIO.read(FlasherGUI.class.getResource("/gui/ressources/icons/flash_32.png"));
+						app.setApplicationIconImage(img);
 						frame.setVisible(true);
 					} catch (Exception e) {}
 				}

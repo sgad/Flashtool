@@ -167,6 +167,13 @@ public class FlasherGUI extends JFrame {
 		killAdbandFastboot();
 	}
 
+	public static void macSetup() {
+		if (OS.getName().startsWith("mac")) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name","Flashtool");
+		}
+	}
+	
 	public static void addToolbar(JButton button) {
 		toolBar.add(button);
 	}
@@ -181,6 +188,7 @@ public class FlasherGUI extends JFrame {
 			System.out.println("It can be downloaded on http://www.libusbx.org");
 			System.exit(1);
 		}
+		macSetup();
 		OptionParser parser = new OptionParser();
 		OptionSet options;
         parser.accepts( "console" );

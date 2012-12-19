@@ -15,6 +15,7 @@
 	<classpathentry kind="lib" path="libs/platform-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/rsyntaxtextarea-2.0.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
+	<classpathentry kind="lib" path="libs/macify-1.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

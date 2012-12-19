@@ -260,7 +260,7 @@ public class FlasherGUI extends JFrame {
 						app.addApplicationListener(frame.getApplicationListener());
 						app.addPreferencesMenuItem();
 						app.setEnabledPreferencesMenu(true);
-						BufferedImage img = ImageIO.read(FlasherGUI.class.getResource("/gui/ressources/icons/flash_32.png"));
+						BufferedImage img = ImageIO.read(FlasherGUI.class.getResource("/gui/ressources/icons/flash_512.png"));
 						app.setApplicationIconImage(img);
 						frame.setVisible(true);
 					} catch (Exception e) {}

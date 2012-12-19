@@ -29,6 +29,10 @@ import org.logger.MyLogger;
 import org.plugins.PluginActionListener;
 import org.plugins.PluginActionListenerAbout;
 import org.plugins.PluginInterface;
+import org.simplericity.macify.eawt.Application;
+import org.simplericity.macify.eawt.ApplicationEvent;
+import org.simplericity.macify.eawt.ApplicationListener;
+import org.simplericity.macify.eawt.DefaultApplication;
 import org.system.AdbPhoneThread;
 import org.system.ClassPath;
 import org.system.CommentedPropertiesFile;
@@ -145,6 +149,7 @@ public class FlasherGUI extends JFrame {
 	//private StatusListener phoneStatus;
 	private JMenu mnDev;
 	private JMenu mnMyDevice;
+	private MyApplicationListener listener = new MyApplicationListener();
 
 	private static void setSystemLookAndFeel() {
 		try {
@@ -254,7 +259,8 @@ public class FlasherGUI extends JFrame {
         }
 	}
 
-	public FlasherGUI() {		
+	public FlasherGUI() {
+		Application app = new DefaultApplication();
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FlasherGUI.class.getResource("/gui/ressources/icons/flash_32.png")));
 		_root=this;
 		setName("FlasherGUI");
@@ -2516,5 +2522,43 @@ public class FlasherGUI extends JFrame {
 	    }
 	    return "ERROR";
 	}
+	// Must be public!!
+	 public class MyApplicationListener implements ApplicationListener {
 
+	    private void handle(ApplicationEvent event, String message) {
+	       JOptionPane.showMessageDialog(_root, message);
+	       event.setHandled(true);
+	    }
+
+	    public void handleAbout(ApplicationEvent event) {
+	       handle(event, "aboutAction");
+	    }
+
+	    public void handleOpenApplication(ApplicationEvent event) {
+	       // Ok, we know our application started
+	       // Not much to do about that..
+	    }
+
+	    public void handleOpenFile(ApplicationEvent event) {
+	       handle(event, "openFileInEditor: " + event.getFilename());
+	    }
+
+	    public void handlePreferences(ApplicationEvent event) {
+	       handle(event, "preferencesAction");
+	    }
+
+	    public void handlePrintFile(ApplicationEvent event) {
+	       handle(event, "Sorry, printing not implemented");
+	    }
+
+	    public void handleQuit(ApplicationEvent event) {
+	       handle(event, "exitAction");
+	       System.exit(0);
+	    }
+
+	    public void handleReOpenApplication(ApplicationEvent event) {
+	       event.setHandled(true);
+	       _root.setVisible(true);
+	    }
+	 }
 }

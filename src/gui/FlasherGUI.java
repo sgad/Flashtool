@@ -251,7 +251,11 @@ public class FlasherGUI extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
+						Application app = new DefaultApplication();
 						FlasherGUI frame = new FlasherGUI();
+						app.addApplicationListener(frame.getApplicationListener());
+						app.addPreferencesMenuItem();
+						app.setEnabledPreferencesMenu(true);
 						frame.setVisible(true);
 					} catch (Exception e) {}
 				}
@@ -2560,5 +2564,9 @@ public class FlasherGUI extends JFrame {
 	       event.setHandled(true);
 	       _root.setVisible(true);
 	    }
+	 }
+	 
+	 public ApplicationListener getApplicationListener() {
+		 return listener;
 	 }
 }

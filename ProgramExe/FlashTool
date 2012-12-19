@@ -76,7 +76,7 @@ else
     ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
     if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
     then
-    	java -Xms128m -Xmx512m -Xdock.name="Flashtool" -Duser.country=US -Duser.language=en -jar x10flasher.jar
+    	java -Xms128m -Xmx512m -Xdock:name="Flashtool" -Duser.country=US -Duser.language=en -jar x10flasher.jar
     else
 	echo "Java version must be 1.6 or 1.7"
     fi

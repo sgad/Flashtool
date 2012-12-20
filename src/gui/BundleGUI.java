@@ -116,6 +116,7 @@ public class BundleGUI extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		if (OS.getName().startsWith("mac"))
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(198dlu;default)"),
@@ -127,7 +128,7 @@ public class BundleGUI extends JDialog {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(59dlu;default)"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(9dlu;default)"),
+				RowSpec.decode("max(21dlu;default)"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(15dlu;default)"),
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -138,6 +139,29 @@ public class BundleGUI extends JDialog {
 				RowSpec.decode("default:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
+		else
+			contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
+					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("max(198dlu;default)"),
+					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("max(36dlu;default)"),
+					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("max(105dlu;default):grow"),},
+				new RowSpec[] {
+					FormFactory.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("max(59dlu;default)"),
+					FormFactory.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("max(9dlu;default)"),
+					FormFactory.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("max(15dlu;default)"),
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("default:grow"),
+					FormFactory.RELATED_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC,}));
 		{
 			JPanel panel = new JPanel();
 			contentPanel.add(panel, "2, 2, 3, 1, fill, fill");

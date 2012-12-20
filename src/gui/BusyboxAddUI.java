@@ -24,6 +24,8 @@ import com.jgoodies.forms.factories.FormFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import org.system.OS;
+
 public class BusyboxAddUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -40,7 +42,10 @@ public class BusyboxAddUI extends JDialog {
 		setResizable(false);
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 162);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 544, 162);
+		else
+			setBounds(100, 100, 450, 162);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

@@ -70,7 +70,10 @@ public class DeviceEditorUI extends JDialog {
 		setModal(true);
 		config = new PropertiesFile("org/system/ressources/deviceTemplate.properties","");
 		setTitle("Device Editor");
-		setBounds(100, 100, 461, 368);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 461, 384);
+		else
+			setBounds(100, 100, 461, 368);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

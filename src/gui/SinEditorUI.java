@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.logger.MyLogger;
+import org.system.OS;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -60,7 +61,10 @@ public class SinEditorUI extends JDialog {
 		setModal(true);
 		setTitle("Sin Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 372);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 482, 384);
+		else
+			setBounds(100, 100, 450, 372);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

@@ -15,6 +15,8 @@ import org.lang.Language;
 import org.logger.MyLogger;
 import org.system.DeviceEntry;
 import org.system.Devices;
+import org.system.OS;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -82,7 +84,10 @@ public class deviceSelectGui extends JDialog {
 		setName("deviceSelectGui");
 		setModal(true);
 		setTitle("Device Selection");
-		setBounds(100, 100, 240, 322);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 294, 322);
+		else
+			setBounds(100, 100, 240, 322);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

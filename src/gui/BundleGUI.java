@@ -109,7 +109,10 @@ public class BundleGUI extends JDialog {
 		setName("BundleGUI");
 		setTitle("Bundle Creation");
 		setModal(true);
-		setBounds(100, 100, 687, 380);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 780, 434);
+		else
+			setBounds(100, 100, 687, 380);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

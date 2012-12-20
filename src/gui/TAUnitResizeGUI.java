@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
@@ -91,11 +92,11 @@ public class TAUnitResizeGUI extends JDialog {
 								dispose();
 							}
 							else {
-								AskBox.showOKbox("You must enter a value. Otherwise, cancel");
+								JOptionPane.showMessageDialog(null, "You must enter a value. Otherwise, cancel");
 							}
 						}
 						catch (Exception e) {
-							AskBox.showOKbox("Size must be an integer");
+							JOptionPane.showMessageDialog(null, "Size must be an integer");
 						}
 				    	
 					}

@@ -19,6 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.io.File;
 import org.lang.Language;
+import org.system.OS;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -68,7 +70,10 @@ public class ApkInstallGUI extends JDialog {
 		setName("ApkInstallGUI");
 		setTitle("APK Installer");
 		setModal(true);
-		setBounds(100, 100, 606, 357);
+		if (OS.getName().startsWith("mac"))
+				setBounds(100, 100, 717, 357);
+		else
+			setBounds(100, 100, 606, 357);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

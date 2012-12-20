@@ -2081,8 +2081,18 @@ public class FlasherGUI extends JFrame {
 			        			Devices.setCurrent(devid);
 			        			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
 			        			if (!Devices.getCurrent().getRecognition().contains(prop)) {
-			        				String reply = AskBox.getReplyOf("Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?");
-			        				if (reply.equals("yes"))
+			        				String[] choices = {"Yes", "No"};
+			        				int response = JOptionPane.showOptionDialog(
+			        		                null                       // Center in window.
+			        		              , "Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?"        // Message        // Message
+			        		              , "New Device"               // Title in titlebar
+			        		              , JOptionPane.YES_NO_OPTION  // Option type
+			        		              , JOptionPane.PLAIN_MESSAGE  // messageType
+			        		              , null                       // Icon (none)
+			        		              , choices                    // Button text as above.
+			        		              , "No"    // Default button's label
+			        		            );
+			        				if (response == 0)
 			        					Devices.getCurrent().addRecognitionToList(prop);
 			        			}
 				        		if (!Devices.isWaitingForReboot())

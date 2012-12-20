@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
@@ -191,7 +192,7 @@ public class TaEditor extends JDialog {
 							fos.write(hex.getByteContent());
 							fos.flush();
 							fos.close();
-							AskBox.showOKbox("Unit saved to \n"+path);
+							JOptionPane.showMessageDialog(null, "Unit saved to \n"+path);
 						}
 						catch (Exception e) {
 						}
@@ -274,7 +275,7 @@ public class TaEditor extends JDialog {
 					    			tazone.writeln(i.next().toString());
 					    		}
 					    		tazone.close();
-					    		AskBox.showOKbox("TA saved to \n"+path);
+					    		JOptionPane.showMessageDialog(null, "TA saved to \n"+path);
 					    	}
 						    catch (Exception e) {
 						    	MyLogger.getLogger().error(e.getMessage());

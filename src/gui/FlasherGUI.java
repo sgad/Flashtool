@@ -326,9 +326,9 @@ public class FlasherGUI extends JFrame {
 		mnFile.setName("mnFile");
 		menuBar.add(mnFile);
 
-		mnMyDevice = new JMenu("No Device");
-		mnMyDevice.setName("mnMyDevice_disabled");
-		mnMyDevice.setEnabled(false);
+		mnMyDevice = new JMenu("");
+		mnMyDevice.setName("mnMyDevice");
+		mnMyDevice.setVisible(false);
 		menuBar.add(mnMyDevice);
 
 		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
@@ -2017,7 +2017,8 @@ public class FlasherGUI extends JFrame {
 
     public void doDisableIdent() {
     	if (guimode) {
-			SwingUtilities.invokeLater(
+    		try {
+			SwingUtilities.invokeAndWait(
 					new Runnable() {
 						public void run() {
 				    		btnCleanroot.setEnabled(false);
@@ -2044,13 +2045,11 @@ public class FlasherGUI extends JFrame {
 							custBtn.setEnabled(false);
 							//mntmCleanUninstalled.setEnabled(false);
 					    	mntmBackupSystemApps.setEnabled(false);
-					    	mnMyDevice.setEnabled(false);
-					    	mnMyDevice.setName("mnMyDevice_disabled");
-					    	mnMyDevice.setText(Language.getMessage("mnMyDevice_disabled"));
 					    	mnMyDevice.setVisible(false);
 						}
 					}
 			);
+    		} catch (Exception e) {}
     	}
 	}
  
@@ -2122,16 +2121,22 @@ public class FlasherGUI extends JFrame {
 			        		}
 		        		}
 		        		if (found) {
-		        			SwingUtilities.invokeLater(
+		        			try {
+		        				SwingUtilities.invokeAndWait(
 		        					new Runnable() {
 		        						public void run() {
 		        							mnMyDevice.setVisible(true);
-		        		        			mnMyDevice.setEnabled(true);
-		        		        			mnMyDevice.setName("mnMyDevice");
+		        		        		}
+		        					}
+		        				);
+		        				SwingUtilities.invokeAndWait(
+		        					new Runnable() {
+		        						public void run() {
 		        		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());		        							
 		        						}
 		        					}
-		        			);
+		        				);
+		        			}catch (Exception e1) {}
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
 		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());

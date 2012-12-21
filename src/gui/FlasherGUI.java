@@ -108,6 +108,7 @@ public class FlasherGUI extends JFrame {
 	private static JToolBar toolBar;
 	private static JTextPane textArea = new JTextPane();
 	private static AdbPhoneThread phoneWatchdog;
+	private JMenuBar menuBar;
 	private JPanel contentPane;
 	private Bundle bundle;
 	private ButtonGroup buttonGroupLog = new ButtonGroup();
@@ -146,7 +147,12 @@ public class FlasherGUI extends JFrame {
 	private JMenuItem mntmDevicesEdit;
 	private JMenuItem mntmDevicesExport;
 	private JMenuItem mntmDevicesImport;
+	private JMenu mnRoot;
+	private JMenu mnXrecovery;
 	private JMenu mnPlugins;
+	private JMenu mnClean;
+	private JMenu mnKernel;
+	private JMenu mnReboot;
 	private String lang;
 	private String ftfpath="";
 	private String ftfname="";
@@ -309,7 +315,7 @@ public class FlasherGUI extends JFrame {
             }   // end filesDropped
         }); // end FileDrop.Listener
 
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
 		JMenu mnFile = new JMenu("File");
@@ -436,7 +442,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});
 
-		JMenu mnRoot = new JMenu("Root");
+		mnRoot = new JMenu("Root");
 		mnRoot.setName("mnRoot");
 		mnMyDevice.add(mnRoot);
 
@@ -511,7 +517,7 @@ public class FlasherGUI extends JFrame {
 		mnRoot.add(mntmRootAdbRestore);
 		mnRoot.add(mntmUnRoot);
 		
-		JMenu mnClean = new JMenu("Clean");
+		mnClean = new JMenu("Clean");
 		mnClean.setName("mnClean");
 		mnMyDevice.add(mnClean);
 
@@ -537,7 +543,7 @@ public class FlasherGUI extends JFrame {
 			}
 		});*/
 
-		JMenu mnXrecovery = new JMenu("Recovery");
+		mnXrecovery = new JMenu("Recovery");
 		mnMyDevice.add(mnXrecovery);
 		
 		
@@ -563,7 +569,7 @@ public class FlasherGUI extends JFrame {
 		mntmRecoveryControler.setEnabled(false);*/
 		
 
-		JMenu mnKernel = new JMenu("Kernel");
+		mnKernel = new JMenu("Kernel");
 		mnMyDevice.add(mnKernel);
 
 		//mntmInstallBootkit = new JMenuItem("Install bootkit");
@@ -645,7 +651,7 @@ public class FlasherGUI extends JFrame {
 		});
 		mnAdvanced.add(mntmBundleCreation);
 
-		JMenu mnReboot = new JMenu("Reboot");
+		mnReboot = new JMenu("Reboot");
 		mnReboot.setName("mnReboot");
 		mnMyDevice.add(mnReboot);
 		
@@ -2103,7 +2109,7 @@ public class FlasherGUI extends JFrame {
 			        		}
 		        		}
 		        		if (found) {
-		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
+		        			refreshDeviceMenu(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
 		        			mnMyDevice.setVisible(true);
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
@@ -2585,4 +2591,24 @@ public class FlasherGUI extends JFrame {
 	 public ApplicationListener getApplicationListener() {
 		 return listener;
 	 }
+	 
+	 public void refreshDeviceMenu(String text) {
+			mnMyDevice.setText(text);
+		 	/*mnMyDevice = new JMenu(text);
+		 	mnMyDevice.setName("mnMyDevice");
+		 	//menuBar.add(mnMyDevice);
+			mnMyDevice.add(mnRoot);
+			mnMyDevice.add(mnClean);
+			mnMyDevice.add(mnXrecovery);
+			mnMyDevice.add(mnKernel);
+			mnMyDevice.add(mntmBackupSystemApps);
+			mnMyDevice.add(mntmInstallBusybox);
+			mnMyDevice.add(mntmBuildpropEditor);
+			mnMyDevice.add(mntmBuildpropRebrand);
+			mnMyDevice.add(mnReboot);
+			mnMyDevice.setVisible(true);*/
+			mnMyDevice.revalidate();
+			menuBar.revalidate();
+	 }
+
 }

@@ -94,6 +94,8 @@ import java.awt.Toolkit;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import linuxlib.JUsb;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 
 public class FlasherGUI extends JFrame {
@@ -322,9 +324,9 @@ public class FlasherGUI extends JFrame {
 		mnFile.setName("mnFile");
 		menuBar.add(mnFile);
 
-		mnMyDevice = new JMenu("My");
-		mnMyDevice.setName("mnMyDevice");
-		mnMyDevice.setVisible(false);
+		mnMyDevice = new JMenu("No Device");
+		mnMyDevice.setName("mnMyDevice_disabled");
+		mnMyDevice.setEnabled(false);
 		menuBar.add(mnMyDevice);
 
 		mntmSwitchPro = new JMenuItem(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
@@ -2037,7 +2039,9 @@ public class FlasherGUI extends JFrame {
 			custBtn.setEnabled(false);
 			//mntmCleanUninstalled.setEnabled(false);
 	    	mntmBackupSystemApps.setEnabled(false);
-	    	mnMyDevice.setVisible(false);
+	    	mnMyDevice.setEnabled(false);
+	    	mnMyDevice.setName("mnMyDevice_disabled");
+	    	mnMyDevice.setText(Language.getMessage("mnMyDevice_disabled"));
     	}
 	}
  
@@ -2109,8 +2113,9 @@ public class FlasherGUI extends JFrame {
 			        		}
 		        		}
 		        		if (found) {
-		        			refreshDeviceMenu(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
-		        			mnMyDevice.setVisible(true);
+		        			mnMyDevice.setEnabled(true);
+		        			mnMyDevice.setName("mnMyDevice");
+		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
 		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
@@ -2591,24 +2596,4 @@ public class FlasherGUI extends JFrame {
 	 public ApplicationListener getApplicationListener() {
 		 return listener;
 	 }
-	 
-	 public void refreshDeviceMenu(String text) {
-			mnMyDevice.setText(text);
-		 	/*mnMyDevice = new JMenu(text);
-		 	mnMyDevice.setName("mnMyDevice");
-		 	//menuBar.add(mnMyDevice);
-			mnMyDevice.add(mnRoot);
-			mnMyDevice.add(mnClean);
-			mnMyDevice.add(mnXrecovery);
-			mnMyDevice.add(mnKernel);
-			mnMyDevice.add(mntmBackupSystemApps);
-			mnMyDevice.add(mntmInstallBusybox);
-			mnMyDevice.add(mntmBuildpropEditor);
-			mnMyDevice.add(mntmBuildpropRebrand);
-			mnMyDevice.add(mnReboot);
-			mnMyDevice.setVisible(true);*/
-			mnMyDevice.revalidate();
-			menuBar.revalidate();
-	 }
-
 }

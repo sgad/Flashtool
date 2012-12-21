@@ -70,6 +70,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -2015,33 +2017,40 @@ public class FlasherGUI extends JFrame {
 
     public void doDisableIdent() {
     	if (guimode) {
-			btnCleanroot.setEnabled(false);
-			mntmInstallBusybox.setEnabled(false);
-			mntmClearCache.setEnabled(false);
-			mntmRootzergRush.setEnabled(false);
-			mntmRootPsneuter.setEnabled(false);
-			mntmRootEmulator.setEnabled(false);
-			mntmRootAdbRestore.setEnabled(false);
-			mntmUnRoot.setEnabled(false);
-			mntmBuildpropEditor.setEnabled(false);
-			mntmBuildpropRebrand.setEnabled(false);
-			mntmRebootIntoRecoveryT.setEnabled(false);
-			mntmRebootDefaultRecovery.setEnabled(false);
-			mntmSetDefaultRecovery.setEnabled(false);
-			mntmSetDefaultKernel.setEnabled(false);
-			mntmRebootCustomKernel.setEnabled(false);
-			mntmRebootDefaultKernel.setEnabled(false);
-			//mntmInstallBootkit.setEnabled(false);
-			btnRoot.setEnabled(false);
-			btnXrecovery.setEnabled(false);
-			btnKernel.setEnabled(false);
-			btnAskRootPerms.setEnabled(false);
-			custBtn.setEnabled(false);
-			//mntmCleanUninstalled.setEnabled(false);
-	    	mntmBackupSystemApps.setEnabled(false);
-	    	mnMyDevice.setEnabled(false);
-	    	mnMyDevice.setName("mnMyDevice_disabled");
-	    	mnMyDevice.setText(Language.getMessage("mnMyDevice_disabled"));
+			SwingUtilities.invokeLater(
+					new Runnable() {
+						public void run() {
+				    		btnCleanroot.setEnabled(false);
+							mntmInstallBusybox.setEnabled(false);
+							mntmClearCache.setEnabled(false);
+							mntmRootzergRush.setEnabled(false);
+							mntmRootPsneuter.setEnabled(false);
+							mntmRootEmulator.setEnabled(false);
+							mntmRootAdbRestore.setEnabled(false);
+							mntmUnRoot.setEnabled(false);
+							mntmBuildpropEditor.setEnabled(false);
+							mntmBuildpropRebrand.setEnabled(false);
+							mntmRebootIntoRecoveryT.setEnabled(false);
+							mntmRebootDefaultRecovery.setEnabled(false);
+							mntmSetDefaultRecovery.setEnabled(false);
+							mntmSetDefaultKernel.setEnabled(false);
+							mntmRebootCustomKernel.setEnabled(false);
+							mntmRebootDefaultKernel.setEnabled(false);
+							//mntmInstallBootkit.setEnabled(false);
+							btnRoot.setEnabled(false);
+							btnXrecovery.setEnabled(false);
+							btnKernel.setEnabled(false);
+							btnAskRootPerms.setEnabled(false);
+							custBtn.setEnabled(false);
+							//mntmCleanUninstalled.setEnabled(false);
+					    	mntmBackupSystemApps.setEnabled(false);
+					    	mnMyDevice.setEnabled(false);
+					    	mnMyDevice.setName("mnMyDevice_disabled");
+					    	mnMyDevice.setText(Language.getMessage("mnMyDevice_disabled"));
+					    	mnMyDevice.setVisible(false);
+						}
+					}
+			);
     	}
 	}
  
@@ -2113,9 +2122,16 @@ public class FlasherGUI extends JFrame {
 			        		}
 		        		}
 		        		if (found) {
-		        			mnMyDevice.setEnabled(true);
-		        			mnMyDevice.setName("mnMyDevice");
-		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());
+		        			SwingUtilities.invokeLater(
+		        					new Runnable() {
+		        						public void run() {
+		        							mnMyDevice.setVisible(true);
+		        		        			mnMyDevice.setEnabled(true);
+		        		        			mnMyDevice.setName("mnMyDevice");
+		        		        			mnMyDevice.setText(Language.getMessage("mnMyDevice")+" "+Devices.getCurrent().getId());		        							
+		        						}
+		        					}
+		        			);
 		        			if (!Devices.isWaitingForReboot()) {
 		        				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
 		        				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());

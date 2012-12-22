@@ -911,26 +911,14 @@ public class FlasherGUI extends JFrame {
 
 		mntmSwitchPro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-    			try {
-    				SwingUtilities.invokeAndWait(
-    					new Runnable() {
-    						public void run() {
-    							boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
-    							mntmSwitchPro.setName(ispro?"switchpro":"switchsimple");
-    							GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
-    							mnDev.setVisible(!ispro);
-    		        		}
-    					}
-    				);
-    				SwingUtilities.invokeAndWait(
-    					new Runnable() {
-    						public void run() {
-    		        			mnDev.setText(Language.getMessage(mnDev.getName()));		        							
-    						}
-    					}
-    				);
-    			}catch (Exception e1) {}
-				setLanguage();
+				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
+    			mntmSwitchPro.setName(ispro?"switchpro":"switchsimple");
+    			GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
+    			mnDev.setVisible(!ispro);
+    			mntmSwitchPro.setText(Language.getMessage(mntmSwitchPro.getName()));
+    		    if (ispro)
+    		    while (mnDev.isVisible()) {}
+    		    mnDev.setText(Language.getMessage(mnDev.getName()));
 			}
 		});
 

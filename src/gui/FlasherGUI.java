@@ -916,8 +916,6 @@ public class FlasherGUI extends JFrame {
     			GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
     			mnDev.setVisible(!ispro);
     			mntmSwitchPro.setText(Language.getMessage(mntmSwitchPro.getName()));
-    		    if (ispro)
-    		    while (mnDev.isVisible()) {}
     		    mnDev.setText(Language.getMessage(mnDev.getName()));
 			}
 		});

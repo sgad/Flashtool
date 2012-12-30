@@ -82,6 +82,8 @@ public class BusyBoxSelectGUI extends JDialog {
 		setTitle("Busybox Selector");
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 244, 300);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 244, 300);
 		else
 			setBounds(100, 100, 200, 300);
 		getContentPane().setLayout(new BorderLayout());

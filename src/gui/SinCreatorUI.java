@@ -50,7 +50,7 @@ public class SinCreatorUI extends JDialog {
 		setModal(true);
 		setTitle("Sin Creator");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 318);
+		setBounds(100, 100, 457, 318);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

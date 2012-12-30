@@ -86,6 +86,8 @@ public class deviceSelectGui extends JDialog {
 		setTitle("Device Selection");
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 294, 322);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 294, 322);
 		else
 			setBounds(100, 100, 240, 322);
 		getContentPane().setLayout(new BorderLayout());

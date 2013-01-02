@@ -127,6 +127,12 @@ public class apkClean extends JDialog {
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 680, 532);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 680, 532);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 680, 532);
+		else
+			setBounds(100, 100, 610, 532);
 		{
 			JMenuBar menuBar = new JMenuBar();
 			setJMenuBar(menuBar);

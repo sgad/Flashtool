@@ -55,6 +55,8 @@ public class FastBootToolboxGUI extends JDialog {
 		setAlwaysOnTop(true);
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 784, 299);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 775, 299);
 		else
 			setBounds(100, 100, 714, 299);
 		getContentPane().setLayout(new BorderLayout());

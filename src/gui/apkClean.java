@@ -126,7 +126,7 @@ public class apkClean extends JDialog {
 		setTitle("SE ROM Cleaner");
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 580, 532);
+		setBounds(100, 100, 680, 532);
 		{
 			JMenuBar menuBar = new JMenuBar();
 			setJMenuBar(menuBar);

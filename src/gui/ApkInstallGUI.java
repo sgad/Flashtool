@@ -73,7 +73,7 @@ public class ApkInstallGUI extends JDialog {
 		if (OS.getName().startsWith("mac"))
 				setBounds(100, 100, 717, 357);
 		else if (OS.getName().startsWith("linux"))
-			setBounds(100, 100, 678, 357);
+			setBounds(100, 100, 740, 357);
 		else
 			setBounds(100, 100, 606, 357);
 		getContentPane().setLayout(new BorderLayout());

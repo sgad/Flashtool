@@ -159,7 +159,7 @@ public class firmSelect extends JDialog {
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 922, 498);
 		else if (OS.getName().startsWith("linux"))
-			setBounds(100, 100, 990, 518);
+			setBounds(100, 100, 995, 518);
 		else
 			setBounds(100, 100, 838, 498);
 		getContentPane().setLayout(new BorderLayout());

@@ -111,12 +111,14 @@ public class BundleGUI extends JDialog {
 		setModal(true);
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 780, 434);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 790, 434);
 		else
 			setBounds(100, 100, 687, 380);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		if (OS.getName().startsWith("mac"))
+		if (OS.getName().startsWith("mac") || OS.getName().startsWith("linux"))
 		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(198dlu;default)"),

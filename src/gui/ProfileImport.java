@@ -138,7 +138,12 @@ public class ProfileImport extends JDialog {
 		setName("firmSelect");
 		setTitle("Profile Import");
 		setModal(true);
-		setBounds(100, 100, 527, 342);
+		if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 527, 342);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 700, 342);
+		else
+			setBounds(100, 100, 527, 342);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

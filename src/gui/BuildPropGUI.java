@@ -126,7 +126,12 @@ public class BuildPropGUI extends JFrame implements ActionListener {
 		setTitle("File Editor");
 		setName("BuildPropGUI");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 549, 466);
+		if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 790, 466);
+		else if (OS.getName().startsWith("mac"))
+			setBounds(100, 100, 549, 466);
+		else
+			setBounds(100, 100, 549, 466);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

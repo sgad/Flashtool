@@ -155,15 +155,18 @@ public class DeviceEditorUI extends JDialog {
 			JButton btnNewButton = new JButton("...");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					loaderpath.setText(doChoose());
-					try {
-						SinFile l = new SinFile(loaderpath.getText());
-						if (l.getSinHeader().getNbHashBlocks()>1) {
-							JOptionPane.showMessageDialog(null, "This file is not a loader");
-							loaderpath.setText("");
+					String localpath = doChoose();
+					if (localpath.length()>0) {
+						loaderpath.setText(localpath);
+						try {
+							SinFile l = new SinFile(loaderpath.getText());
+							if (l.getSinHeader().getNbHashBlocks()>1) {
+								JOptionPane.showMessageDialog(null, "This file is not a loader");
+								loaderpath.setText("");
+							}
 						}
-					}
-					catch (IOException ioe) {
+						catch (IOException ioe) {
+						}
 					}
 				}
 			});

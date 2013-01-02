@@ -800,11 +800,16 @@ public class FlasherGUI extends JFrame {
         			        				list.setProperty(name, "Device to import");
         			        			}
         			        		}
-        			        		String devid = devsel.getDeviceFromList(list);
-        			        		if (devid.length()>0) {
-	        							MyLogger.getLogger().info("Beginning import of "+devid);
-	        							doImportDevice(devid);
-	        							MyLogger.getLogger().info("Device "+devid+" imported successfully");
+        			        		if (list.size()>0) {
+	        			        		String devid = devsel.getDeviceFromList(list);
+	        			        		if (devid.length()>0) {
+		        							MyLogger.getLogger().info("Beginning import of "+devid);
+		        							doImportDevice(devid);
+		        							MyLogger.getLogger().info("Device "+devid+" imported successfully");
+	        			        		}
+        			        		}
+        			        		else {
+        			        			JOptionPane.showMessageDialog(null, "No device to import");
         			        		}
         						}
         						catch (Exception e) {

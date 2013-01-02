@@ -1716,6 +1716,8 @@ public class FlasherGUI extends JFrame {
 									shell.runRoot();
 									MyLogger.getLogger().info("Rebrand finished. Rebooting phone ...");
 								}
+								else
+									MyLogger.getLogger().info("Rebrand canceled ...");
 							}
 							else {MyLogger.getLogger().error("You are not on a stock ROM");}
 						}

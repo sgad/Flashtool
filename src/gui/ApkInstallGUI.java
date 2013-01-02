@@ -75,7 +75,7 @@ public class ApkInstallGUI extends JDialog {
 		else if (OS.getName().startsWith("linux"))
 			setBounds(100, 100, 740, 357);
 		else
-			setBounds(100, 100, 606, 357);
+			setBounds(100, 100, 550, 357);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

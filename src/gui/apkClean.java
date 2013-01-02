@@ -126,7 +126,6 @@ public class apkClean extends JDialog {
 		setTitle("SE ROM Cleaner");
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 680, 532);
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 680, 532);
 		else if (OS.getName().startsWith("linux"))

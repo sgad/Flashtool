@@ -3,7 +3,6 @@ package flashsystem;
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
 import gui.LoaderRootFilter;
-import gui.LoaderSelectorGUI;
 import gui.deviceSelectGui;
 
 import java.io.File;

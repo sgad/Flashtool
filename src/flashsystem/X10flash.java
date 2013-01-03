@@ -15,6 +15,7 @@ import java.io.IOException;
 import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
+import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
@@ -31,6 +32,8 @@ public class X10flash {
     private String firstRead = "";
     private String cmd01string = "";
     private boolean taopen = false;
+    private boolean modded_loader=false;
+    private String currentdevice = "";
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -221,14 +224,42 @@ public class X10flash {
     	}
     }
 
+    private String getDefaultLoader() {
+    	int nbfound = 0;
+    	String loader = "";
+    	Enumeration<Object> e = Devices.listDevices(true);
+    	while (e.hasMoreElements()) {
+    		DeviceEntry current = Devices.getDevice((String)e.nextElement());
+    		if (current.getRecognition().contains(currentdevice)) {
+    			nbfound++;
+    			if (modded_loader) {
+    				loader = current.getLoaderUnlocked();
+    			}
+    			else {
+    				loader=current.getLoader();
+    			}
+    		}
+    	}
+    	if ((nbfound == 0) || (nbfound > 1)) 
+    		return "";
+    	if (modded_loader)
+			MyLogger.getLogger().info("Using an unofficial loader");
+    	return loader;
+    }
+
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException {
 		MyLogger.getLogger().info("Processing loader");
-		String LoaderHandler;
-		if (_bundle.hasLoader()) {
-			SinFile sin = new SinFile(_bundle.getLoader().getAbsolutePath());
-			sin.setChunkSize(0x1000);
-			uploadImage(sin);
-		}
+		String loader = getDefaultLoader();
+		if (loader.length()==0)
+			if (_bundle.hasLoader()) {
+				MyLogger.getLogger().info("Device loader has not been identified. Using the one from the bundle");
+				loader = _bundle.getLoader().getAbsolutePath();
+			}
+		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
+		SinFile sin = new SinFile(loader);
+		sin.setChunkSize(0x1000);
+		uploadImage(sin);
+		/*}
 		else {
 			File dir = new File(OS.getWorkDir()+"/loaders");
 			LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
@@ -272,16 +303,7 @@ public class X10flash {
 					fin.close();
 				}
 			}
-		}
-		USBFlash.readS1Reply(5000);
-		hookDevice(true);
-    }
-
-    public void sendLoader(File loader) throws FileNotFoundException, IOException, X10FlashException {
-		MyLogger.getLogger().info("Processing loader");
-		SinFile sin = new SinFile(loader.getAbsolutePath());
-		sin.setChunkSize(0x1000);
-		uploadImage(sin);
+		}*/
 		USBFlash.readS1Reply(5000);
 		hookDevice(true);
     }
@@ -349,6 +371,7 @@ public class X10flash {
     public void getDevInfo() throws IOException, X10FlashException {
     	cmd.send(Command.CMD12, Command.TA_DEVID1, false);
     	String info = "Current device : "+cmd.getLastReplyString();
+    	currentdevice = cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID2, false);
     	info = info + " - "+cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID3, false);
@@ -363,9 +386,6 @@ public class X10flash {
     public void flashDevice() {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
-		    openTA(2);
-		    getDevInfo();
-		    closeTA();
 		    sendLoader();
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
@@ -462,6 +482,8 @@ public class X10flash {
 				USBFlash.readS1Reply();
 				firstRead = new String (USBFlash.getLastReply());
 				phoneprops = new LoaderInfo(firstRead);
+				if (phoneprops.getProperty("VER").startsWith("r"))
+					modded_loader=true;
 				MyLogger.getLogger().debug(firstRead);
 				
     		}
@@ -473,7 +495,10 @@ public class X10flash {
     	    cmd = new Command(_bundle.simulate());
     	    hookDevice(false);
     	    MyLogger.getLogger().info("Phone ready for flashmode operations.");
-    		found = true;
+		    openTA(2);
+		    getDevInfo();
+		    closeTA();
+    	    found = true;
     	}
     	catch (Exception e){
     		e.printStackTrace();

@@ -116,7 +116,11 @@ public class DeviceEntry {
 	}
 
 	public boolean hasUnlockedLoader() {
-		return _entry.getProperties().containsKey("loader_unlocked");
+		if (_entry.getProperties().containsKey("loader_unlocked")) {
+			return (_entry.getProperties().getProperty("loader_unlocked").length()>0);
+		}
+		else
+			return false;
 	}
 
 	public String getBusyBoxInstallPath() {

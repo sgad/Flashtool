@@ -62,6 +62,9 @@ public class DeviceEditorUI extends JDialog {
 	private JCheckBox canfastboot;
 	private DeviceEntry _ent = null;
 	private Properties BusyboxBag = new Properties();
+	private JTextField unlockedloaderpath;
+	private String origloader;
+	private String origloaderunl;
 
 	/**
 	 * Create the dialog.
@@ -72,8 +75,10 @@ public class DeviceEditorUI extends JDialog {
 		setTitle("Device Editor");
 		if (OS.getName().startsWith("mac"))
 			setBounds(100, 100, 461, 384);
+		else if (OS.getName().startsWith("linux"))
+			setBounds(100, 100, 461, 400);
 		else
-			setBounds(100, 100, 461, 368);
+			setBounds(100, 100, 461, 380);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -83,8 +88,12 @@ public class DeviceEditorUI extends JDialog {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("right:max(31dlu;default):grow"),
 				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,},
 			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -152,8 +161,8 @@ public class DeviceEditorUI extends JDialog {
 			loaderpath.setColumns(10);
 		}
 		{
-			JButton btnNewButton = new JButton("...");
-			btnNewButton.addActionListener(new ActionListener() {
+			JButton btnLoader = new JButton("...");
+			btnLoader.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					String localpath = doChoose();
 					if (localpath.length()>0) {
@@ -170,25 +179,65 @@ public class DeviceEditorUI extends JDialog {
 					}
 				}
 			});
-			contentPanel.add(btnNewButton, "6, 12");
+			contentPanel.add(btnLoader, "6, 12");
+		}
+		{
+			JLabel lblUnlockedLoaderr = new JLabel("Unlocked Loader");
+			contentPanel.add(lblUnlockedLoaderr, "2, 14, right, default");
+		}
+		{
+			unlockedloaderpath = new JTextField();
+			unlockedloaderpath.setEditable(false);
+			contentPanel.add(unlockedloaderpath, "4, 14, fill, default");
+			unlockedloaderpath.setColumns(10);
+		}
+		{
+			JButton btnUnlockedLoader = new JButton("...");
+			btnUnlockedLoader.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					String localpath = doChoose();
+					if (localpath.length()>0) {
+						unlockedloaderpath.setText(localpath);
+						try {
+							SinFile l = new SinFile(unlockedloaderpath.getText());
+							if (l.getSinHeader().getNbHashBlocks()>1) {
+								JOptionPane.showMessageDialog(null, "This file is not a loader");
+								unlockedloaderpath.setText("");
+							}
+						}
+						catch (IOException ioe) {
+						}
+					}
+				}
+			});
+			contentPanel.add(btnUnlockedLoader, "6, 14");
+		}
+		{
+			JButton btnClear = new JButton("Clear");
+			btnClear.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					unlockedloaderpath.setText("");
+				}
+			});
+			contentPanel.add(btnClear, "8, 14");
 		}
 		{
 			JLabel lblBusyboxInstallPath = new JLabel("Busybox install path");
-			contentPanel.add(lblBusyboxInstallPath, "2, 14, right, default");
+			contentPanel.add(lblBusyboxInstallPath, "2, 16, right, default");
 		}
 		{
 			busyboxinstall = new JTextField();
-			contentPanel.add(busyboxinstall, "4, 14, fill, default");
+			contentPanel.add(busyboxinstall, "4, 16, fill, default");
 			busyboxinstall.setColumns(10);
 		}
 		{
 			JLabel lblDefaultBusybox = new JLabel("Default busybox");
-			contentPanel.add(lblDefaultBusybox, "2, 16, right, default");
+			contentPanel.add(lblDefaultBusybox, "2, 18, right, default");
 		}
 		{
 			busyboxversion = new JTextField();
 			busyboxversion.setEditable(false);
-			contentPanel.add(busyboxversion, "4, 16, fill, default");
+			contentPanel.add(busyboxversion, "4, 18, fill, default");
 			busyboxversion.setColumns(10);
 		}
 		{
@@ -202,15 +251,15 @@ public class DeviceEditorUI extends JDialog {
 						busyboxversion.setText(result);
 				}
 			});
-			contentPanel.add(button, "6, 16");
+			contentPanel.add(button, "6, 18");
 		}
 		{
 			canflashmode = new JCheckBox("Flash mode");
-			contentPanel.add(canflashmode, "2, 18");
+			contentPanel.add(canflashmode, "2, 20");
 		}
 		{
 			canfastboot = new JCheckBox("Fastboot mode");
-			contentPanel.add(canfastboot, "2, 20");
+			contentPanel.add(canfastboot, "2, 22");
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -272,6 +321,9 @@ public class DeviceEditorUI extends JDialog {
 							return;
 						}
 						config.setProperty("loader",OS.getMD5(new File(loaderpath.getText())));
+						if (unlockedloaderpath.getText().length()>0) {
+							config.setProperty("loader_unlocked",OS.getMD5(new File(unlockedloaderpath.getText())));
+						}
 						if (busyboxversion.getText().length()==0) {
 							JOptionPane.showMessageDialog(null, "You must choose a busybox default version");
 							return;
@@ -293,7 +345,13 @@ public class DeviceEditorUI extends JDialog {
 						if (!f2.exists()) f2.mkdir();
 
 						config.write(OS.getWorkDir()+"/devices/"+deviceid.getText().toUpperCase()+"/"+deviceid.getText().toUpperCase()+".properties", "UTF-8");
-						OS.copyfile(loaderpath.getText(), f.getAbsolutePath()+"/loader.sin");
+						if (!_ent.getLoader().equals(loaderpath.getText()))
+							OS.copyfile(loaderpath.getText(), f.getAbsolutePath()+"/loader.sin");
+						if (unlockedloaderpath.getText().length()>0) {
+							if (!_ent.getLoaderUnlocked().equals(unlockedloaderpath.getText()))
+								OS.copyfile(unlockedloaderpath.getText(), f.getAbsolutePath()+"/loader_unlocked.sin");
+						}
+						else new File(_ent.getLoaderUnlocked()).delete();
 						Enumeration en = BusyboxBag.keys();
 						while (en.hasMoreElements()) {
 							String version = (String)en.nextElement();
@@ -362,6 +420,7 @@ public class DeviceEditorUI extends JDialog {
 		buildprop.setText(ent.getBuildProp());
 		recognition.setText(ent.getRecognition());
 		loaderpath.setText(ent.getLoader());
+		unlockedloaderpath.setText(ent.hasUnlockedLoader()?ent.getLoaderUnlocked():"");
 		busyboxinstall.setText(ent.getBusyBoxInstallPath());
 		busyboxversion.setText(new File(ent.getBusybox(false)).getParentFile().getName());
 		canflashmode.setSelected(ent.canFlash());

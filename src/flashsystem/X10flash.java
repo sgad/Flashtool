@@ -243,66 +243,33 @@ public class X10flash {
     		return "";
     	if (modded_loader)
 			MyLogger.getLogger().info("Using an unofficial loader");
-    	return loader;
+    	return OS.getWorkDir()+loader.substring(1, loader.length());
     }
 
     public void sendLoader() throws FileNotFoundException, IOException, X10FlashException {
+    	String loader = "";
 		MyLogger.getLogger().info("Processing loader");
-		String loader = getDefaultLoader();
-		if (loader.length()==0)
+		if (!modded_loader) {
 			if (_bundle.hasLoader()) {
-				MyLogger.getLogger().info("Device loader has not been identified. Using the one from the bundle");
 				loader = _bundle.getLoader().getAbsolutePath();
 			}
+			else {
+				loader = getDefaultLoader();
+			}
+		}
+		else {
+			loader = getDefaultLoader();
+			if (loader.length()==0)
+				if (_bundle.hasLoader()) {
+					MyLogger.getLogger().info("Device loader has not been identified. Using the one from the bundle");
+					loader = _bundle.getLoader().getAbsolutePath();
+				}
+		}
+		
 		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
 		SinFile sin = new SinFile(loader);
 		sin.setChunkSize(0x1000);
 		uploadImage(sin);
-		/*}
-		else {
-			File dir = new File(OS.getWorkDir()+"/loaders");
-			LoaderHandler = phoneprops.getProperty("LOADER_ROOT");
-			File[] filelist = dir.listFiles(new LoaderRootFilter(LoaderHandler));
-			if (filelist.length>1) {
-				LoaderSelectorGUI sel = new LoaderSelectorGUI(filelist);
-				String loader = sel.getVersion();
-				if (loader.length()>0) {
-					SinFile sin = new SinFile(OS.getWorkDir()+"/loaders/"+loader);
-					sin.setChunkSize(0x1000);
-					uploadImage(sin);
-				}
-			}
-			else {
-				if (filelist.length==1) {
-					SinFile sin = new SinFile(filelist[0].getAbsolutePath());
-					sin.setChunkSize(0x1000);
-					uploadImage(sin);
-				}
-				else {
-	        		String devid="";
-	        		deviceSelectGui devsel = new deviceSelectGui(null);
-	        		devid = devsel.getDevice(new Properties());
-	        		SinFile sin = new SinFile(OS.getWorkDir()+"/devices/"+devid+"/loader.sin");
-	        		sin.setChunkSize(0x1000);
-					uploadImage(sin);
-					FileInputStream fin = new FileInputStream(new File(OS.getWorkDir()+"/devices/"+devid+"/loader.sin"));
-					FileOutputStream fout = new FileOutputStream(OS.getWorkDir()+"/loaders/"+new File(phoneprops.getProperty("LOADER_ROOT")+".sin"));
-					try {
-						byte b[] = new byte[1];
-						int read = fin.read(b);
-						while (read == 1) {
-							fout.write(b);
-							read = fin.read(b);
-						}
-					}
-					catch (Exception e) {
-					}
-					fout.flush();
-					fout.close();
-					fin.close();
-				}
-			}
-		}*/
 		USBFlash.readS1Reply(5000);
 		hookDevice(true);
     }

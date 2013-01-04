@@ -50,10 +50,6 @@
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib"/>
         <mkdir dir="../Deploy/FlashTool/x10flasher_lib/langs"/>
         <mkdir dir="../Deploy/FlashTool/drivers"/>
-        <copy todir="../Deploy/FlashTool/loaders">
-            <fileset dir="./loaders"
-                excludes="**/.svn"/>
-        </copy>
 		<copy todir="../Deploy/FlashTool/custom/shells">
     		<fileset dir="./shells"
 				excludes="**/.svn"/>

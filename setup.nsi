@@ -65,6 +65,7 @@ Section -Flashtool SEC0000
     SetOverwrite on
     RmDir /r /REBOOTOK $SMPROGRAMS\$StartMenuGroup
     RmDir /r /REBOOTOK $INSTDIR\x10flasher_lib
+    RmDir /r /REBOOTOK $INSTDIR\loaders
     RmDir /r /REBOOTOK $INSTDIR\drivers
     RmDir /r /REBOOTOK $INSTDIR\devices
     RmDir /r /REBOOTOK $INSTDIR\custom\features

@@ -166,14 +166,12 @@ public class FlasherGUI extends JFrame {
 	private MyApplicationListener listener = new MyApplicationListener();
 
 	private static void setSystemLookAndFeel() {
+		if (!OS.getName().startsWith("linux")) {
 		try {
-			if (OS.getName().startsWith("linux"))
-				UIManager.setLookAndFeel(new com.sun.java.swing.plaf.gtk.GTKLookAndFeel());
-			else
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());			
 		}
 		catch (Exception e) {}
+		}
 	}
 
 	private static void initLogger() throws FileNotFoundException {

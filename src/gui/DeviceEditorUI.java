@@ -74,7 +74,7 @@ public class DeviceEditorUI extends JDialog {
 		config = new PropertiesFile("org/system/ressources/deviceTemplate.properties","");
 		setTitle("Device Editor");
 		if (OS.getName().startsWith("mac"))
-			setBounds(100, 100, 461, 384);
+			setBounds(100, 100, 461, 400);
 		else if (OS.getName().startsWith("linux"))
 			setBounds(100, 100, 461, 400);
 		else

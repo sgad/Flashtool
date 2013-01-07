@@ -2613,8 +2613,7 @@ public class FlasherGUI extends JFrame {
 	    }
 
 	    public void handleQuit(ApplicationEvent event) {
-	       handle(event, "exitAction");
-	       System.exit(0);
+	       exitProgram();
 	    }
 
 	    public void handleReOpenApplication(ApplicationEvent event) {

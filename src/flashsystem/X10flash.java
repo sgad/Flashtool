@@ -445,7 +445,7 @@ public class X10flash {
     		USBFlash.open("ADDE");
     		try {
 				MyLogger.getLogger().info("Reading device information");
-				USBFlash.readS1Reply();
+				USBFlash.readS1Reply(true);
 				firstRead = new String (USBFlash.getLastReply());
 				phoneprops = new LoaderInfo(firstRead);
 				if (phoneprops.getProperty("VER").startsWith("r"))

@@ -9,6 +9,8 @@ import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.OS;
 
+import win32lib.JKernel32;
+
 public class USBFlash {
 
 	public static void open(String pid) throws IOException, Exception {
@@ -21,14 +23,14 @@ public class USBFlash {
 		}
 	}
 
-	public static void writeS1(S1Packet p) throws IOException,X10FlashException {
+	public static void writeS1(S1Packet p,boolean withprogressupdate) throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsWriteS1(p);
 		}
 		else {
 			USBFlashLinux.linuxWriteS1(p);
 		}
-		readS1Reply();
+		readS1Reply(withprogressupdate);
 	}
 
 	public static void write(byte[] array) throws IOException,X10FlashException {
@@ -40,14 +42,15 @@ public class USBFlash {
 		}		
 	}
 
-	public static void readS1Reply()  throws IOException,X10FlashException {
+	public static void readS1Reply(boolean withprogressupdate)  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsReadS1Reply();
 		}
 		else {
 			USBFlashLinux.linuxReadS1Reply();
 		}
-		MyLogger.updateProgress();
+		if (withprogressupdate)
+			MyLogger.updateProgress();
 	}
 
 	public static void readS1Reply(int timeout)  throws IOException,X10FlashException {

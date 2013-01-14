@@ -165,124 +165,26 @@ public class FlasherGUI extends JFrame {
 	private JMenu mnMyDevice;
 	private MyApplicationListener listener = new MyApplicationListener();
 
-	private static void setSystemLookAndFeel() {
-		if (!OS.getName().startsWith("linux")) {
-		try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());			
-		}
-		catch (Exception e) {}
-		}
-	}
 
-	private static void initLogger() throws FileNotFoundException {
+	private void initLogger() throws FileNotFoundException {
 		MyLogger.appendTextArea(textArea);
 		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
-	}
-
-	static public void runAdb() throws Exception {
-		if (!OS.getName().equals("windows")) {
-			ProcessBuilderWrapper giveRights = new ProcessBuilderWrapper(new String[] {"chmod", "755", OS.getAdbPath()},false);
-			giveRights = new ProcessBuilderWrapper(new String[] {"chmod", "755", OS.getFastBootPath()},false);
-		}
-		killAdbandFastboot();
-	}
-
-	public static void macSetup() {
-		if (OS.getName().startsWith("mac")) {
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name","Flashtool");
-		}
 	}
 	
 	public static void addToolbar(JButton button) {
 		toolBar.add(button);
 	}
 
-	public static void main(String[] args) throws Exception {
-		try {
-			if (OS.getName()!="windows") JUsb.init();
-		}
-		catch (UnsatisfiedLinkError e) {
-			e.printStackTrace();
-			System.out.println("libusbx 1.0 not installed. 1.0.14 version mandatory");
-			System.out.println("It can be downloaded on http://www.libusbx.org");
-			System.exit(1);
-		}
-		macSetup();
-		OptionParser parser = new OptionParser();
-		OptionSet options;
-        parser.accepts( "console" );
-        try {
-        	options = parser.parse(args);
-        }
-        catch (Exception e) {
-        	parser.accepts("action").withRequiredArg().required();
-        	parser.accepts("file").withOptionalArg().defaultsTo("");
-        	parser.accepts("method").withOptionalArg().defaultsTo("auto");
-        	parser.accepts("wipedata").withOptionalArg().defaultsTo("yes");
-        	parser.accepts("wipecache").withOptionalArg().defaultsTo("yes");
-        	parser.accepts("baseband").withOptionalArg().defaultsTo("yes");
-        	parser.accepts("system").withOptionalArg().defaultsTo("yes");
-        	parser.accepts("kernel").withOptionalArg().defaultsTo("yes");
-            options = parser.parse(args);        	
-        }
-        Language.Init(GlobalConfig.getProperty("language").toLowerCase());
-        if (options.has("console")) {
-        	String action=(String)options.valueOf("action");
-        	
-        	if (action.toLowerCase().equals("flash")) {
-        		FlasherConsole.init(false);
-        		FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
-        	}
-
-        	if (action.toLowerCase().equals("imei")) {
-        		FlasherConsole.init(false);
-        		FlasherConsole.doGetIMEI();
-        	}
-
-        	if (action.toLowerCase().equals("root")) {
-        		FlasherConsole.init(true);
-        		FlasherConsole.doRoot();
-        	}
-        	
-        	if (action.toLowerCase().equals("blunlock")) {
-        		FlasherConsole.init(true);
-        		FlasherConsole.doBLUnlock();
-        		
-        	}
-        	
-        	FlasherConsole.exit();
-        }
-        else {
-			initLogger();
-			setSystemLookAndFeel();
-			runAdb();
-			MyLogger.getLogger().info("Flashtool "+About.getVersion());
-			if (JUsb.version.length()>0) MyLogger.getLogger().info(JUsb.version);
-			MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
-			String userdir = System.getProperty("user.dir");
-			String pathsep = System.getProperty("path.separator");
-			System.setProperty("java.library.path", OS.getWinDir()+pathsep+OS.getSystem32Dir()+pathsep+userdir+fsep+"x10flasher_lib");
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						Application app = new DefaultApplication();
-						FlasherGUI frame = new FlasherGUI();
-						app.addApplicationListener(frame.getApplicationListener());
-						app.addPreferencesMenuItem();
-						app.setEnabledPreferencesMenu(true);
-						BufferedImage img = ImageIO.read(FlasherGUI.class.getResource("/gui/ressources/icons/flash_512.png"));
-						app.setApplicationIconImage(img);
-						frame.setVisible(true);
-					} catch (Exception e) {}
-				}
-			});
-        }
-	}
-
-	public FlasherGUI() {
-		Application app = new DefaultApplication();
+	public FlasherGUI(Application app) throws FileNotFoundException, Exception {
+		app.addApplicationListener(listener);
+		app.addPreferencesMenuItem();
+		app.setEnabledPreferencesMenu(true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(FlasherGUI.class.getResource("/gui/ressources/icons/flash_32.png")));
+		initLogger();
+		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
+		MyLogger.getLogger().info("Flashtool "+About.getVersion());
+		if (JUsb.version.length()>0)
+			MyLogger.getLogger().info(JUsb.version);
 		_root=this;
 		setName("FlasherGUI");
 		setTitle("SonyEricsson X10 Flasher by Bin4ry & Androxyde");
@@ -319,7 +221,7 @@ public class FlasherGUI extends JFrame {
         					MyLogger.getLogger().error("You dropped more than one file");
             }   // end filesDropped
         }); // end FileDrop.Listener
-
+		MyLogger.getLogger().info("You can drag and drop ftf files here to start flashing them");
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -1128,6 +1030,7 @@ public class FlasherGUI extends JFrame {
 				}
 			}
 		};
+		killAdbandFastboot();
 		phoneWatchdog = new AdbPhoneThread();
 		phoneWatchdog.start();
 		phoneWatchdog.addStatusListener(phoneStatus);
@@ -2620,9 +2523,5 @@ public class FlasherGUI extends JFrame {
 	       event.setHandled(true);
 	       _root.setVisible(true);
 	    }
-	 }
-	 
-	 public ApplicationListener getApplicationListener() {
-		 return listener;
 	 }
 }

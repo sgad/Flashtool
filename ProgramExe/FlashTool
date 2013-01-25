@@ -85,7 +85,7 @@ else
     fi
     if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
     then
-    	java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar $JAVAEXE
+    	java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar $JAVAEXE
     else
 		echo "Java version must be 1.6 or 1.7"
     fi

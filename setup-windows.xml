@@ -4,6 +4,20 @@
 	
 	<target name="all" depends="loadprops, clean, binaries, dodrivers, dosetup"/>
 
+	<target name="main_lib">
+        <tstamp>
+             <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+        </tstamp>
+        <jar destfile="../Deploy/FlashTool/x10flasher.jar">
+            <manifest>
+                <attribute name="Main-Class" value="gui.Main"/>
+                <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${TODAY}"/>
+            	<attribute name="Internal-Version" value="${Internal-Version}"/>
+            </manifest>
+        	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>
+        </jar>
+	</target>
+
 	<target name="clean">
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/winjre32"/>
         <delete dir="../Deploy/FlashTool/x10flasher_lib/winjre64"/>
@@ -49,7 +63,7 @@
 	        <nsis script="drivers.nsi" path="C:\Program Files (x86)\NSIS\Unicode"/>
 	    </target>
 
-	<target name="binaries" depends="clean, JRE">
+	<target name="binaries" depends="clean, main_lib, JRE">
 		<copy file="./ProgramExe/FlashTool.exe" todir="../Deploy/FlashTool"/>
 		<copy file="./ProgramExe/FlashTool64.exe" todir="../Deploy/FlashTool"/>
     	<copy todir="../Deploy/FlashTool/x10flasher_lib">

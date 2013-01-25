@@ -16,7 +16,13 @@
 	<classpathentry kind="lib" path="libs/rsyntaxtextarea-2.0.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
 	<classpathentry kind="lib" path="libs/macify-1.4.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin64.jar"/>
+	<classpathentry kind="lib" path="libs/swt64/swtwin64.jar"/>
+	<classpathentry kind="lib" path="libs/commands.jar"/>
+	<classpathentry kind="lib" path="libs/equinox.jar"/>
+	<classpathentry kind="lib" path="libs/jface.jar"/>
+	<classpathentry kind="lib" path="libs/jobs.jar"/>
+	<classpathentry kind="lib" path="libs/osgi.jar"/>
+	<classpathentry kind="lib" path="libs/runtime.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

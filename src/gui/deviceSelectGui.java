@@ -178,22 +178,12 @@ public class deviceSelectGui extends JDialog {
 		return result;
 	}
 
-	public String getDevice(Properties list) {
-		if (list.size()>1) {
-			fillTable(list);
-			MyLogger.getLogger().warn("Your device has been matched with more than one device");
-		}
-		else
-			fillTable();
-		setVisible(true);
-		return result;
-	}
-
 	public String getDeviceFromList(Properties list) {
 		if (list==null) fillTable();
 		else {
 			if (list.size()>0) {
 				fillTable(list);
+				MyLogger.getLogger().warn("Your device has been matched with more than one device");
 			}
 			else
 				fillTable();

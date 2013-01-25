@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.eclipse.swt.custom.StyledText;
+
 import javax.swing.JProgressBar;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -123,6 +125,11 @@ public class MyLogger {
 		org.logger.TextAreaAppender.setTextArea(textArea);
 	}
 
+	public static void appendTextArea(StyledText textArea) {
+		org.logger.TextAreaAppender.setTextArea(textArea);
+	}
+
+	
 	public static void disableTextArea() {
 		hasTextArea = false;
 	}

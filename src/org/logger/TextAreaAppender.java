@@ -18,11 +18,14 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.apache.log4j.Level;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Display;
 import org.system.OS;
 
 public class TextAreaAppender extends WriterAppender {
 	
 	static private JTextPane jTextArea = null;
+	static private StyledText styledText = null;
 	static private StringBuilder builder = new StringBuilder();
 	static Font font = new Font("Serif", Font.PLAIN, 12);
 	public static String timestamp=getTimeStamp();
@@ -64,6 +67,11 @@ public class TextAreaAppender extends WriterAppender {
 		TextAreaAppender.jTextArea.setEditable(false);
 	}
 
+	/** Set the target JTextArea for the logging information to appear. */
+	static public void setTextArea(StyledText styledText) {
+		TextAreaAppender.styledText = styledText;
+	}
+
 	/**
 	 * Format and then append the loggingEvent to the stored
 	 * JTextArea.
@@ -89,7 +97,8 @@ public class TextAreaAppender extends WriterAppender {
 		});
 	}
 	
-	public static void append(Color c,String message) {
+	public static void append(Color c, final String message) {
+		if (jTextArea != null) {
         // Start with the current input attributes for the JTextPane. This
         // should ensure that we do not wipe out any existing attributes
         // (such as alignment or other paragraph attributes) currently
@@ -119,6 +128,14 @@ public class TextAreaAppender extends WriterAppender {
         jTextArea.scrollRectToVisible(jTextArea.modelToView(doc.getLength()));
         }
         catch (Exception e) {}
+		}
+		else if (styledText != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					styledText.append(message);
+				}
+			});
+		}
     }
 
 	public String getString() {

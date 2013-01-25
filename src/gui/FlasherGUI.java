@@ -2005,7 +2005,7 @@ public class FlasherGUI extends JFrame {
 			        		MyLogger.getLogger().info("Selecting from user input");
 			        		String devid="";
 			        		deviceSelectGui devsel = new deviceSelectGui(null);
-			        		devid = devsel.getDevice(founditems);
+			        		devid = devsel.getDeviceFromList(founditems);
 			    			if (devid.length()>0) {
 			        			found = true;
 			        			Devices.setCurrent(devid);

@@ -3,7 +3,6 @@
 
 	<target name="all" depends="loadprops, binaries, dotar"/>
 
-	
 	<target name="main_lib">
         <tstamp>
              <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -57,6 +56,10 @@
 		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
         <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
 	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/swt32/swtwin32.jar"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/swt32/swtmac32.jar"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/swt64/swtwin64.jar"/>
+		<delete file="../Deploy/FlashTool/x10flasher_lib/swt64/swtmac64.jar"/>
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/mac"/>
         <delete file="../Deploy/FlashTool/config.properties"/>
 	</target>

@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.Properties;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -36,12 +40,9 @@ import org.system.OS;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.VersionChecker;
-
 import flashsystem.Bundle;
 import flashsystem.BundleException;
 import flashsystem.X10flash;
-import foxtrot.Job;
-import foxtrot.Worker;
 import gui.tools.WidgetTask;
 import org.eclipse.swt.custom.ScrolledComposite;
 
@@ -49,7 +50,7 @@ public class MainSWT {
 
 	protected Shell shell;
 	private static AdbPhoneThread phoneWatchdog;
-	private static boolean guimode=false;
+	public static boolean guimode=false;
 	protected ToolItem tltmFlash;
 	protected ToolItem tltmRoot;
 	protected ToolItem tltmAskRoot;
@@ -183,15 +184,6 @@ public class MainSWT {
 		fd_btnSaveLog.right = new FormAttachment(100, -10);
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");
-		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
-		try {
-		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
-		} catch (Exception e) {
-			MyLogger.getLogger().info("Language files not installed");
-		}
-		MyLogger.getLogger().info("Flashtool "+About.getVersion());
-		if (JUsb.version.length()>0)
-			MyLogger.getLogger().info(JUsb.version);
 		
 		tltmAskRoot = new ToolItem(toolBar, SWT.NONE);
 		tltmAskRoot.addSelectionListener(new SelectionAdapter() {
@@ -226,6 +218,15 @@ public class MainSWT {
 		MyLogger.appendTextArea(logWindow);
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
+		try {
+		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
+		} catch (Exception e) {
+			MyLogger.getLogger().info("Language files not installed");
+		}
+		MyLogger.getLogger().info("Flashtool "+About.getVersion());
+		if (JUsb.version.length()>0)
+			MyLogger.getLogger().info(JUsb.version);
 	}
 
 	public static void stopPhoneWatchdog() {
@@ -294,8 +295,8 @@ public class MainSWT {
     			MyLogger.getLogger().error("Cannot identify your device.");
         		MyLogger.getLogger().info("Selecting from user input");
         		String devid=(String)WidgetTask.openDeviceSelector(shell);
-        		deviceSelectGui devsel = new deviceSelectGui(null);
-        		devid = devsel.getDeviceFromList(founditems);
+        		//deviceSelectGui devsel = new deviceSelectGui(null);
+        		//devid = devsel.getDeviceFromList(founditems);
     			if (devid.length()>0) {
         			found = true;
         			Devices.setCurrent(devid);
@@ -397,8 +398,8 @@ public class MainSWT {
     }
 
 	public void doAskRoot() {
-		Worker.post(new Job() {
-			public Object run() {
+		Job job = new Job("Give Root") {
+			protected IStatus run(IProgressMonitor monitor) {
 				MyLogger.getLogger().warn("Please check your Phone and 'ALLOW' Superuseraccess!");
         		if (!AdbUtility.hasRootPerms()) {
         			MyLogger.getLogger().error("Please Accept root permissions on the phone");
@@ -406,9 +407,10 @@ public class MainSWT {
         		else {
         			doGiveRoot();
         		}
-        		return null;
+        		return Status.OK_STATUS;				
 			}
-		});
+		};
+		job.schedule();
 	}
     
 	public void doInstFlashtool() {
@@ -435,8 +437,8 @@ public class MainSWT {
 	}
 	
 	public void doFastBoot() throws Exception {
-		FastBootToolboxGUI box = new FastBootToolboxGUI();
-		box.setVisible(true);
+		/*FastBootToolboxGUI box = new FastBootToolboxGUI();
+		box.setVisible(true);*/
 	}
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {

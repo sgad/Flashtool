@@ -2,13 +2,8 @@ package flashsystem;
 
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
-import gui.LoaderRootFilter;
-import gui.deviceSelectGui;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import org.logger.MyLogger;
@@ -18,9 +13,7 @@ import org.system.DeviceEntry;
 import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
-
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.Vector;
 
 public class X10flash {

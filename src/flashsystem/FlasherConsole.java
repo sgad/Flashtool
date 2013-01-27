@@ -7,11 +7,8 @@ import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
-
-import foxtrot.Job;
-import foxtrot.Worker;
 import gui.About;
-import gui.FlasherGUI;
+import gui.MainSWT;
 
 import org.adb.AdbUtility;
 import org.logger.MyLogger;
@@ -39,7 +36,7 @@ public class FlasherConsole {
 			MyLogger.disableTextArea();
 			MyLogger.setLevel("info");
 			MyLogger.getLogger().info("Flashtool "+About.getVersion());
-			FlasherGUI.guimode=false;
+			MainSWT.guimode=false;
 			if (withadb) {
 			StatusListener phoneStatus = new StatusListener() {
 				public void statusChanged(StatusEvent e) {

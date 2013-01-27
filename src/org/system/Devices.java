@@ -1,14 +1,11 @@
 package org.system;
 
-import gui.FlasherGUI;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.logger.MyLogger;

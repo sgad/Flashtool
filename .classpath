@@ -4,18 +4,12 @@
 	<classpathentry kind="lib" path="libs/AXMLPrinter2.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.3.jar"/>
-	<classpathentry kind="lib" path="libs/foxtrot-core-4.0.jar"/>
 	<classpathentry kind="lib" path="libs/HexLib.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="libs/jgoodies-common-1.4.0.jar"/>
-	<classpathentry kind="lib" path="libs/jgoodies-forms-1.6.0.jar"/>
-	<classpathentry kind="lib" path="libs/jgoodies-looks-2.5.2.jar"/>
 	<classpathentry kind="lib" path="libs/jna-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="libs/platform-3.4.2.jar"/>
-	<classpathentry kind="lib" path="libs/rsyntaxtextarea-2.0.4.1.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
-	<classpathentry kind="lib" path="libs/macify-1.4.jar"/>
 	<classpathentry kind="lib" path="libs/swt64/swtwin64.jar"/>
 	<classpathentry kind="lib" path="libs/commands.jar"/>
 	<classpathentry kind="lib" path="libs/equinox.jar"/>

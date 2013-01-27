@@ -1,52 +1,45 @@
 package org.logger;
 
-import gui.FlasherGUI;
+import gui.MainSWT;
 
-import java.awt.EventQueue;
 import java.io.InputStream;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.swt.custom.StyledText;
-
-import javax.swing.JProgressBar;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ProgressBar;
 
 public class MyLogger {
 
 	static Logger logger = Logger.getLogger(MyLogger.class);
 	static boolean isinit = false;
-	static JProgressBar _bar = null;
+	static ProgressBar _bar = null;
 	static boolean hasTextArea = true;
 	static long maxstepsconsole = 0;
 	static long currentstepconsole = 0;
 	static String lastaction = "";
 	public static String curlevel;
 
-	public static void registerProgressBar(JProgressBar bar) {
+	public static void registerProgressBar(ProgressBar bar) {
 		_bar = bar;
 	}
 	
 	public static void writeFile() {
-		if (FlasherGUI.guimode)
+		if (MainSWT.guimode)
 			org.logger.TextAreaAppender.writeFile();
 		else
 			org.logger.ConsoleAppender.writeFile();
 	}
 
-	public static JProgressBar getProgressBar() {
+	public static ProgressBar getProgressBar() {
 		return _bar;
 	}
 	
 	public static void initProgress(long max) {
-					if (FlasherGUI.guimode) {
-						if (max > 0) 
-							_bar.setStringPainted(true);
-						else 
-							_bar.setStringPainted(false);
-						_bar.setValue(0);
+					if (MainSWT.guimode) {
+						_bar.setMinimum(0);
+						_bar.setState(0);
 						_bar.setMaximum((int)max);
 					}
 					else {
@@ -56,13 +49,9 @@ public class MyLogger {
 	}
 
 	public static void initProgress(int max) {
-					if (FlasherGUI.guimode) {
-						if (max > 0) 
-							_bar.setStringPainted(true);
-						else 
-							_bar.setStringPainted(false);
-						_bar.setValue(0);
-						_bar.setMaximum((int)max);
+					if (MainSWT.guimode) {
+						_bar.setMinimum(0);
+						_bar.setState(0);
 					}
 					else {
 						maxstepsconsole=max;
@@ -71,10 +60,10 @@ public class MyLogger {
 	}
 
 	public static void updateProgress() {
-					if (FlasherGUI.guimode) {
-						SwingUtilities.invokeLater(new Runnable() {
+					if (MainSWT.guimode) {
+						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								_bar.setValue(_bar.getValue()+1);
+								_bar.setState(_bar.getState()+1);
 							}
 						});
 					}
@@ -119,10 +108,6 @@ public class MyLogger {
 		}
 		catch (Exception e) {
 		}
-	}
-
-	public static void appendTextArea(JTextPane textArea) {
-		org.logger.TextAreaAppender.setTextArea(textArea);
 	}
 
 	public static void appendTextArea(StyledText textArea) {

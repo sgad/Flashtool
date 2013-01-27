@@ -1,7 +1,5 @@
 package org.system;
 
-import gui.BusyBoxSelectGUI;
-import gui.RecoveryBootSelectGUI;
 import java.util.HashSet;
 import org.adb.AdbUtility;
 import org.logger.MyLogger;
@@ -42,7 +40,7 @@ public class DeviceEntry {
 		}
 	}
 
-	public void rebootSelectedRecovery() throws Exception {
+	/*public void rebootSelectedRecovery() throws Exception {
 		RecoveryBootSelectGUI rsel = new RecoveryBootSelectGUI();
 		rsel.setTitle("Recovery selector");
 		String current = rsel.getVersion();
@@ -56,9 +54,9 @@ public class DeviceEntry {
 		else {
 			MyLogger.getLogger().info("Canceled");
 		}
-	}
+	}*/
 	
-	public void setDefaultRecovery() throws Exception {
+	/*public void setDefaultRecovery() throws Exception {
 		RecoveryBootSelectGUI rsel = new RecoveryBootSelectGUI();
 		String current = rsel.getVersion();
 		if (current.length()>0) {
@@ -73,7 +71,7 @@ public class DeviceEntry {
 		else {
 			MyLogger.getLogger().info("Canceled");
 		}
-	}
+	}*/
 	
 	private void setKernelVersion() {
 		_entry.setProperty("kernel.version", AdbUtility.getKernelVersion(isBusyboxInstalled(false)));
@@ -195,11 +193,11 @@ public class DeviceEntry {
 	}
 
 	public String getBusybox(boolean select) {
-		String version;
+		String version="";
 		if (!select) version = _entry.getProperty("busyboxhelper");
 		else {
-			BusyBoxSelectGUI sel = new BusyBoxSelectGUI(getId());
-			version = sel.getVersion();
+			//BusyBoxSelectGUI sel = new BusyBoxSelectGUI(getId());
+			//version = sel.getVersion();
 		}
 		if (version.length()==0) return "";
 		else return "."+fsep+"devices"+fsep+_entry.getProperty("internalname")+fsep+"busybox"+fsep+version+fsep+"busybox";

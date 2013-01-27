@@ -1,14 +1,11 @@
 package org.system;
 
-import gui.FlasherGUI;
 import java.util.Enumeration;
-import java.util.Iterator;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
 import org.logger.MyLogger;
 import com.sun.jna.platform.win32.WinBase;
-import win32lib.JKernel32;
 import win32lib.JsetupAPi;
 import win32lib.SetupApi.HDEVINFO;
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;

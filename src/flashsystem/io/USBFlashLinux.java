@@ -1,12 +1,9 @@
 package flashsystem.io;
 
-import flashsystem.HexDump;
 import flashsystem.S1Packet;
 import flashsystem.X10FlashException;
 import java.io.IOException;
 import org.logger.MyLogger;
-
-import win32lib.JKernel32;
 import linuxlib.JUsb;
 
 public class USBFlashLinux {

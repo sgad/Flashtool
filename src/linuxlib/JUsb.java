@@ -1,17 +1,10 @@
 package linuxlib;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-
 import libusb.UsbDevList;
 import libusb.UsbDevice;
 import libusb.UsbSystem;
-
-import org.logger.MyLogger;
-
 import flashsystem.BytesUtil;
-import flashsystem.HexDump;
 
 public class JUsb {
 	

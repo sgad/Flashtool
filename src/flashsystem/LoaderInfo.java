@@ -1,10 +1,14 @@
 package flashsystem;
 
-import java.util.Enumeration;
 import java.util.Properties;
 
 public class LoaderInfo extends Properties {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public LoaderInfo(String phoneloader) {
 		update(phoneloader);
 	}

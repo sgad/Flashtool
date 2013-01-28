@@ -1,7 +1,5 @@
 package flashsystem;
 
-import org.logger.MyLogger;
-
 public class SinPartInfo {
 
 	byte[] partinfo=null;

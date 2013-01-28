@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.jdom.Element;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
-import org.lang.Language;
+//import org.lang.Language;
 
 public class BundleMetaData {
 
@@ -22,7 +22,7 @@ public class BundleMetaData {
 	Properties _catorders = new Properties();
 	
 	public BundleMetaData() {
-		_categex.setProperty("SYSTEM", Language.getMessage("meta_system"));
+		/*_categex.setProperty("SYSTEM", Language.getMessage("meta_system"));
 		_categex.setProperty("BASEBAND", Language.getMessage("meta_baseband"));
 		_categex.setProperty("KERNEL", Language.getMessage("meta_kernel"));
 		_categex.setProperty("PARTITION", Language.getMessage("meta_partition"));
@@ -31,7 +31,7 @@ public class BundleMetaData {
 		_categex.setProperty("TA", Language.getMessage("meta_ta"));
 		_categwipe.setProperty("DATA", Language.getMessage("meta_data"));
 		_categwipe.setProperty("CACHE", Language.getMessage("meta_cache"));
-		_categwipe.setProperty("LOG", Language.getMessage("meta_log"));
+		_categwipe.setProperty("LOG", Language.getMessage("meta_log"));*/
 		_catorders.setProperty("1", "KERNEL");
 		_catorders.setProperty("2", "FOTA");
 		_catorders.setProperty("3", "BASEBAND");

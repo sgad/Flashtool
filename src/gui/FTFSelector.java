@@ -1,14 +1,8 @@
 package gui;
 
 import flashsystem.Bundle;
-import gui.tools.FtfFilter;
 import java.io.File;
-import java.text.Collator;
-import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Properties;
-import java.util.jar.JarFile;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -27,23 +21,17 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.lang.Language;
-import org.logger.MyLogger;
-import org.system.DeviceEntry;
-import org.system.Devices;
 import org.system.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
-
 import gui.models.ContentContentProvider;
 import gui.models.ContentLabelProvider;
 import gui.models.Firmware;
 import gui.models.FirmwareContentProvider;
 import gui.models.FirmwareLabelProvider;
 import gui.models.FirmwaresModel;
-import org.eclipse.swt.custom.ScrolledComposite;
 
 public class FTFSelector extends Dialog {
 

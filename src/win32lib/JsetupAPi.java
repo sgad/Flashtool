@@ -7,7 +7,6 @@ import win32lib.SetupApi.SP_DEVICE_INTERFACE_DETAIL_DATA;
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.win32.W32APIOptions;
 

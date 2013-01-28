@@ -1,7 +1,6 @@
 package gui;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
@@ -28,7 +27,6 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.lang.Language;
 import org.logger.MyLogger;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
@@ -41,7 +39,6 @@ import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
-import flashsystem.BundleException;
 import flashsystem.X10flash;
 import gui.tools.WidgetTask;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -54,6 +51,7 @@ public class MainSWT {
 	protected ToolItem tltmFlash;
 	protected ToolItem tltmRoot;
 	protected ToolItem tltmAskRoot;
+	protected VersionChecker vcheck=null;
 	
 	/**
 	 * Open the window.
@@ -99,7 +97,7 @@ public class MainSWT {
 		phoneWatchdog = new AdbPhoneThread();
 		phoneWatchdog.start();
 		phoneWatchdog.addStatusListener(phoneStatus);
-		VersionChecker vcheck = new VersionChecker();
+		vcheck = new VersionChecker();
 		vcheck.setMessageFrame(shell);
 		vcheck.start();
 		shell.open();
@@ -109,7 +107,6 @@ public class MainSWT {
 				display.sleep();
 			}
 		}
-		exitProgram();
 	}
 
 	public void doDisableIdent() {
@@ -142,6 +139,7 @@ public class MainSWT {
 		mntmExit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				exitProgram();
 				shell.dispose();
 			}
 		});
@@ -219,11 +217,11 @@ public class MainSWT {
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
-		try {
+/*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {
 			MyLogger.getLogger().info("Language files not installed");
-		}
+		}*/
 		MyLogger.getLogger().info("Flashtool "+About.getVersion());
 		if (JUsb.version.length()>0)
 			MyLogger.getLogger().info(JUsb.version);
@@ -237,6 +235,7 @@ public class MainSWT {
 				phoneWatchdog.join();
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -251,7 +250,11 @@ public class MainSWT {
 			if (GlobalConfig.getProperty("killadbonexit").equals("yes")) {
 				killAdbandFastboot();
 			}
-			System.exit(0);
+			vcheck.done();
+			try {
+				vcheck.join();
+			}
+			catch (InterruptedException e) {}
 		}
 		catch (Exception e) {}		
 	}

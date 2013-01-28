@@ -1,7 +1,6 @@
 package org.plugins;
 
 import java.util.Enumeration;
-
 import javax.swing.JMenu;
 
 public interface  PluginInterface {

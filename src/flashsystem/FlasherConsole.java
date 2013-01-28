@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import gui.About;
 import gui.MainSWT;
-
 import org.adb.AdbUtility;
 import org.logger.MyLogger;
 import org.plugins.PluginInterface;

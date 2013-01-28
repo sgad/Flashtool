@@ -2,7 +2,6 @@ package win32lib;
 
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.Library;
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinBase;

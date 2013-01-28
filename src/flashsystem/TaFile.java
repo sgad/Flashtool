@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Vector;
 
-import org.logger.MyLogger;
-
 /** Demonstrate using Scanner to read a file. **/
 public class TaFile {
   

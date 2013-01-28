@@ -1,9 +1,6 @@
 package libusb;
 
 import com.sun.jna.Pointer;
-import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.Vector;
 import libusb.jna.LibUsbLibrary;
 import libusb.jna.libusb_version;
 

@@ -3,10 +3,6 @@ package gui;
 import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Locale;
-
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;

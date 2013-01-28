@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.logger.MyLogger;
-
 import flashsystem.Bundle;
 
 public class Firmware {

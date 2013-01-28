@@ -1,32 +1,25 @@
 package org.system;
 
 import gui.About;
-
 import java.net.*;
 import java.io.*;
-
-import javax.swing.JFrame;
-
 import org.eclipse.swt.widgets.Display;
 
 
 	
 public class VersionChecker extends Thread {
 
-		JFrame _f = null;
 		static org.eclipse.swt.widgets.Shell _s = null;
-		
-		public void setMessageFrame(JFrame f) {
-			_f = f;
-		}
+		private boolean notchecked=true;
 
 		public void setMessageFrame(org.eclipse.swt.widgets.Shell s) {
 			_s = s;
 		}
 
 		public void run() {
+			this.setName("Version Checker");
 			System.setProperty("java.net.useSystemProxies", "true");
-			boolean notchecked = true;
+			notchecked = true;
 			while (notchecked) {
 			try {
 		       URL oracle = new URL("https://github.com/Androxyde/Flashtool/raw/master/deploy-release.xml");
@@ -40,8 +33,6 @@ public class VersionChecker extends Thread {
 		    		   String version1 = inputLine.substring(inputLine.indexOf("value")+7);
 		    		   final String version = version1.substring(0,version1.indexOf("\""));
 		    		   if (!About.build.contains(version))
-		    			   	if (_f!=null)
-		    				   _f.setTitle(_f.getTitle()+"    --- New version "+version+" available ---");
 		    		   		if (_s!=null) {
 		    		   			Display.getDefault().syncExec(
 		    		   					new Runnable() {
@@ -57,10 +48,19 @@ public class VersionChecker extends Thread {
 		   	catch (Exception e) {
 		   	}
 		   	try {
-		   		sleep(2000);
+				while (notchecked) {
+					int count=1;
+					while (count<2001 && notchecked) {
+						sleep(1);
+						count++;
+					}
+				}
 		   	}
 		   	catch (Exception e) {}
 			}
 	   } 
 
+		public void done() {
+			notchecked=false;
+		}
 }

@@ -2,13 +2,11 @@ package org.adb;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
-
 import org.logger.MyLogger;
 import org.system.Devices;
 import org.system.GlobalConfig;
@@ -229,10 +227,11 @@ public class AdbUtility  {
 	}
 
 	public static void killServer() throws Exception {
-		MyLogger.getLogger().info("Killing adb service");
+		//MyLogger.getLogger().info("Killing adb service");
 		ProcessBuilderWrapper command = null;
-		if (OS.getName().equals("windows"))
+		if (OS.getName().equals("windows")) {
 			command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
+		}
 		else
 			command = new ProcessBuilderWrapper(new String[] {"killall","adb"},false);
 	}

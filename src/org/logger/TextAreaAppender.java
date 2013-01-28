@@ -86,6 +86,7 @@ public class TextAreaAppender extends WriterAppender {
 		if (styledText != null) {
 					styledText.setForeground(color);
 					styledText.append(message);
+					styledText.setSelection(styledText.getCharCount());
 		}
     }
 

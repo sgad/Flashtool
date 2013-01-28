@@ -1,7 +1,6 @@
 package flashsystem;
 
 import java.util.Vector;
-
 import org.logger.MyLogger;
 
 public class SinFileHeader {

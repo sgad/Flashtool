@@ -3,7 +3,6 @@ package libusb;
 import java.util.Vector;
 import libusb.jna.libusb_interface;
 import libusb.jna.libusb_interface_descriptor;
-import libusb.jna.libusb_interface_descriptor.ByReference;
 
 public class UsbInterface
 {

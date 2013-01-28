@@ -1,7 +1,6 @@
 package gui.models;
 
 import gui.tools.FtfFilter;
-
 import java.io.File;
 import java.util.jar.JarFile;
 

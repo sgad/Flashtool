@@ -1,14 +1,9 @@
 package flashsystem;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Vector;
-
 import org.logger.MyLogger;
-
 import flashsystem.io.USBFlash;
-import flashsystem.io.USBFlashWin32;
 
 public class Command {
 

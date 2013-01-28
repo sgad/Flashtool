@@ -2,7 +2,6 @@ package org.system;
 
 import java.util.HashSet;
 import org.adb.AdbUtility;
-import org.logger.MyLogger;
 
 public class DeviceEntry {
 

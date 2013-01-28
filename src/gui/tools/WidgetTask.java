@@ -5,13 +5,10 @@ import gui.BootModeSelector;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.WaitDeviceForFlashmode;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
 
 public class WidgetTask {
 	

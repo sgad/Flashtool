@@ -1,7 +1,6 @@
 package flashsystem;
 
 import gui.tools.FirmwareFileFilter;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -18,7 +17,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.Deflater;
-
 import org.logger.MyLogger;
 import org.system.OS;
 

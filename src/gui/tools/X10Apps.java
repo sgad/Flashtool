@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
-
 import org.adb.AdbUtility;
 import org.system.Devices;
 import org.system.OS;

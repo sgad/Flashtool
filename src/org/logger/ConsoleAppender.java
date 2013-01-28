@@ -1,7 +1,6 @@
 package org.logger;
 
 import gui.MainSWT;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

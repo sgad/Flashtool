@@ -3,9 +3,7 @@ package org.adb;
 import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import org.xmlpull.v1.XmlPullParser;
-
 import android.content.res.AXmlResourceParser;
 
 public class APKUtility {

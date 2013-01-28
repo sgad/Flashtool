@@ -2,9 +2,7 @@ package org.plugins;
 
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.JMenu;
-
 import org.system.OS;
 import org.system.PropertiesFile;
 

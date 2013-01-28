@@ -1,7 +1,5 @@
 package org.system;
 
-import javax.swing.event.EventListenerList;
-
 import org.system.Device;
 import org.system.DeviceIdent;
 import org.system.StatusEvent;
@@ -14,7 +12,7 @@ public class PhoneThread extends Thread {
 	boolean forced = false;
 	String status = "";
 	
-	private final EventListenerList listeners = new EventListenerList();
+	StatusListener listener;
 
 	public void run() {
 		int count = 0;
@@ -62,21 +60,20 @@ public class PhoneThread extends Thread {
 	}
 
 	public void addStatusListener(StatusListener listener) {
-        listeners.add(StatusListener.class, listener);
+		this.listener = listener;
     }
     
     public void removeStatusListener(StatusListener listener) {
-        listeners.remove(StatusListener.class, listener);
+    	this.listener = null;
     }
     
-    public StatusListener[] getStatusListeners() {
-        return listeners.getListeners(StatusListener.class);
+    public StatusListener getStatusListeners() {
+        return listener;
     }
     
     protected void fireStatusChanged(StatusEvent e) {
-		for(StatusListener listener : getStatusListeners()) {
+    	if (listener!=null)
 		    listener.statusChanged(e);
-		}
     }
     
     public void forceDetection() {

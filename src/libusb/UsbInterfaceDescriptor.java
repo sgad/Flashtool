@@ -2,7 +2,6 @@ package libusb;
 
 import java.util.Vector;
 import libusb.jna.libusb_endpoint_descriptor;
-import libusb.jna.libusb_endpoint_descriptor.ByReference;
 import libusb.jna.libusb_interface_descriptor;
 
 public class UsbInterfaceDescriptor

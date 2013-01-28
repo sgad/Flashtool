@@ -1,7 +1,5 @@
 package org.system;
 
-import java.util.Properties;
-
 public class GlobalConfig {
 	private static PropertiesFile config;
 	

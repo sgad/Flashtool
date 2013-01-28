@@ -2,8 +2,6 @@ package org.system;
 
 import java.util.Enumeration;
 import java.util.Properties;
-import org.adb.AdbUtility;
-import org.adb.FastbootUtility;
 
 public class DeviceIdent {
 

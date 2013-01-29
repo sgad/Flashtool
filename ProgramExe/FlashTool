@@ -41,10 +41,10 @@ then
         if test "${system64}" = "x86_64"
         then
              export JAVA_HOME=./x10flasher_lib/linjre64
-             export JAVAEXE=x10flasher64.jar
+             ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
         else
              export JAVA_HOME=./x10flasher_lib/linjre32
-             export JAVAEXE=x10flasher32.jar
+             ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
         fi
         echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
     fi
@@ -58,7 +58,7 @@ then
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
 	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
 	 then
-         	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar $JAVAEXE
+         	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
 	 else
 		echo "Java version must be 1.6 or 1.7"
 	 fi

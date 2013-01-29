@@ -47,10 +47,8 @@
 		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
         <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
 	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/swt32/swtlin32.jar"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/swt32/swtmac32.jar"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/swt64/swtlin64.jar"/>
-		<delete file="../Deploy/FlashTool/x10flasher_lib/swt64/swtmac64.jar"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtlin"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/mac"/>
         <delete file="../Deploy/FlashTool/config.properties"/>
 	</target>

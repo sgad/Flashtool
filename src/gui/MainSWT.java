@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Menu;
@@ -40,6 +42,7 @@ import org.system.StatusListener;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
 import flashsystem.X10flash;
+import gui.tools.FlashJob;
 import gui.tools.WidgetTask;
 import org.eclipse.swt.custom.ScrolledComposite;
 
@@ -121,6 +124,11 @@ public class MainSWT {
 	 */
 	protected void createContents() {
 		shell = new Shell();
+		shell.addListener(SWT.Close, new Listener() {
+		      public void handleEvent(Event event) {
+		    	  exitProgram();
+		      }
+		    });
 		shell.setSize(794, 460);
 		shell.setText("SWT Application");
 		shell.setImage(SWTResourceManager.getImage(FlashtoolSWT.class, "/gui/ressources/icons/flash_32.png"));
@@ -195,6 +203,8 @@ public class MainSWT {
 		tltmAskRoot.setToolTipText("Ask for root permissions");
 		
 		ProgressBar progressBar = new ProgressBar(shell, SWT.NONE);
+		progressBar.setState(SWT.NORMAL);
+		MyLogger.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
 		fd_progressBar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
 		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
@@ -449,13 +459,16 @@ public class MainSWT {
 			FTFSelector ftfsel = new FTFSelector(shell,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
-				X10flash flash=null;
 	    		bundle.open();
 		    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-				flash = new X10flash(bundle);
+				final X10flash flash = new X10flash(bundle);
 				MyLogger.getLogger().info("Please connect your device into flashmode.");
-				WidgetTask.openWaitDeviceForFlashmode(shell,flash);
-				bundle.close();
+				String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
+				if (result.equals("OK")) {
+					FlashJob fjob = new FlashJob("Flash");
+					fjob.setFlash(flash);
+					fjob.schedule();
+				}
 			}
 			else
 				MyLogger.getLogger().info("Flash canceled");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <exe4j version="4.5.1" transformSequenceNumber="1">
-  <directoryPresets config="C:/Users/Public/git/Deploy/FlashTool/x10flasher_lib" />
+  <directoryPresets config="C:/Users/Public/git/Deploy/FlashTool/x10flasher_lib/swtwin" />
   <application name="FlashTool" distributionSourceDir="C:/Users/Public/git/Deploy/FlashTool">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
@@ -24,7 +24,7 @@
     <classPath>
       <archive location="./x10flasher.jar" failOnError="false" />
       <scanDirectory location="./x10flasher_lib" failOnError="false" />
-      <scanDirectory location="./x10flasher_lib/swt64" failOnError="false" />
+      <scanDirectory location="./x10flasher_lib/swtwin/x86_64" failOnError="false" />
     </classPath>
     <nativeLibraryDirectories>
       <directory name="." />

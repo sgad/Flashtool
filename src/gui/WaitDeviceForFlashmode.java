@@ -1,5 +1,6 @@
 package gui;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -36,12 +37,16 @@ public class WaitDeviceForFlashmode extends Dialog {
 		shlWaitForFlashmode.open();
 		shlWaitForFlashmode.layout();
 		Display display = getParent().getDisplay();
-		job = new SearchJob("First Job");
+		job = new SearchJob("Search Job");
 		job.setFlash(flash);
 		job.schedule();
 		while (!shlWaitForFlashmode.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
+			if (job.getState() == Status.OK) {
+				result = new String("OK");
+				shlWaitForFlashmode.dispose();
 			}
 		}
 		return result;
@@ -71,6 +76,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				job.stopSearch();
+				result = new String("Canceled");
 				shlWaitForFlashmode.dispose();
 			}
 		});

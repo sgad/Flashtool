@@ -370,6 +370,10 @@ public class X10flash {
     	}
     }
 
+    public Bundle getBundle() {
+    	return _bundle;
+    }
+    
     public boolean openDevice() {
     	return openDevice(_bundle.simulate());
     }

@@ -9,13 +9,13 @@
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="libs/platform-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/commands.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/equinox.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/jface.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/jobs.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/osgi.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/runtime.jar"/>
-	<classpathentry kind="lib" path="libs/swtwin/swt64.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/commands.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/equinox.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/jface.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/jobs.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/osgi.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/runtime.jar"/>
+	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

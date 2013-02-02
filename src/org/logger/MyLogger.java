@@ -35,11 +35,15 @@ public class MyLogger {
 		return _bar;
 	}
 	
-	public static void initProgress(long max) {
+	public static void initProgress(final long max) {
 					if (MainSWT.guimode) {
-						_bar.setMinimum(0);
-						_bar.setState(0);
-						_bar.setMaximum((int)max);
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								_bar.setMinimum(0);
+								_bar.setMaximum((int)max);
+								_bar.setSelection(0);
+							}
+						});
 					}
 					else {
 						maxstepsconsole=max;
@@ -47,10 +51,15 @@ public class MyLogger {
 					}
 	}
 
-	public static void initProgress(int max) {
+	public static void initProgress(final int max) {
 					if (MainSWT.guimode) {
-						_bar.setMinimum(0);
-						_bar.setState(0);
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								_bar.setMinimum(0);
+								_bar.setMaximum((int)max);
+								_bar.setSelection(0);
+							}
+						});
 					}
 					else {
 						maxstepsconsole=max;
@@ -62,7 +71,7 @@ public class MyLogger {
 					if (MainSWT.guimode) {
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								_bar.setState(_bar.getState()+1);
+								_bar.setSelection(_bar.getSelection()+1);
 							}
 						});
 					}

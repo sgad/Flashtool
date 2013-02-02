@@ -228,12 +228,13 @@ public class AdbUtility  {
 
 	public static void killServer() throws Exception {
 		//MyLogger.getLogger().info("Killing adb service");
-		ProcessBuilderWrapper command = null;
 		if (OS.getName().equals("windows")) {
-			command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
+			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
 		}
-		else
-			command = new ProcessBuilderWrapper(new String[] {"killall","adb"},false);
+		else {
+			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
+		    ProcessBuilderWrapper command1 = new ProcessBuilderWrapper(new String[] {"killall","adb"},false);
+		}
 	}
 
 	public static void startServer() throws Exception {

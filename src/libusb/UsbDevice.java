@@ -199,9 +199,9 @@ public class UsbDevice
 	  }
   }
 
-  public byte[] bulkRead() {
+  public byte[] bulkRead(int count) {
 	  if (handle != null) {
-		  byte[] data = new byte[4096];
+		  byte[] data = new byte[count];
 		  int[] actual_length = new int[1];
 		  int result = LibUsbLibrary.libUsb.libusb_bulk_transfer(this.handle, default_endpoint_in, data, data.length, actual_length, 0);
 		  int retries=0;

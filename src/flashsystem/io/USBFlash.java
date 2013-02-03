@@ -49,15 +49,6 @@ public class USBFlash {
 			MyLogger.updateProgress();
 	}
 
-	public static void readS1Reply(int timeout)  throws IOException,X10FlashException {
-		if (OS.getName().equals("windows")) {
-			USBFlashWin32.windowsReadS1Reply();
-		}
-		else {
-			USBFlashLinux.linuxReadS1Reply(timeout);
-		}
-	}
-
 	public static void readReply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsReadReply();

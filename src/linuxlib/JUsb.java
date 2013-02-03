@@ -90,12 +90,12 @@ public class JUsb {
 			dev.releaseAndClose();
 	}
 	
-	public static byte[] readBytes() {
-		return dev.bulkRead();
+	public static byte[] readBytes(int count) {
+		return dev.bulkRead(count);
 	}
 
-	public static byte[] readBytes(int timeout) {
-		return dev.bulkRead();
+	public static byte[] readBytes(int count, int timeout) {
+		return dev.bulkRead(count);
 	}
 
 	public static void cleanup() throws Exception {

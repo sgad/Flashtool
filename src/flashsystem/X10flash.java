@@ -267,7 +267,7 @@ public class X10flash {
 		else
 			sin.setChunkSize(0x10000);
 		uploadImage(sin);
-		USBFlash.readS1Reply(5000);
+		USBFlash.readS1Reply(true);
 		hookDevice(true);
     }
 

@@ -47,15 +47,12 @@ public class USBFlashLinux {
     {
     	MyLogger.getLogger().debug("Reading packet from phone");
     	byte[] read = JUsb.readBytes(13);
-    	System.out.println(read.length);
     	S1Packet p=new S1Packet(read);
     	if (p.getDataLength()>0) {
     		read = JUsb.readBytes(p.getDataLength());
-    		System.out.println(read.length);
     		p.addData(read);
     	}
     	read = JUsb.readBytes(4);
-    	System.out.println(read.length);
     	p.addData(read);
 		p.validate();
 		MyLogger.getLogger().debug("IN : " + p);

@@ -1,5 +1,8 @@
 package win32lib;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
@@ -30,6 +33,17 @@ public interface SetupApi extends Library {
         public char[]  ProviderName= new char[255];
         public WinBase.FILETIME  DriverDate;
         public int DriverVersion;
+        
+        protected List getFieldOrder() {
+        	return Arrays.asList("cbSize",
+        				     "DriverType",
+        				     "Reserved",
+        				     "Description",
+        				     "MfgName",
+        				     "ProviderName",
+        				     "DriverDate",
+        				     "DriverVersion");
+        }
     }
 
     
@@ -67,7 +81,12 @@ public interface SetupApi extends Library {
 
         public char[] devicePath = new char[1];
 
+        protected List getFieldOrder() {
+        	return Arrays.asList("cbSize",
+        				     "devicePath");
+        }
     }
+
 
     public static int DIGCF_DEFAULT         = 0x00000001; 
     public static int DIGCF_PRESENT         = 0x00000002;

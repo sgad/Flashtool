@@ -1,5 +1,8 @@
 package libusb.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.ByReference;
@@ -63,10 +66,10 @@ public class libusb_version extends Structure
   }
 
   public libusb_version() {
-    initFieldOrder();
   }
-  protected void initFieldOrder() {
-    setFieldOrder(new String[] { "major", "minor", "micro", "nano", "rc", "describe" });
+
+  protected List getFieldOrder() {
+	  	return Arrays.asList("major", "minor", "micro", "nano", "rc", "describe");
   }
 
   public libusb_version(short major, short minor, short micro, short nano, Pointer rc, Pointer describe)
@@ -77,7 +80,6 @@ public class libusb_version extends Structure
     this.nano = nano;
     this.rc = rc;
     this.describe = describe;
-    initFieldOrder();
   }
 
   public static class ByReference extends libusb_version

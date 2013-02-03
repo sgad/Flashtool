@@ -21,7 +21,10 @@ public class USBFlashLinux {
 	public static void linuxWriteS1(S1Packet p) throws IOException,X10FlashException {
 		try {
 			MyLogger.getLogger().debug("Writing packet to phone");
-			JUsb.writeBytes(p.getByteArray());
+			JUsb.writeBytes(p.getHeader());
+			if (p.getDataLength()>0)
+				JUsb.writeBytes(p.getDataArray());
+			JUsb.writeBytes(p.getCRC32());
 			MyLogger.getLogger().debug("OUT : " + p);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

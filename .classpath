@@ -5,9 +5,7 @@
 	<classpathentry kind="lib" path="libs/jdom-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/jopt-simple-4.3.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="libs/jna-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="libs/platform-3.4.2.jar"/>
 	<classpathentry kind="lib" path="libs/sony.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/commands.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/equinox.jar"/>
@@ -16,6 +14,8 @@
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/osgi.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/runtime.jar"/>
 	<classpathentry kind="lib" path="libs/swtwin/x86_64/swt.jar"/>
+	<classpathentry kind="lib" path="libs/platform-3.5.1.jar"/>
+	<classpathentry kind="lib" path="libs/jna-3.5.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

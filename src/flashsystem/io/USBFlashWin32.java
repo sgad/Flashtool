@@ -33,7 +33,10 @@ public class USBFlashWin32 {
 
 	public static boolean windowsWriteS1(S1Packet p) throws IOException,X10FlashException {
 		MyLogger.getLogger().debug("Writing packet to phone");
-		JKernel32.writeBytes(p.getByteArray());
+		JKernel32.writeBytes(p.getHeader());
+		if (p.getDataLength()>0)
+			JKernel32.writeBytes(p.getDataArray());
+		JKernel32.writeBytes(p.getCRC32());
 		MyLogger.getLogger().debug("OUT : " + p);
 		return true;
 	}

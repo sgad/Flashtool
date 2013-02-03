@@ -26,6 +26,7 @@ public class X10flash {
     private boolean taopen = false;
     private boolean modded_loader=false;
     private String currentdevice = "";
+    private int maxpacketsize = 0;
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -261,7 +262,10 @@ public class X10flash {
 		
 		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
 		SinFile sin = new SinFile(loader);
-		sin.setChunkSize(0x1000);
+		if (sin.getSinHeader().getVersion()!=3)
+			sin.setChunkSize(0x1000);
+		else
+			sin.setChunkSize(0x10000);
 		uploadImage(sin);
 		USBFlash.readS1Reply(5000);
 		hookDevice(true);

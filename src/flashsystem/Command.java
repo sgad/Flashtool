@@ -95,36 +95,16 @@ public class Command {
     					Thread.sleep(125);
     				}catch (Exception e) {}
     			}
-    			Vector<S1Packet> v = new Vector<S1Packet>();
 	    		S1Packet p = new S1Packet(command,data,ongoing);
-				if (p.getDataLength()>=65536) {
-					byte[] part1 = new byte[65536-17];
-					byte[] part2 = new byte[17];
-					System.arraycopy(p.getDataArray(), 0, part1, 0, part1.length);
-					System.arraycopy(p.getDataArray(), part1.length, part2, 0, part2.length);
-					S1Packet p1 = new S1Packet(p.getCommand(),part1,ongoing?ongoing:true);
-					v.add(p1);
-					S1Packet p2 = new S1Packet(p.getCommand(),part2,ongoing);
-					v.add(p2);
-					p.release();
-				}
-				else v.add(p);
-				S1Packet ptemp = null;
 	    		try {
-	    			for (int i=0;i<v.size();i++) {
-	    				ptemp = v.get(i);
-	    				boolean withupdate=false;
-	    				if (v.size()==1 || (i+1)==v.size()) withupdate=true;  
-		    			USBFlash.writeS1(ptemp,withupdate);
-		    			ptemp.release();
-	    			}
+		    		USBFlash.writeS1(p, true);
 	    		}
 	    		catch (X10FlashException xe) {
-	    			ptemp.release();
+	    			p.release();
 	    			throw new X10FlashException(xe.getMessage());
 	    		}
 	    		catch (IOException ioe) {
-	    			ptemp.release();
+	    			p.release();
 	    			throw new IOException(ioe.getMessage());
 	    		}
 	    }

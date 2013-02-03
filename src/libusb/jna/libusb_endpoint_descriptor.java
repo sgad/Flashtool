@@ -1,5 +1,8 @@
 package libusb.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.ByReference;
@@ -99,10 +102,10 @@ public class libusb_endpoint_descriptor extends Structure
   }
 
   public libusb_endpoint_descriptor() {
-    initFieldOrder();
   }
-  protected void initFieldOrder() {
-    setFieldOrder(new String[] { "bLength", "bDescriptorType", "bEndpointAddress", "bmAttributes", "wMaxPacketSize", "bInterval", "bRefresh", "bSynchAddress", "extra", "extra_length" });
+
+  protected List getFieldOrder() {
+	  	return Arrays.asList("bLength", "bDescriptorType", "bEndpointAddress", "bmAttributes", "wMaxPacketSize", "bInterval", "bRefresh", "bSynchAddress", "extra", "extra_length");
   }
 
   public static class ByReference extends libusb_endpoint_descriptor

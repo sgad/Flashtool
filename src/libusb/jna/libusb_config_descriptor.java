@@ -1,5 +1,8 @@
 package libusb.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.ByReference;
@@ -19,9 +22,21 @@ public class libusb_config_descriptor extends Structure
   public Pointer extra;
   public int extra_length;
 
-  public libusb_config_descriptor()
-  {
+  protected List getFieldOrder() {
+  	return Arrays.asList("bLength",
+  				     	 "bDescriptorType",
+  				     	 "wTotalLength", 
+  				     	 "bNumInterfaces",
+  				     	 "bConfigurationValue",
+  				     	 "iConfiguration",
+  				     	 "bmAttributes",
+  				     	 "MaxPower",
+  				     	 "iFaces",
+  				     	 "extra",
+  						 "extra_length");
   }
+
+  public libusb_config_descriptor() {}
 
   public libusb_config_descriptor[] toArray(int size)
   {
@@ -42,4 +57,5 @@ public class libusb_config_descriptor extends Structure
     implements Structure.ByValue
   {
   }
+
 }

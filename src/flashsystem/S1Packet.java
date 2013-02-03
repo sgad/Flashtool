@@ -220,5 +220,18 @@ public class S1Packet {
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}
+	
+	public byte[] getCRC32() {
+		return crc32;
+	}
+	
+	public byte[] getHeader() {
+		byte[] array = new byte[13];
+		System.arraycopy(cmd, 0, array, 0, 4);
+		System.arraycopy(flags, 0, array, 4, 4);
+		System.arraycopy(datalen, 0, array, 8, 4);
+		array[12] = hdr;
+		return array;
+	}
 
 }

@@ -1,6 +1,9 @@
 package win32lib;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -60,6 +63,10 @@ public interface User32RW extends User32 {
 	public static class POINT extends Structure {
 		public int x;
 		public int y;
+        protected List getFieldOrder() {
+        	return Arrays.asList("x",
+        				     "y");
+        }
 	}
 
 	/*
@@ -76,6 +83,14 @@ public interface User32RW extends User32 {
 		public int lParam;
 		public int time;
 		public POINT pt;
+        protected List getFieldOrder() {
+        	return Arrays.asList("hWnd",
+        				     "message",
+        				     "wParam",
+        				     "lParam",
+        				     "time",
+        				     "pt");
+        }
 	}
 
 	// http://msdn.microsoft.com/en-us/library/ms644936(VS.85).aspx

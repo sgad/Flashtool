@@ -1,5 +1,8 @@
 package libusb.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.ByReference;
 import com.sun.jna.Structure.ByValue;
@@ -21,14 +24,12 @@ public class libusb_device_descriptor extends Structure
   public byte iSerialNumber;
   public byte bNumConfigurations;
 
-  public libusb_device_descriptor()
-  {
-    initFieldOrder();
-  }
-  protected void initFieldOrder() {
-    setFieldOrder(new String[] { "bLength", "bDescriptorType", "bcdUSB", "bDeviceClass", "bDeviceSubClass", "bDeviceProtocol", "bMaxPacketSize0", "idVendor", "idProduct", "bcdDevice", "iManufacturer", "iProduct", "iSerialNumber", "bNumConfigurations" });
-  }
+  public libusb_device_descriptor() {}
 
+  protected List getFieldOrder() {
+	  	return Arrays.asList("bLength", "bDescriptorType", "bcdUSB", "bDeviceClass", "bDeviceSubClass", "bDeviceProtocol", "bMaxPacketSize0", "idVendor", "idProduct", "bcdDevice", "iManufacturer", "iProduct", "iSerialNumber", "bNumConfigurations");
+  }
+  
   public String toString()
   {
     return "libusb_device_descriptor { bLength=" + 

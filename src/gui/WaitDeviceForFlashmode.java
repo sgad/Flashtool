@@ -3,6 +3,8 @@ package gui;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -36,6 +38,12 @@ public class WaitDeviceForFlashmode extends Dialog {
 		createContents();
 		shlWaitForFlashmode.open();
 		shlWaitForFlashmode.layout();
+		shlWaitForFlashmode.addListener(SWT.Close, new Listener() {
+		      public void handleEvent(Event event) {
+					job.stopSearch();
+					result = new String("Canceled");
+		      }
+		    });
 		Display display = getParent().getDisplay();
 		job = new SearchJob("Search Job");
 		job.setFlash(flash);

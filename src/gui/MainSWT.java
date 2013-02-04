@@ -446,8 +446,10 @@ public class MainSWT {
 		String select = WidgetTask.openBootModeSelector(shell);
 		if (select.equals("flashmode"))
 			doFlashmode("","");
-		if (select.equals("fastboot"))
+		else if (select.equals("fastboot"))
 			doFastBoot();
+		else
+			MyLogger.getLogger().info("Flash canceled");
 	}
 	
 	public void doFastBoot() throws Exception {
@@ -470,6 +472,8 @@ public class MainSWT {
 					fjob.setFlash(flash);
 					fjob.schedule();
 				}
+				else
+					MyLogger.getLogger().info("Flash canceled");
 			}
 			else
 				MyLogger.getLogger().info("Flash canceled");

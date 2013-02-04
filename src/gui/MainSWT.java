@@ -226,7 +226,8 @@ public class MainSWT {
 		MyLogger.appendTextArea(logWindow);
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
+		//MyLogger.setLevel("DEBUG");
+		MyLogger.setLevel("INFO");
 /*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {

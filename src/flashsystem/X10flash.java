@@ -262,10 +262,10 @@ public class X10flash {
 		
 		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
 		SinFile sin = new SinFile(loader);
-		if (sin.getSinHeader().getVersion()!=3)
-			sin.setChunkSize(0x1000);
-		else
+		if (sin.getSinHeader().getVersion()>=2)
 			sin.setChunkSize(0x10000);
+		else
+			sin.setChunkSize(0x1000);
 		uploadImage(sin);
 		USBFlash.readS1Reply(true);
 		hookDevice(true);
@@ -277,7 +277,7 @@ public class X10flash {
 			MyLogger.getLogger().info("Processing "+entry.getName());
 			closeTA();
 			SinFile sin = new SinFile(entry.getAbsolutePath());
-			sin.setChunkSize(0x10000);
+			sin.setChunkSize(maxpacketsize);
 			uploadImage(sin);
 			openTA(2);
 		}
@@ -293,7 +293,7 @@ public class X10flash {
 					BundleEntry bent = _bundle.getEntry(entry);
 					MyLogger.getLogger().info("Processing "+bent.getName());
 					SinFile sin = new SinFile(bent.getAbsolutePath());
-					sin.setChunkSize(0x10000);
+					sin.setChunkSize(maxpacketsize);
 					uploadImage(sin);
 					MyLogger.getLogger().debug("Flashing "+bent.getName()+" finished");
 				}
@@ -350,6 +350,7 @@ public class X10flash {
     	try {
 		    MyLogger.getLogger().info("Start Flashing");
 		    sendLoader();
+		    maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
 		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);

@@ -12,8 +12,7 @@ import org.logger.MyLogger;
 public class SinFile {
 
 	byte[] ident = new byte[16];
-    static byte readarray64[] = new byte[0x10000];
-    static byte readarray4[] = new byte[0x1000];
+	private byte[] readarray;
 	File sinfile;
 	byte[] yaffs2 = {0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xFF, (byte)0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	String datatype = null;
@@ -67,16 +66,9 @@ public class SinFile {
 		long offset = sinheader.getHeaderSize()+(chunkId*chunksize);
 		fin.seek(offset);
 		int readcount=0;
-		if (readarray64.length==chunksize) {
-			readcount = fin.read(readarray64);
-			fin.close();
-			return BytesUtil.getReply(readarray64,readcount);
-		}
-		else {
-			readcount = fin.read(readarray4);
-			fin.close();
-			return BytesUtil.getReply(readarray4,readcount);
-		}
+		readcount = fin.read(readarray);
+		fin.close();
+		return BytesUtil.getReply(readarray,readcount);
 	}
 	
 	public void setChunkSize(long size) {
@@ -84,6 +76,7 @@ public class SinFile {
 		nbchunks = datasize / size;
 		chunksize = size;
 		if (datasize%size>0) nbchunks++;
+		readarray = new byte[(int)size];
 	}
 	
 	public long getChunkSize() {

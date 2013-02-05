@@ -58,7 +58,7 @@
 	</target>
 
 	<target name="loadprops">
-		<loadmf jar="../Deploy/FlashTool/x10flasher.jar" prefix=""/>
+		<loadmf jar="../Deploy/FlashTool/x10flasher_lib/x10flasher-res.jar" prefix=""/>
 	</target>
 	
 	   <target name="dodrivers">

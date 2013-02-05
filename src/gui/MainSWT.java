@@ -54,6 +54,7 @@ public class MainSWT {
 	protected ToolItem tltmFlash;
 	protected ToolItem tltmRoot;
 	protected ToolItem tltmAskRoot;
+	protected ToolItem tltmBLU;
 	protected VersionChecker vcheck=null;
 	
 	/**
@@ -153,15 +154,57 @@ public class MainSWT {
 		});
 		mntmExit.setText("Exit");
 		
-		MenuItem mntmPlugins = new MenuItem(menu, SWT.CASCADE);
-		mntmPlugins.setText("Plugins");
+		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
+		mntmHelp.setText("Help");
 		
-		Menu menu_2 = new Menu(mntmPlugins);
-		mntmPlugins.setMenu(menu_2);
+		Menu menu_2 = new Menu(mntmHelp);
+		mntmHelp.setMenu(menu_2);
+		
+		MenuItem mntmLogLevel = new MenuItem(menu_2, SWT.CASCADE);
+		mntmLogLevel.setText("Log level");
+		
+		Menu menu_3 = new Menu(mntmLogLevel);
+		mntmLogLevel.setMenu(menu_3);
+		
+		MenuItem mntmError = new MenuItem(menu_3, SWT.NONE);
+		mntmError.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MyLogger.setLevel("ERROR");
+			}
+		});
+		mntmError.setText("error");
+		
+		MenuItem mntmWarning = new MenuItem(menu_3, SWT.NONE);
+		mntmWarning.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MyLogger.setLevel("WARN");
+			}
+		});
+		mntmWarning.setText("warning");
+		
+		MenuItem mntmInfo = new MenuItem(menu_3, SWT.NONE);
+		mntmInfo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MyLogger.setLevel("INFO");
+			}
+		});
+		mntmInfo.setText("info");
+		
+		MenuItem mntmDebug = new MenuItem(menu_3, SWT.NONE);
+		mntmDebug.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MyLogger.setLevel("DEBUG");
+			}
+		});
+		mntmDebug.setText("debug");
 
 		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 158);
+		fd_toolBar.right = new FormAttachment(0, 179);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);
@@ -177,6 +220,16 @@ public class MainSWT {
 		});
 		tltmFlash.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		tltmFlash.setToolTipText("Flash device");
+		
+		tltmBLU = new ToolItem(toolBar, SWT.NONE);
+		tltmBLU.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doBLUnlock();
+			}
+		});
+		tltmBLU.setToolTipText("Bootloader Unlock");
+		tltmBLU.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/blu_32.png"));
 		
 		tltmRoot = new ToolItem(toolBar, SWT.NONE);
 		tltmRoot.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/root_32.png"));
@@ -213,10 +266,10 @@ public class MainSWT {
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		FormData fd_scrolledComposite = new FormData();
-		fd_scrolledComposite.bottom = new FormAttachment(btnSaveLog, -6);
-		fd_scrolledComposite.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
 		fd_scrolledComposite.top = new FormAttachment(toolBar, 6);
-		fd_scrolledComposite.left = new FormAttachment(toolBar, 0, SWT.LEFT);
+		fd_scrolledComposite.bottom = new FormAttachment(btnSaveLog, -6);
+		fd_scrolledComposite.left = new FormAttachment(0, 10);
+		fd_scrolledComposite.right = new FormAttachment(100, -10);
 		scrolledComposite.setLayoutData(fd_scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
@@ -462,18 +515,24 @@ public class MainSWT {
 			FTFSelector ftfsel = new FTFSelector(shell,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
 			if (bundle !=null) {
-	    		bundle.open();
-		    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-				final X10flash flash = new X10flash(bundle);
-				MyLogger.getLogger().info("Please connect your device into flashmode.");
-				String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
-				if (result.equals("OK")) {
-					FlashJob fjob = new FlashJob("Flash");
-					fjob.setFlash(flash);
-					fjob.schedule();
+				try {
+		    		bundle.open();
+			    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+					final X10flash flash = new X10flash(bundle);
+					MyLogger.getLogger().info("Please connect your device into flashmode.");
+					String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
+					if (result.equals("OK")) {
+						FlashJob fjob = new FlashJob("Flash");
+						fjob.setFlash(flash);
+						fjob.schedule();
+					}
+					else
+						MyLogger.getLogger().info("Flash canceled");
 				}
-				else
+				catch (Exception e){
+					MyLogger.getLogger().error(e.getMessage());
 					MyLogger.getLogger().info("Flash canceled");
+				}
 			}
 			else
 				MyLogger.getLogger().info("Flash canceled");
@@ -521,4 +580,56 @@ public class MainSWT {
 		});*/
 	}
 
+	public void doBLUnlock() {
+		String ulcode="";
+		String imei = "";
+		String blstatus = "";
+
+		try {
+		Bundle bundle = new Bundle();
+		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+		X10flash flash = new X10flash(bundle);
+		MyLogger.getLogger().info("Please connect your device into flashmode.");
+		String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
+		if (result.equals("OK")) {
+			try {
+				flash.openDevice();
+				flash.sendLoader();
+				blstatus = flash.getPhoneProperty("ROOTING_STATUS");
+				imei=flash.getPhoneProperty("IMEI");
+				if (blstatus.equals("ROOTED")) {
+					flash.openTA(2);
+					ulcode=flash.dumpProperty(2226,"string");
+					flash.closeTA();
+				}
+				MyLogger.initProgress(0);
+				bundle.close();
+				flash.closeDevice();
+				DeviceChangedListener.pause(false);
+				MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+				result = (String)WidgetTask.openWaitDeviceForFastboot(shell);
+				if (result.equals("OK")) {
+					BLUWizard wiz = new BLUWizard(shell,SWT.PRIMARY_MODAL | SWT.SHEET);
+					wiz.open(imei,ulcode);
+				}
+				else {
+					MyLogger.getLogger().info("Bootloader unlock canceled");
+				}
+			}
+			catch (Exception e) {
+				bundle.close();
+				flash.closeDevice();
+				DeviceChangedListener.pause(false);
+				MyLogger.getLogger().info("Bootloader unlock canceled");
+			}
+		}
+		else {
+			blstatus="CANCELED";
+			MyLogger.getLogger().info("Bootloader unlock canceled");
+		}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

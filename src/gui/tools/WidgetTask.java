@@ -4,6 +4,7 @@ import flashsystem.X10flash;
 import gui.BootModeSelector;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
+import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -74,6 +75,21 @@ public class WidgetTask {
 					public void run() {
 			    		WaitDeviceForFlashmode dial = new WaitDeviceForFlashmode(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open(flash);
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openWaitDeviceForFastboot(final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		WaitDeviceForFastboot dial = new WaitDeviceForFastboot(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open();
 						res.setResult(obj);
 						
 					}

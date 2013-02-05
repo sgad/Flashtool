@@ -36,24 +36,12 @@ public class MyLogger {
 	}
 	
 	public static void initProgress(final long max) {
-					if (MainSWT.guimode) {
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								_bar.setMinimum(0);
-								_bar.setMaximum((int)max);
-								_bar.setSelection(0);
-							}
-						});
-					}
-					else {
-						maxstepsconsole=max;
-						currentstepconsole=0;
-					}
+		MyLogger.initProgress((int) max);
 	}
 
 	public static void initProgress(final int max) {
 					if (MainSWT.guimode) {
-						Display.getDefault().asyncExec(new Runnable() {
+						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
 								_bar.setMinimum(0);
 								_bar.setMaximum((int)max);
@@ -69,7 +57,7 @@ public class MyLogger {
 
 	public static void updateProgress() {
 					if (MainSWT.guimode) {
-						Display.getDefault().asyncExec(new Runnable() {
+						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
 								_bar.setSelection(_bar.getSelection()+1);
 							}

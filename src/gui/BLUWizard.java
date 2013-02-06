@@ -1,5 +1,8 @@
 package gui;
 
+import java.awt.Desktop;
+import java.net.URI;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -78,6 +81,12 @@ public class BLUWizard extends Dialog {
 		textIMEI.setBounds(92, 7, 164, 21);
 		
 		btnGetUnlock = new Button(shlBootloaderUnlockWizard, SWT.NONE);
+		btnGetUnlock.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showInBrowser("http://unlockbootloader.sonymobile.com/unlock/step1");
+			}
+		});
 		btnGetUnlock.setBounds(110, 40, 118, 25);
 		btnGetUnlock.setText("Get Unlock Code");
 		
@@ -103,4 +112,15 @@ public class BLUWizard extends Dialog {
 		btnNewButton_2.setText("Cancel");
 
 	}
+
+	private boolean showInBrowser(String url){
+		try {
+			Desktop.getDesktop().browse(new URI(url));
+		} 
+		catch (Exception e) {
+		} 
+        return true;
+        // some mod here
+	}
+
 }

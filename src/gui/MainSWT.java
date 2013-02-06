@@ -166,41 +166,54 @@ public class MainSWT {
 		Menu menu_3 = new Menu(mntmLogLevel);
 		mntmLogLevel.setMenu(menu_3);
 		
-		MenuItem mntmError = new MenuItem(menu_3, SWT.NONE);
+		MenuItem mntmError = new MenuItem(menu_3, SWT.RADIO);
 		mntmError.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MyLogger.setLevel("ERROR");
+				GlobalConfig.setProperty("loglevel", "error");
 			}
 		});
 		mntmError.setText("error");
 		
-		MenuItem mntmWarning = new MenuItem(menu_3, SWT.NONE);
+		MenuItem mntmWarning = new MenuItem(menu_3, SWT.RADIO);
 		mntmWarning.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MyLogger.setLevel("WARN");
+				GlobalConfig.setProperty("loglevel", "warn");
 			}
 		});
 		mntmWarning.setText("warning");
 		
-		MenuItem mntmInfo = new MenuItem(menu_3, SWT.NONE);
+		MenuItem mntmInfo = new MenuItem(menu_3, SWT.RADIO);
 		mntmInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MyLogger.setLevel("INFO");
+				GlobalConfig.setProperty("loglevel", "info");
 			}
 		});
 		mntmInfo.setText("info");
 		
-		MenuItem mntmDebug = new MenuItem(menu_3, SWT.NONE);
+		MenuItem mntmDebug = new MenuItem(menu_3, SWT.RADIO);
 		mntmDebug.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MyLogger.setLevel("DEBUG");
+				GlobalConfig.setProperty("loglevel", "debug");
 			}
 		});
 		mntmDebug.setText("debug");
+
+		if (GlobalConfig.getProperty("loglevel").equals("debug"))
+			mntmDebug.setSelection(true);
+		if (GlobalConfig.getProperty("loglevel").equals("warn"))
+			mntmWarning.setSelection(true);
+		if (GlobalConfig.getProperty("loglevel").equals("info"))
+			mntmInfo.setSelection(true);
+		if (GlobalConfig.getProperty("loglevel").equals("error"))
+			mntmError.setSelection(true);
 
 		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
@@ -279,8 +292,7 @@ public class MainSWT {
 		MyLogger.appendTextArea(logWindow);
 		scrolledComposite.setContent(logWindow);
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		//MyLogger.setLevel("DEBUG");
-		MyLogger.setLevel("INFO");
+		MyLogger.setLevel(GlobalConfig.getProperty("loglevel").toUpperCase());
 /*		try {
 		Language.Init(GlobalConfig.getProperty("language").toLowerCase());
 		} catch (Exception e) {

@@ -252,7 +252,7 @@ public class MainSWT {
 		Button btnSaveLog = new Button(shell, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();
 		fd_btnSaveLog.bottom = new FormAttachment(100, -33);
-		fd_btnSaveLog.left = new FormAttachment(100, -66);
+		fd_btnSaveLog.left = new FormAttachment(100, -77);
 		fd_btnSaveLog.right = new FormAttachment(100, -10);
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");
@@ -272,9 +272,9 @@ public class MainSWT {
 		progressBar.setState(SWT.NORMAL);
 		MyLogger.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
-		fd_progressBar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
 		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
 		fd_progressBar.left = new FormAttachment(0, 10);
+		fd_progressBar.right = new FormAttachment(100, -10);
 		progressBar.setLayoutData(fd_progressBar);
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);

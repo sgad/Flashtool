@@ -61,6 +61,9 @@ public final class Bundle {
 			_firmware = new JarFile(path);
 			_meta = new BundleMetaData();
 			MyLogger.getLogger().debug("Creating bundle from ftf file : "+_firmware.getName());
+			_device = _firmware.getManifest().getMainAttributes().getValue("device");
+			_version = _firmware.getManifest().getMainAttributes().getValue("version");
+			_branding = _firmware.getManifest().getMainAttributes().getValue("branding");
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
 				BundleEntry entry = new BundleEntry(this,e.nextElement());
@@ -260,8 +263,9 @@ public final class Bundle {
 		    return totalsize+13;
 	}
 
-	public void open() throws BundleException {
+	public boolean open() {
 		try {
+			MyLogger.getLogger().info("Preparing files for flashing");
 			File f = new File("."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared");
 			if (f.exists()) {
 				File[] f1 = f.listFiles();
@@ -278,9 +282,11 @@ public final class Bundle {
 			}
 			if (hasLoader())
 				saveEntry(getLoader());
+			return true;
 		}
 		catch (Exception e) {
-			throw new BundleException(e.getMessage());
+			MyLogger.getLogger().error(e.getMessage());
+			return false;
 		}
     }
 	
@@ -312,4 +318,7 @@ public final class Bundle {
 		return _meta;
 	}
 
+	public String toString() {
+	    return _device + " / " + _version + " / " + _branding;
+	}
 }

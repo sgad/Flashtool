@@ -5,8 +5,8 @@ import org.logger.MyLogger;
 
 public class SinFileHeader {
 
-	private byte[] magic = new byte[4];
-	private byte[] version = new byte[1]; 
+	private byte[] version = new byte[1];
+	private byte[] magic = new byte[3];
 	private byte[] nextHeader = new byte[1];;
 	private byte[] headersize = new byte[4];
 	private byte[] partitionType = new byte[1];;
@@ -21,12 +21,13 @@ public class SinFileHeader {
 	
 	public SinFileHeader(byte[] header) {
 		this.header = header;
-		System.arraycopy(header, 0, magic, 0, 4);
-		if (HexDump.toHex(magic).equals("[03, 53, 49, 4E]")) {
+		// Sin version
+		System.arraycopy(header, 0, version, 0, 1);
+		if (getVersion()==3) {
+			System.arraycopy(header, 1, magic, 0, 3);
 			System.arraycopy(header, 4, headersize, 0, 4);
 		}
 		else {
-			System.arraycopy(header, 0, version, 0, 1);
 			System.arraycopy(header, 1, nextHeader, 0, 1);
 			System.arraycopy(header, 2, headersize, 0, 4);
 			partitionType[0] = header[6];

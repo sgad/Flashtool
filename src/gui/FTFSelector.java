@@ -83,7 +83,12 @@ public class FTFSelector extends Dialog {
 		shlFirmwareSelector.setSize(688, 486);
 		shlFirmwareSelector.setText("Firmware Selector");
 		shlFirmwareSelector.setLayout(new FormLayout());
-		
+		shlFirmwareSelector.addListener(SWT.Close, new Listener() {
+		      public void handleEvent(Event event) {
+					result = null;
+					shlFirmwareSelector.dispose();
+		      }
+		    });
 		Button btnCancel = new Button(shlFirmwareSelector, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -125,7 +130,13 @@ public class FTFSelector extends Dialog {
 	    	if (i==0) {
 	    		tableFirmware.getColumn(i).setWidth(0);tableFirmware.getColumn(i).setResizable(false);
 	    	}
-	      }
+	    	if (i==1)
+	    		tableFirmware.getColumn(i).setWidth(60);
+		    if (i==2)
+		    	tableFirmware.getColumn(i).setWidth(100);
+		    if (i==3)
+		    	tableFirmware.getColumn(i).setWidth(180);
+	    }
 		tableFirmware.setHeaderVisible(true);
 		tableFirmware.setLinesVisible(true);
 		tableFirmware.addListener(SWT.DefaultSelection, new Listener() {
@@ -231,6 +242,7 @@ public class FTFSelector extends Dialog {
 		lblContent.setText("Content :");
 		
 		sourceFolder = new Text(shlFirmwareSelector, SWT.BORDER);
+		sourceFolder.setEditable(false);
 		if (pathname.length()==0) {
 			sourceFolder.setText(OS.getWorkDir()+File.separator+"firmwares");
 		}

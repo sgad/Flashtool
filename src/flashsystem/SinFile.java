@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 import org.logger.MyLogger;
+import org.system.OS;
 
 
 public class SinFile {
@@ -107,6 +110,14 @@ public class SinFile {
 	}
 	
 	public void dumpImage() throws IOException {
+		if (sinheader.getVersion()==1||sinheader.getVersion()==2)
+			dumpImageV1_2();
+		if (sinheader.getVersion()==3) {
+			dumpImageV3();
+		}
+	}
+	
+	public void dumpImageV1_2() throws IOException {
 				try {
 					// First I write partition info bytearray in a .partinfo file
 					if (sinheader.hasPartitionInfo()) {
@@ -156,6 +167,49 @@ public class SinFile {
 				}
 	}
 
+	public void dumpImageV3() throws FileNotFoundException, IOException {
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		fin.seek(sinheader.getHeaderSize()+0x10+0x10);
+		byte[] addr = new byte[0x44];
+		boolean isaddr = true;
+		HashMap map = new HashMap();
+		int count = 0;
+		while (isaddr) {
+			fin.read(addr);
+			isaddr = new String(addr).startsWith("ADDR");
+			if (isaddr) {
+				SinAddr a = new SinAddr();
+				System.arraycopy(addr, 0, a.enregtype,0,4);
+				System.arraycopy(addr, 4, a.enregsize,0,4);
+				System.arraycopy(addr, 8, a.addrsrc,0,8);
+				System.arraycopy(addr, 16, a.datalen,0,8);
+				System.arraycopy(addr, 24, a.addrdest,0,8);
+				System.arraycopy(addr, 32, a.hashtype,0,4);
+				map.put(new Integer(count++), a);
+			}
+		}
+		SinAddr a = (SinAddr)map.get(map.size()-1);
+		MyLogger.getLogger().info("Generating empty container file");
+		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+".data";
+		System.out.println(foutname);
+		RandomAccessFile fout = OS.generateEmptyFile("C:/Users/xperia/system.data", a.getDestOffset()+a.getDataLength(), (byte)0xFF);
+		MyLogger.getLogger().info("Container generated. Now extracting data to container");
+		long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
+		Iterator i = map.keySet().iterator();
+		while (i.hasNext()) {
+			int key = ((Integer)i.next()).intValue();
+			SinAddr ad = (SinAddr)map.get(key);
+			fin.seek(startoffset+ad.getSrcOffset());
+			byte[] res = new byte[(int)ad.getDataLength()];
+			fin.read(res);
+			fout.seek(ad.getDestOffset());
+			fout.write(res);
+		}
+		fout.close();
+		fin.close();
+		MyLogger.getLogger().info("Extraction finished to "+foutname);
+	}
+	
 	private void processHeader() throws IOException {
 		byte magic[] = new byte[4];
 		int nbread;

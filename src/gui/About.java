@@ -17,7 +17,7 @@ public class About extends Dialog {
 	 */
 	public About(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
+		setText("About");
 	}
 
 	/**

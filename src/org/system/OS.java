@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -368,6 +369,27 @@ public class OS {
 			throw e;
 		}
 		return dectyptedText;
+	}
+
+	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
+		// To fill the empty file with FF values		
+		byte[] empty = new byte[65*1024];
+		for (int i=0; i<empty.length;i++)
+			empty[i] = fill;		
+		// Creation of empty file
+		File f = new File(fname);
+		f.delete();
+		try {
+		RandomAccessFile fout = new RandomAccessFile(f,"rw");
+		for (long i = 0; i<size/empty.length; i++) {
+			fout.write(empty);
+		}
+		for (long i = 0; i<size%empty.length; i++) {
+			fout.write(0xFF);
+		}
+		return fout;
+		}
+		catch (Exception e) {return null;}
 	}
 
 }

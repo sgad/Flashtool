@@ -48,7 +48,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
 
-	protected Shell shell;
+	protected Shell shlSonyericsson;
 	private static AdbPhoneThread phoneWatchdog;
 	public static boolean guimode=false;
 	protected ToolItem tltmFlash;
@@ -102,11 +102,11 @@ public class MainSWT {
 		phoneWatchdog.start();
 		phoneWatchdog.addStatusListener(phoneStatus);
 		vcheck = new VersionChecker();
-		vcheck.setMessageFrame(shell);
+		vcheck.setMessageFrame(shlSonyericsson);
 		vcheck.start();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
+		shlSonyericsson.open();
+		shlSonyericsson.layout();
+		while (!shlSonyericsson.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -124,19 +124,19 @@ public class MainSWT {
 	 * @wbp.parser.entryPoint
 	 */
 	protected void createContents() {
-		shell = new Shell();
-		shell.addListener(SWT.Close, new Listener() {
+		shlSonyericsson = new Shell();
+		shlSonyericsson.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
 		    	  exitProgram();
 		      }
 		    });
-		shell.setSize(794, 460);
-		shell.setText("SWT Application");
-		shell.setImage(SWTResourceManager.getImage(FlashtoolSWT.class, "/gui/ressources/icons/flash_32.png"));
-		shell.setLayout(new FormLayout());
+		shlSonyericsson.setSize(794, 460);
+		shlSonyericsson.setText("SonyEricsson Xperia Flasher by Bin4ry & Androxyde");
+		shlSonyericsson.setImage(SWTResourceManager.getImage(FlashtoolSWT.class, "/gui/ressources/icons/flash_32.png"));
+		shlSonyericsson.setLayout(new FormLayout());
 		
-		Menu menu = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(menu);
+		Menu menu = new Menu(shlSonyericsson, SWT.BAR);
+		shlSonyericsson.setMenuBar(menu);
 		
 		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
 		mntmFile.setText("File");
@@ -149,10 +149,26 @@ public class MainSWT {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				exitProgram();
-				shell.dispose();
+				shlSonyericsson.dispose();
 			}
 		});
 		mntmExit.setText("Exit");
+		
+		MenuItem mntmNewSubmenu = new MenuItem(menu, SWT.CASCADE);
+		mntmNewSubmenu.setText("Tools");
+		
+		Menu menu_4 = new Menu(mntmNewSubmenu);
+		mntmNewSubmenu.setMenu(menu_4);
+		
+		MenuItem mntmNewItem = new MenuItem(menu_4, SWT.NONE);
+		mntmNewItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				SinEditor sedit = new SinEditor(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				sedit.open();
+			}
+		});
+		mntmNewItem.setText("Sin Editor");
 		
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
@@ -215,7 +231,7 @@ public class MainSWT {
 		if (GlobalConfig.getProperty("loglevel").equals("error"))
 			mntmError.setSelection(true);
 
-		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
+		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
 		fd_toolBar.right = new FormAttachment(0, 179);
 		fd_toolBar.top = new FormAttachment(0, 10);
@@ -249,7 +265,7 @@ public class MainSWT {
 		tltmRoot.setEnabled(false);
 		tltmRoot.setToolTipText("Root device");
 		
-		Button btnSaveLog = new Button(shell, SWT.NONE);
+		Button btnSaveLog = new Button(shlSonyericsson, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();
 		fd_btnSaveLog.bottom = new FormAttachment(100, -33);
 		fd_btnSaveLog.left = new FormAttachment(100, -77);
@@ -268,7 +284,7 @@ public class MainSWT {
 		tltmAskRoot.setEnabled(false);
 		tltmAskRoot.setToolTipText("Ask for root permissions");
 		
-		ProgressBar progressBar = new ProgressBar(shell, SWT.NONE);
+		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
 		progressBar.setState(SWT.NORMAL);
 		MyLogger.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
@@ -277,7 +293,7 @@ public class MainSWT {
 		fd_progressBar.right = new FormAttachment(100, -10);
 		progressBar.setLayoutData(fd_progressBar);
 		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scrolledComposite = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		FormData fd_scrolledComposite = new FormData();
 		fd_scrolledComposite.top = new FormAttachment(toolBar, 6);
 		fd_scrolledComposite.bottom = new FormAttachment(btnSaveLog, -6);
@@ -373,7 +389,7 @@ public class MainSWT {
     		else {
     			MyLogger.getLogger().error("Cannot identify your device.");
         		MyLogger.getLogger().info("Selecting from user input");
-        		String devid=(String)WidgetTask.openDeviceSelector(shell);
+        		String devid=(String)WidgetTask.openDeviceSelector(shlSonyericsson);
         		//deviceSelectGui devsel = new deviceSelectGui(null);
         		//devid = devsel.getDeviceFromList(founditems);
     			if (devid.length()>0) {
@@ -382,7 +398,7 @@ public class MainSWT {
         			String prop = DeviceProperties.getProperty(Devices.getCurrent().getBuildProp());
         			if (!Devices.getCurrent().getRecognition().contains(prop)) {
         				String[] choices = {"Yes", "No"};
-        				MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION |SWT.YES | SWT.NO);
+        				MessageBox messageBox = new MessageBox(shlSonyericsson, SWT.ICON_QUESTION |SWT.YES | SWT.NO);
         			    messageBox.setMessage("Do you want to permanently identify this device as \n"+Devices.getCurrent().getName()+"?");
         			    int response = messageBox.open();
         				if (response == SWT.YES)
@@ -508,7 +524,7 @@ public class MainSWT {
     }
 
 	public void doFlash() throws Exception {
-		String select = WidgetTask.openBootModeSelector(shell);
+		String select = WidgetTask.openBootModeSelector(shlSonyericsson);
 		if (select.equals("flashmode"))
 			doFlashmode("","");
 		else if (select.equals("fastboot"))
@@ -524,22 +540,27 @@ public class MainSWT {
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {
 		try {
-			FTFSelector ftfsel = new FTFSelector(shell,SWT.PRIMARY_MODAL | SWT.SHEET);
+			FTFSelector ftfsel = new FTFSelector(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 			final Bundle bundle = (Bundle)ftfsel.open(pftfpath, pftfname);
+			MyLogger.getLogger().info("Selected "+bundle);
 			if (bundle !=null) {
 				try {
-		    		bundle.open();
-			    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-					final X10flash flash = new X10flash(bundle);
-					MyLogger.getLogger().info("Please connect your device into flashmode.");
-					String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
-					if (result.equals("OK")) {
-						FlashJob fjob = new FlashJob("Flash");
-						fjob.setFlash(flash);
-						fjob.schedule();
-					}
-					else
-						MyLogger.getLogger().info("Flash canceled");
+		    		if (bundle.open()) {
+				    	bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+						final X10flash flash = new X10flash(bundle);
+						MyLogger.getLogger().info("Please connect your device into flashmode.");
+						String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
+						if (result.equals("OK")) {
+							FlashJob fjob = new FlashJob("Flash");
+							fjob.setFlash(flash);
+							fjob.schedule();
+						}
+						else
+							MyLogger.getLogger().info("Flash canceled");
+		    		}
+		    		else {
+		    			MyLogger.getLogger().info("Flash canceled");
+		    		}
 				}
 				catch (Exception e){
 					MyLogger.getLogger().error(e.getMessage());
@@ -602,7 +623,7 @@ public class MainSWT {
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 		X10flash flash = new X10flash(bundle);
 		MyLogger.getLogger().info("Please connect your device into flashmode.");
-		String result = (String)WidgetTask.openWaitDeviceForFlashmode(shell,flash);
+		String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 		if (result.equals("OK")) {
 			try {
 				flash.openDevice();
@@ -619,9 +640,9 @@ public class MainSWT {
 				flash.closeDevice();
 				DeviceChangedListener.pause(false);
 				MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
-				result = (String)WidgetTask.openWaitDeviceForFastboot(shell);
+				result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
 				if (result.equals("OK")) {
-					BLUWizard wiz = new BLUWizard(shell,SWT.PRIMARY_MODAL | SWT.SHEET);
+					BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 					wiz.open(imei,ulcode);
 				}
 				else {

@@ -139,8 +139,7 @@ public class SWTResourceManager {
 				image = getImage(new FileInputStream(path));
 				m_imageMap.put(path, image);
 			} catch (Exception e) {
-				image = getMissingImage();
-				m_imageMap.put(path, image);
+				image = null;
 			}
 		}
 		return image;
@@ -155,19 +154,23 @@ public class SWTResourceManager {
 	 * @return the {@link Image} stored in the file at the specified path
 	 */
 	public static Image getImage(Class<?> clazz, String path) {
-		String key = clazz.getName() + '|' + path;
-		Image image = m_imageMap.get(key);
+		Image image = getImage("./x10flasher_lib"+path);
 		if (image == null) {
-			try {
-				image = getImage(clazz.getResourceAsStream(path));
-				m_imageMap.put(key, image);
-			} catch (Exception e) {
-				image = getMissingImage();
-				m_imageMap.put(key, image);
+			String key = clazz.getName() + '|' + path;
+			image = m_imageMap.get(key);
+			if (image == null) {
+				try {
+					image = getImage(clazz.getResourceAsStream(path));
+					m_imageMap.put(key, image);
+				} catch (Exception e) {
+					image = getMissingImage();
+					m_imageMap.put(key, image);
+				}
 			}
 		}
 		return image;
 	}
+
 	private static final int MISSING_IMAGE_SIZE = 10;
 	/**
 	 * @return the small {@link Image} that can be used as placeholder for missing image.

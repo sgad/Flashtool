@@ -191,23 +191,27 @@ public class SinFile {
 		SinAddr a = (SinAddr)map.get(map.size()-1);
 		MyLogger.getLogger().info("Generating empty container file");
 		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+".data";
-		System.out.println(foutname);
-		RandomAccessFile fout = OS.generateEmptyFile("C:/Users/xperia/system.data", a.getDestOffset()+a.getDataLength(), (byte)0xFF);
-		MyLogger.getLogger().info("Container generated. Now extracting data to container");
-		long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
-		Iterator i = map.keySet().iterator();
-		while (i.hasNext()) {
-			int key = ((Integer)i.next()).intValue();
-			SinAddr ad = (SinAddr)map.get(key);
-			fin.seek(startoffset+ad.getSrcOffset());
-			byte[] res = new byte[(int)ad.getDataLength()];
-			fin.read(res);
-			fout.seek(ad.getDestOffset());
-			fout.write(res);
+		RandomAccessFile fout = OS.generateEmptyFile(foutname, a.getDestOffset()+a.getDataLength(), (byte)0xFF);
+		if (fout!=null) {
+			MyLogger.getLogger().info("Container generated. Now extracting data to container");
+			long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
+			Iterator i = map.keySet().iterator();
+			while (i.hasNext()) {
+				int key = ((Integer)i.next()).intValue();
+				SinAddr ad = (SinAddr)map.get(key);
+				fin.seek(startoffset+ad.getSrcOffset());
+				byte[] res = new byte[(int)ad.getDataLength()];
+				fin.read(res);
+				fout.seek(ad.getDestOffset());
+				fout.write(res);
+			}
+			fout.close();
+			fin.close();
+			MyLogger.getLogger().info("Extraction finished to "+foutname);
 		}
-		fout.close();
-		fin.close();
-		MyLogger.getLogger().info("Extraction finished to "+foutname);
+		else {
+			MyLogger.getLogger().error("An error occured while generating container");
+		}
 	}
 	
 	private void processHeader() throws IOException {

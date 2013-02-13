@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Vector;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +43,7 @@ import org.system.StatusListener;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
 import flashsystem.X10flash;
+import gui.tools.DecryptJob;
 import gui.tools.FlashJob;
 import gui.tools.WidgetTask;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -132,7 +134,7 @@ public class MainSWT {
 		    });
 		shlSonyericsson.setSize(794, 460);
 		shlSonyericsson.setText("SonyEricsson Xperia Flasher by Bin4ry & Androxyde");
-		shlSonyericsson.setImage(SWTResourceManager.getImage(FlashtoolSWT.class, "/gui/ressources/icons/flash_32.png"));
+		shlSonyericsson.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		shlSonyericsson.setLayout(new FormLayout());
 		
 		Menu menu = new Menu(shlSonyericsson, SWT.BAR);
@@ -169,6 +171,34 @@ public class MainSWT {
 			}
 		});
 		mntmNewItem.setText("Sin Editor");
+		
+		MenuItem mntmNewItem_1 = new MenuItem(menu_4, SWT.NONE);
+		mntmNewItem_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Decrypt decrypt = new Decrypt(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				Vector result = decrypt.open();
+				if (result!=null) {
+					DecryptJob dec = new DecryptJob("Decrypt");
+					dec.setFiles(result);
+					dec.schedule();
+				}
+				else {
+					MyLogger.getLogger().info("Decrypt canceled");
+				}
+			}
+		});
+		mntmNewItem_1.setText("SEUS Decrypt");
+		
+		MenuItem mntmBundleCreation = new MenuItem(menu_4, SWT.NONE);
+		mntmBundleCreation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				BundleCreator cre = new BundleCreator(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				cre.open();
+			}
+		});
+		mntmBundleCreation.setText("Bundle creation");
 		
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");

@@ -373,23 +373,30 @@ public class OS {
 
 	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
 		// To fill the empty file with FF values		
-		byte[] empty = new byte[65*1024];
-		for (int i=0; i<empty.length;i++)
-			empty[i] = fill;		
-		// Creation of empty file
-		File f = new File(fname);
-		f.delete();
 		try {
-		RandomAccessFile fout = new RandomAccessFile(f,"rw");
-		for (long i = 0; i<size/empty.length; i++) {
-			fout.write(empty);
+			byte[] empty = new byte[65*1024];
+			for (int i=0; i<empty.length;i++)
+				empty[i] = fill;		
+			// Creation of empty file
+			File f = new File(fname);
+			f.delete();
+			FileOutputStream fout = new FileOutputStream(f);
+			for (long i = 0; i<size/empty.length; i++) {
+				fout.write(empty);
+			}
+			for (long i = 0; i<size%empty.length; i++) {
+				fout.write(fill);
+			}
+			fout.flush();
+			fout.close();
+			RandomAccessFile fo = new RandomAccessFile(f,"rw");
+			return fo;
 		}
-		for (long i = 0; i<size%empty.length; i++) {
-			fout.write(0xFF);
+		catch (Exception e) {
+			e.printStackTrace();
+			MyLogger.getLogger().error(e.getMessage());
+			return null;
 		}
-		return fout;
-		}
-		catch (Exception e) {return null;}
 	}
 
 }

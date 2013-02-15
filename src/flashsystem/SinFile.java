@@ -188,19 +188,40 @@ public class SinFile {
 				map.put(new Integer(count++), a);
 			}
 		}
-		SinAddr a = (SinAddr)map.get(map.size()-1);
+		long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
+		SinAddr a = (SinAddr)map.get(0);
+		byte[] res = new byte[(int)a.getDataLength()];
+		fin.seek(startoffset+a.getSrcOffset());
+		fin.read(res);
+		byte[] magicext4 = new byte[2];
+		int pos = 0;
+		while (res[pos]==0) pos++;
+		System.arraycopy(res, pos, magicext4, 0, magicext4.length);
+		while (!HexDump.toHex(magicext4).equals("[53, EF]")) {
+			pos++;
+			if (pos > res.length) break;
+			System.arraycopy(res, pos, magicext4, 0, magicext4.length);
+		}
+		pos = pos - 56;
+		byte[] header = new byte[58];
+		System.arraycopy(res, pos, header, 0, header.length);
+		byte[] bcount = new byte[4];
+		System.arraycopy(header, 4, bcount, 0, bcount.length);
+		BytesUtil.revert(bcount);
+		long blockcount = BytesUtil.getInt(bcount);
+		long totsize = blockcount*4L*1024L;
+		System.out.println(totsize);
 		MyLogger.getLogger().info("Generating empty container file");
 		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+".data";
-		RandomAccessFile fout = OS.generateEmptyFile(foutname, a.getDestOffset()+a.getDataLength(), (byte)0xFF);
+		RandomAccessFile fout = OS.generateEmptyFile(foutname, totsize, (byte)0xFF);
 		if (fout!=null) {
-			MyLogger.getLogger().info("Container generated. Now extracting data to container");
-			long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
+			MyLogger.getLogger().info("Container generated. Now extracting data to container");			
 			Iterator i = map.keySet().iterator();
 			while (i.hasNext()) {
 				int key = ((Integer)i.next()).intValue();
 				SinAddr ad = (SinAddr)map.get(key);
 				fin.seek(startoffset+ad.getSrcOffset());
-				byte[] res = new byte[(int)ad.getDataLength()];
+				res = new byte[(int)ad.getDataLength()];
 				fin.read(res);
 				fout.seek(ad.getDestOffset());
 				fout.write(res);

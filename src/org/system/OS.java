@@ -372,7 +372,8 @@ public class OS {
 	}
 
 	public static RandomAccessFile generateEmptyFile(String fname, long size, byte fill) {
-		// To fill the empty file with FF values		
+		// To fill the empty file with FF values
+		MyLogger.getLogger().info("File size : "+size/1024/1024+" Mb");
 		try {
 			byte[] empty = new byte[65*1024];
 			for (int i=0; i<empty.length;i++)

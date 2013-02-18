@@ -16,7 +16,7 @@ import gui.tools.SearchJob;
 
 public class WaitDeviceForFlashmode extends Dialog {
 
-	protected Object result;
+	protected Object result = new String("OK");
 	protected Shell shlWaitForFlashmode;
 	protected SearchJob job;
 	
@@ -53,7 +53,6 @@ public class WaitDeviceForFlashmode extends Dialog {
 				display.sleep();
 			}
 			if (job.getState() == Status.OK) {
-				result = new String("OK");
 				shlWaitForFlashmode.dispose();
 			}
 		}

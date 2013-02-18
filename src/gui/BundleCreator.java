@@ -243,6 +243,12 @@ public class BundleCreator extends Dialog {
 		tree.setLinesVisible(true);
 		
 		Button btnCancel = new Button(shlBundler, SWT.NONE);
+		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlBundler.dispose();
+			}
+		});
 		fd_composite.bottom = new FormAttachment(btnCancel, -5);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.bottom = new FormAttachment(100, -10);

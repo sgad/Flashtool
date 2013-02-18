@@ -11,6 +11,7 @@ public class ExtractSinDataJob extends Job {
 
 	boolean canceled = false;
 	SinFile sin;
+	private String mode="raw";
 
 	public ExtractSinDataJob(String name) {
 		super(name);
@@ -20,9 +21,17 @@ public class ExtractSinDataJob extends Job {
 		sin=f;
 	}
 	
+	public void setMode(String m) {
+		mode = m;
+	}
+	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-    		sin.dumpImage();
+    		if (mode.equals("data"))
+    			sin.dumpImage();
+    		else
+    			if (mode.equals("raw"))
+    				sin.dumpRaw();
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

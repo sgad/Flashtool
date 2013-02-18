@@ -22,6 +22,8 @@ public class SinEditor extends Dialog {
 	private Text sourceFile;
 	private Button btnDumpHeader;
 	private Button btnDumpData;
+	private Button btnNewButton_1;
+	private Button btnClose;
 
 	/**
 	 * Create the dialog.
@@ -89,6 +91,7 @@ public class SinEditor extends Dialog {
 		        		sourceFile.setText(dir);
 		        		btnDumpHeader.setEnabled(true);
 		        		btnDumpData.setEnabled(true);
+		        		btnNewButton_1.setEnabled(true);
 		        	}
 		        }
 			}
@@ -120,16 +123,44 @@ public class SinEditor extends Dialog {
 					SinFile sinf = new SinFile(sourceFile.getText());
 					ExtractSinDataJob ej = new ExtractSinDataJob("Sin dump job");
 					ej.setSin(sinf);
+					ej.setMode("data");
 					ej.schedule();
 				}
 				catch (Exception ex) {
 				}
 			}
 		});
-		btnDumpData.setBounds(102, 76, 75, 25);
-		btnDumpData.setText("Dump data");
+		btnDumpData.setBounds(183, 76, 75, 25);
+		btnDumpData.setText("Extract data");
 		btnDumpData.setEnabled(false);
-
+		
+		btnNewButton_1 = new Button(shlSinEditor, SWT.NONE);
+		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					SinFile sinf = new SinFile(sourceFile.getText());
+					ExtractSinDataJob ej = new ExtractSinDataJob("Sin dump job");
+					ej.setSin(sinf);
+					ej.setMode("raw");
+					ej.schedule();
+				}
+				catch (Exception ex) {
+				}
+			}
+		});
+		btnNewButton_1.setBounds(102, 76, 75, 25);
+		btnNewButton_1.setText("Dump raw");
+		btnNewButton_1.setEnabled(false);
+		
+		btnClose = new Button(shlSinEditor, SWT.NONE);
+		btnClose.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shlSinEditor.dispose();
+			}
+		});
+		btnClose.setBounds(359, 111, 75, 25);
+		btnClose.setText("Close");
 	}
-
 }

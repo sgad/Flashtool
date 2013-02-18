@@ -10,6 +10,7 @@ public class SinAddr {
 	public byte[] addrdest = new byte[8];
 	public byte[] datalen = new byte[8];
 	public byte[] hashtype = new byte[4];
+	public byte[] hashvalue;
 
 	public long getSrcOffset() {
 		return BytesUtil.getLong(addrsrc);
@@ -23,4 +24,21 @@ public class SinAddr {
 		return BytesUtil.getLong(datalen);
 	}
 
+	public int getRecordLength() {
+		return BytesUtil.getInt(enregsize);
+	}
+
+	public int getHashType() {
+		return BytesUtil.getInt(hashtype);
+	}
+	
+	public String toString() {
+		return "ADDR : "+getRecordLength();
+	}
+	
+	public void allocateHash() {
+		if (getHashType()==2) {
+			hashvalue = new byte[32];
+		}
+	}
 }

@@ -94,14 +94,33 @@ public class SinFile {
 		String path = sinfile.getAbsolutePath(); 
 		return path.substring(0, path.length()-3)+getDataType();
 	}
-	
+
+	public String getRawFileName() throws IOException {
+		String path = sinfile.getAbsolutePath(); 
+		return path.substring(0, path.length()-3)+"raw";
+	}
+
 	public String getPartInfoFileName() {
 		String path = sinfile.getAbsolutePath(); 
 		return path.substring(0, path.length()-3)+"partinfo";		
 	}
 	
+	public void dumpRaw() throws IOException {
+		MyLogger.getLogger().info("Extracting "+getShortFileName() + " header to " + getRawFileName());
+		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
+		byte[] chunk = new byte[512*1024];
+		int nbread;
+		fin.seek(sinheader.getHeaderSize());
+		FileOutputStream fout = new FileOutputStream(new File(getRawFileName()));
+		while ((nbread=fin.read(chunk))!=-1) fout.write(BytesUtil.getReply(chunk, nbread));
+		fout.flush();
+		fout.close();
+		fin.close();
+		MyLogger.getLogger().info("RAW Extraction finished");
+	}
+
 	public void dumpHeader() throws IOException {
-		MyLogger.getLogger().info("Extracting "+getShortFileName() + " header to " + getHeaderFileName());
+		MyLogger.getLogger().info("Extracting "+getShortFileName() + " raw data to " + getHeaderFileName());
 		FileOutputStream fout = new FileOutputStream(new File(getHeaderFileName()));
 		fout.write(sinheader.getHeader());
 		fout.flush();
@@ -169,59 +188,43 @@ public class SinFile {
 
 	public void dumpImageV3() throws FileNotFoundException, IOException {
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
-		fin.seek(sinheader.getHeaderSize()+0x10+0x10);
-		byte[] addr = new byte[0x44];
+		fin.seek(sinheader.getHeaderSize());
+		SinDataHeader dhead = new SinDataHeader();
+		fin.read(dhead.mmcfmagic);
+		fin.read(dhead.mmcflength);
+		fin.read(dhead.gptpmagic);
+		fin.read(dhead.gptplength);
+		fin.seek(sinheader.getHeaderSize()+dhead.getDataHeaderSize());
+		byte[] addrmagic = new byte[4];
 		boolean isaddr = true;
-		HashMap map = new HashMap();
 		int count = 0;
 		while (isaddr) {
-			fin.read(addr);
-			isaddr = new String(addr).startsWith("ADDR");
+			fin.read(addrmagic);
+			isaddr = new String(addrmagic).equals("ADDR");
 			if (isaddr) {
 				SinAddr a = new SinAddr();
-				System.arraycopy(addr, 0, a.enregtype,0,4);
-				System.arraycopy(addr, 4, a.enregsize,0,4);
-				System.arraycopy(addr, 8, a.addrsrc,0,8);
-				System.arraycopy(addr, 16, a.datalen,0,8);
-				System.arraycopy(addr, 24, a.addrdest,0,8);
-				System.arraycopy(addr, 32, a.hashtype,0,4);
-				map.put(new Integer(count++), a);
+				System.arraycopy(addrmagic, 0, a.enregtype,0,4);
+				fin.read(a.enregsize);
+				fin.read(a.addrsrc);
+				fin.read(a.datalen);
+				fin.read(a.addrdest);
+				fin.read(a.hashtype);
+				a.allocateHash();
+				fin.read(a.hashvalue);
+				dhead.addAddr(a);
 			}
 		}
-		long startoffset = sinheader.getHeaderSize()+0x10+0x10+(map.size()*0x44);
-		SinAddr a = (SinAddr)map.get(0);
-		byte[] res = new byte[(int)a.getDataLength()];
-		fin.seek(startoffset+a.getSrcOffset());
-		fin.read(res);
-		byte[] magicext4 = new byte[2];
-		int pos = 0;
-		while (res[pos]==0) pos++;
-		System.arraycopy(res, pos, magicext4, 0, magicext4.length);
-		while (!HexDump.toHex(magicext4).equals("[53, EF]")) {
-			pos++;
-			if (pos > res.length) break;
-			System.arraycopy(res, pos, magicext4, 0, magicext4.length);
-		}
-		pos = pos - 56;
-		byte[] header = new byte[58];
-		System.arraycopy(res, pos, header, 0, header.length);
-		byte[] bcount = new byte[4];
-		System.arraycopy(header, 4, bcount, 0, bcount.length);
-		BytesUtil.revert(bcount);
-		long blockcount = BytesUtil.getInt(bcount);
-		long totsize = blockcount*4L*1024L;
-		System.out.println(totsize);
 		MyLogger.getLogger().info("Generating empty container file");
-		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+".data";
-		RandomAccessFile fout = OS.generateEmptyFile(foutname, totsize, (byte)0xFF);
+		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+"."+dhead.computeDataSizeAndType(fin);
+		RandomAccessFile fout = OS.generateEmptyFile(foutname, dhead.getOutputSize(), (byte)0xFF);
 		if (fout!=null) {
-			MyLogger.getLogger().info("Container generated. Now extracting data to container");			
-			Iterator i = map.keySet().iterator();
+			MyLogger.getLogger().info("Container generated. Now extracting data to container");
+			Iterator i = dhead.getAddrs().keySet().iterator();
 			while (i.hasNext()) {
 				int key = ((Integer)i.next()).intValue();
-				SinAddr ad = (SinAddr)map.get(key);
-				fin.seek(startoffset+ad.getSrcOffset());
-				res = new byte[(int)ad.getDataLength()];
+				SinAddr ad = (SinAddr)dhead.getAddrs().get(key);
+				fin.seek(dhead.getDataOffset()+ad.getSrcOffset());
+				byte[] res = new byte[(int)ad.getDataLength()];
 				fin.read(res);
 				fout.seek(ad.getDestOffset());
 				fout.write(res);

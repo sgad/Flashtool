@@ -298,7 +298,7 @@ public class MainSWT {
 		Button btnSaveLog = new Button(shlSonyericsson, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();
 		fd_btnSaveLog.bottom = new FormAttachment(100, -33);
-		fd_btnSaveLog.left = new FormAttachment(100, -77);
+		fd_btnSaveLog.left = new FormAttachment(100, -87);
 		fd_btnSaveLog.right = new FormAttachment(100, -10);
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");

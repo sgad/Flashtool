@@ -57,7 +57,7 @@ public class SinDataHeader {
 		pos = 0;
 		System.arraycopy(res, startpos + pos, magic, 0, magic.length);
 		if (new String(magic).contains("ELF")) return "elf";
-		while (!HexDump.toHex(magic).startsWith("[53, EF")) {
+		while (!HexDump.toHex(magic).startsWith("[FF, FF, 53, EF")) {
 			pos++;
 			try {
 				System.arraycopy(res, startpos+pos, magic, 0, magic.length);
@@ -68,7 +68,7 @@ public class SinDataHeader {
 			if (new String(magic).contains("ELF")) return "elf";
 		}
 		//if (pos>=500) return "unknown";
-		pos = pos - 56;
+		pos = pos - 54;
 		byte[] header = new byte[58];
 		System.arraycopy(res, startpos + pos, header, 0, header.length);
 		byte[] bcount = new byte[4];

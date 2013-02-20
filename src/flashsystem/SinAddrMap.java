@@ -15,7 +15,6 @@ public class SinAddrMap extends HashMap {
 
 	public SinAddr put(int pos, SinAddr addr) {
 		SinAddr old = (SinAddr)put(new Integer(pos), addr);
-		mapsize+=addr.getRecordLength();
 		return old;
 	}
 	

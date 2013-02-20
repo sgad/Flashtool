@@ -190,6 +190,7 @@ public class SinFile {
 		RandomAccessFile fin = new RandomAccessFile(sinfile,"r");
 		fin.seek(sinheader.getHeaderSize());
 		SinDataHeader dhead = new SinDataHeader();
+		byte[] chunk = new byte[65*1024];
 		fin.read(dhead.mmcfmagic);
 		fin.read(dhead.mmcflength);
 		fin.read(dhead.gptpmagic);
@@ -198,6 +199,7 @@ public class SinFile {
 		byte[] addrmagic = new byte[4];
 		boolean isaddr = true;
 		int count = 0;
+		long progressMax = 0;
 		while (isaddr) {
 			fin.read(addrmagic);
 			isaddr = new String(addrmagic).equals("ADDR");
@@ -211,26 +213,44 @@ public class SinFile {
 				fin.read(a.hashtype);
 				a.allocateHash();
 				fin.read(a.hashvalue);
+				progressMax += ((a.getDataLength()/chunk.length));
+				if ((a.getDataLength()%chunk.length)>0) progressMax++;
 				dhead.addAddr(a);
 			}
 		}
-		MyLogger.getLogger().info("Generating empty container file");
 		String foutname = sinfile.getAbsolutePath().substring(0, sinfile.getAbsolutePath().length()-4)+"."+dhead.computeDataSizeAndType(fin);
+		MyLogger.getLogger().info("Generating empty container file");
 		RandomAccessFile fout = OS.generateEmptyFile(foutname, dhead.getOutputSize(), (byte)0xFF);
 		if (fout!=null) {
 			MyLogger.getLogger().info("Container generated. Now extracting data to container");
 			Iterator i = dhead.getAddrs().keySet().iterator();
+			MyLogger.initProgress(progressMax);
+			int nbloop = 0;
 			while (i.hasNext()) {
 				int key = ((Integer)i.next()).intValue();
 				SinAddr ad = (SinAddr)dhead.getAddrs().get(key);
-				fin.seek(dhead.getDataOffset()+ad.getSrcOffset());
-				byte[] res = new byte[(int)ad.getDataLength()];
-				fin.read(res);
+				fin.seek(sinheader.getHeaderSize()+dhead.getDataOffset()+ad.getSrcOffset());
 				fout.seek(ad.getDestOffset());
-				fout.write(res);
+				for (long j=0;j<ad.getDataLength()/chunk.length;j++) {
+					int nbread = fin.read(chunk);
+					fout.write(chunk);
+					nbloop++;
+					MyLogger.updateProgress();
+				}
+				byte[] finres = new byte[(int)(ad.getDataLength()%chunk.length)];
+				if (finres.length>0) {
+					int nbread = fin.read(finres);
+					if (nbread!=finres.length) 
+						fout.write(BytesUtil.getReply(finres, nbread));
+					else
+						fout.write(finres);
+					nbloop++;
+					MyLogger.updateProgress();
+				}
 			}
 			fout.close();
 			fin.close();
+			MyLogger.initProgress(0);
 			MyLogger.getLogger().info("Extraction finished to "+foutname);
 		}
 		else {

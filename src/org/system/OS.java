@@ -382,12 +382,16 @@ public class OS {
 			File f = new File(fname);
 			f.delete();
 			FileOutputStream fout = new FileOutputStream(f);
+			MyLogger.initProgress(size/empty.length+size%empty.length);
 			for (long i = 0; i<size/empty.length; i++) {
 				fout.write(empty);
+				MyLogger.updateProgress();
 			}
 			for (long i = 0; i<size%empty.length; i++) {
 				fout.write(fill);
+				MyLogger.updateProgress();
 			}
+			MyLogger.initProgress(0);
 			fout.flush();
 			fout.close();
 			RandomAccessFile fo = new RandomAccessFile(f,"rw");

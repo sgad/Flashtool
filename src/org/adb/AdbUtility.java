@@ -233,8 +233,8 @@ public class AdbUtility  {
 		}
 		else {
 			ProcessBuilderWrapper command1 = new ProcessBuilderWrapper(new String[] {"killall","adb"},false);
-			ProcessBuilderWrapper command1 = new ProcessBuilderWrapper(new String[] {"killall","adb."+OS.getName()},false);
-			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
+			ProcessBuilderWrapper command2 = new ProcessBuilderWrapper(new String[] {"killall","adb."+OS.getName()},false);
+			ProcessBuilderWrapper command3 = new ProcessBuilderWrapper(new String[] {adbpath,"kill-server"},false);
 		}
 	}
 

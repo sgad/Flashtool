@@ -57,7 +57,7 @@ public class SinEditor extends Dialog {
 	 */
 	private void createContents() {
 		shlSinEditor = new Shell(getParent(), getStyle());
-		shlSinEditor.setSize(450, 175);
+		shlSinEditor.setSize(470, 175);
 		shlSinEditor.setText("Sin Editor");
 		
 		Label lblNewLabel = new Label(shlSinEditor, SWT.NONE);
@@ -96,7 +96,7 @@ public class SinEditor extends Dialog {
 		        }
 			}
 		});
-		btnNewButton.setBounds(413, 31, 21, 25);
+		btnNewButton.setBounds(413, 31, 47, 26);
 		btnNewButton.setText("...");
 		
 		btnDumpHeader = new Button(shlSinEditor, SWT.NONE);
@@ -111,7 +111,7 @@ public class SinEditor extends Dialog {
 				}
 			}
 		});
-		btnDumpHeader.setBounds(10, 76, 86, 25);
+		btnDumpHeader.setBounds(10, 76, 112, 25);
 		btnDumpHeader.setText("Dump header");
 		btnDumpHeader.setEnabled(false);
 		
@@ -130,7 +130,7 @@ public class SinEditor extends Dialog {
 				}
 			}
 		});
-		btnDumpData.setBounds(183, 76, 75, 25);
+		btnDumpData.setBounds(231, 76, 112, 25);
 		btnDumpData.setText("Extract data");
 		btnDumpData.setEnabled(false);
 		
@@ -149,7 +149,7 @@ public class SinEditor extends Dialog {
 				}
 			}
 		});
-		btnNewButton_1.setBounds(102, 76, 75, 25);
+		btnNewButton_1.setBounds(128, 76, 97, 25);
 		btnNewButton_1.setText("Dump raw");
 		btnNewButton_1.setEnabled(false);
 		

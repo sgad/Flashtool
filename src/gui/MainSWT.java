@@ -132,7 +132,7 @@ public class MainSWT {
 		    	  exitProgram();
 		      }
 		    });
-		shlSonyericsson.setSize(794, 460);
+		shlSonyericsson.setSize(794, 451);
 		shlSonyericsson.setText("SonyEricsson Xperia Flasher by Bin4ry & Androxyde");
 		shlSonyericsson.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		shlSonyericsson.setLayout(new FormLayout());
@@ -297,9 +297,8 @@ public class MainSWT {
 		
 		Button btnSaveLog = new Button(shlSonyericsson, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();
-		fd_btnSaveLog.bottom = new FormAttachment(100, -33);
-		fd_btnSaveLog.left = new FormAttachment(100, -87);
 		fd_btnSaveLog.right = new FormAttachment(100, -10);
+		fd_btnSaveLog.left = new FormAttachment(100, -95);
 		btnSaveLog.setLayoutData(fd_btnSaveLog);
 		btnSaveLog.setText("Save log");
 		
@@ -315,12 +314,13 @@ public class MainSWT {
 		tltmAskRoot.setToolTipText("Ask for root permissions");
 		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
+		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
 		progressBar.setState(SWT.NORMAL);
 		MyLogger.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
 		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
-		fd_progressBar.left = new FormAttachment(0, 10);
-		fd_progressBar.right = new FormAttachment(100, -10);
+		fd_progressBar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
+		fd_progressBar.left = new FormAttachment(toolBar, 0, SWT.LEFT);
 		progressBar.setLayoutData(fd_progressBar);
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);

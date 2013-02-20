@@ -79,13 +79,16 @@ public class Decrypt extends Dialog {
 		
 		Label lblNewLabel = new Label(shlDecruptWizard, SWT.NONE);
 		FormData fd_lblNewLabel = new FormData();
+		fd_lblNewLabel.right = new FormAttachment(0, 110);
 		fd_lblNewLabel.top = new FormAttachment(0, 15);
 		fd_lblNewLabel.left = new FormAttachment(0, 10);
-		fd_lblNewLabel.right = new FormAttachment(100, -422);
 		lblNewLabel.setLayoutData(fd_lblNewLabel);
 		lblNewLabel.setText("Source Folder : ");
 		
 		Button btnNewButton = new Button(shlDecruptWizard, SWT.NONE);
+		FormData fd_btnNewButton = new FormData();
+		fd_btnNewButton.top = new FormAttachment(lblNewLabel, -7, SWT.TOP);
+		btnNewButton.setLayoutData(fd_btnNewButton);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -123,24 +126,22 @@ public class Decrypt extends Dialog {
 		        }
 			}
 		});
-		FormData fd_btnNewButton = new FormData();
-		fd_btnNewButton.top = new FormAttachment(0, 10);
-		fd_btnNewButton.right = new FormAttachment(100, -10);
-		btnNewButton.setLayoutData(fd_btnNewButton);
 		btnNewButton.setText("...");
 		
 		sourceFolder = new Text(shlDecruptWizard, SWT.BORDER);
 		FormData fd_sourceFolder = new FormData();
-		fd_sourceFolder.right = new FormAttachment(btnNewButton, -6);
+		fd_sourceFolder.right = new FormAttachment(0, 473);
 		fd_sourceFolder.top = new FormAttachment(0, 12);
-		fd_sourceFolder.left = new FormAttachment(lblNewLabel, 6);
+		fd_sourceFolder.left = new FormAttachment(0, 116);
 		sourceFolder.setLayoutData(fd_sourceFolder);
 		
 		listViewerFiles = new ListViewer(shlDecruptWizard, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		List list = listViewerFiles.getList();
 		FormData fd_list = new FormData();
+		fd_list.bottom = new FormAttachment(0, 229);
+		fd_list.right = new FormAttachment(0, 223);
+		fd_list.top = new FormAttachment(0, 71);
 		fd_list.left = new FormAttachment(0, 10);
-		fd_list.bottom = new FormAttachment(100, -49);
 		list.setLayoutData(fd_list);
 
 	    listViewerFiles.setContentProvider(new IStructuredContentProvider() {
@@ -169,21 +170,21 @@ public class Decrypt extends Dialog {
 	      });
 
 		Label lblAvailableFiles = new Label(shlDecruptWizard, SWT.NONE);
-		fd_list.top = new FormAttachment(lblAvailableFiles, 6);
 		FormData fd_lblAvailableFiles = new FormData();
 		fd_lblAvailableFiles.right = new FormAttachment(0, 115);
-		fd_lblAvailableFiles.top = new FormAttachment(sourceFolder, 20);
+		fd_lblAvailableFiles.top = new FormAttachment(0, 51);
 		fd_lblAvailableFiles.left = new FormAttachment(0, 10);
 		lblAvailableFiles.setLayoutData(fd_lblAvailableFiles);
 		lblAvailableFiles.setText("Available files :");
 		
 		listViewerConvert = new ListViewer(shlDecruptWizard, SWT.BORDER | SWT.V_SCROLL);
 		List list_1 = listViewerConvert.getList();
+		fd_btnNewButton.right = new FormAttachment(list_1, 0, SWT.RIGHT);
 		FormData fd_list_1 = new FormData();
-		fd_list_1.bottom = new FormAttachment(100, -49);
-		fd_list_1.top = new FormAttachment(btnNewButton, 39);
-		fd_list_1.right = new FormAttachment(100, -10);
-		fd_list_1.left = new FormAttachment(100, -250);
+		fd_list_1.bottom = new FormAttachment(list, 0, SWT.BOTTOM);
+		fd_list_1.top = new FormAttachment(list, 0, SWT.TOP);
+		fd_list_1.right = new FormAttachment(0, 522);
+		fd_list_1.left = new FormAttachment(0, 282);
 		list_1.setLayoutData(fd_list_1);
 
 		listViewerConvert.setContentProvider(new IStructuredContentProvider() {
@@ -213,6 +214,10 @@ public class Decrypt extends Dialog {
 	      });
 		
 		Button btnNewButton_1 = new Button(shlDecruptWizard, SWT.NONE);
+		FormData fd_btnNewButton_1 = new FormData();
+		fd_btnNewButton_1.top = new FormAttachment(0, 106);
+		fd_btnNewButton_1.left = new FormAttachment(0, 229);
+		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -227,13 +232,13 @@ public class Decrypt extends Dialog {
 				}
 			}
 		});
-		fd_list.right = new FormAttachment(btnNewButton_1, -6);
-		FormData fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.right = new FormAttachment(list_1, -6);
-		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlDecruptWizard, SWT.NONE);
+		FormData fd_btnNewButton_2 = new FormData();
+		fd_btnNewButton_2.top = new FormAttachment(0, 161);
+		fd_btnNewButton_2.left = new FormAttachment(0, 229);
+		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -248,34 +253,33 @@ public class Decrypt extends Dialog {
 				}
 			}
 		});
-		fd_btnNewButton_1.bottom = new FormAttachment(100, -144);
-		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 27);
-		fd_btnNewButton_2.right = new FormAttachment(list_1, -6);
-		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
 		btnNewButton_2.setText("<-");
 		
 		Label lblNewLabel_1 = new Label(shlDecruptWizard, SWT.NONE);
 		FormData fd_lblNewLabel_1 = new FormData();
-		fd_lblNewLabel_1.bottom = new FormAttachment(lblAvailableFiles, 0, SWT.BOTTOM);
-		fd_lblNewLabel_1.left = new FormAttachment(list_1, 0, SWT.LEFT);
+		fd_lblNewLabel_1.top = new FormAttachment(0, 51);
+		fd_lblNewLabel_1.left = new FormAttachment(0, 282);
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Files to convert :");
 		
 		Button btnNewButton_3 = new Button(shlDecruptWizard, SWT.NONE);
+		FormData fd_btnNewButton_3 = new FormData();
+		fd_btnNewButton_3.top = new FormAttachment(0, 240);
+		fd_btnNewButton_3.left = new FormAttachment(0, 454);
+		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
 		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shlDecruptWizard.dispose();
 			}
 		});
-		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.bottom = new FormAttachment(100, -10);
-		fd_btnNewButton_3.right = new FormAttachment(btnNewButton, 0, SWT.RIGHT);
-		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
 		btnNewButton_3.setText("Cancel");
 		
 		Button btnNewButton_4 = new Button(shlDecruptWizard, SWT.NONE);
+		FormData fd_btnNewButton_4 = new FormData();
+		fd_btnNewButton_4.top = new FormAttachment(0, 240);
+		fd_btnNewButton_4.left = new FormAttachment(0, 374);
+		btnNewButton_4.setLayoutData(fd_btnNewButton_4);
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -283,10 +287,6 @@ public class Decrypt extends Dialog {
 				shlDecruptWizard.dispose();
 			}
 		});
-		FormData fd_btnNewButton_4 = new FormData();
-		fd_btnNewButton_4.bottom = new FormAttachment(btnNewButton_3, 0, SWT.BOTTOM);
-		fd_btnNewButton_4.right = new FormAttachment(btnNewButton_3, -6);
-		btnNewButton_4.setLayoutData(fd_btnNewButton_4);
 		btnNewButton_4.setText("Convert");
 
 	}

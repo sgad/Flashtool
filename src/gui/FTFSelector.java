@@ -197,10 +197,6 @@ public class FTFSelector extends Dialog {
 		fd_lblContent.left = new FormAttachment(0, 369);
 		lblContent.setLayoutData(fd_lblContent);
 		lblContent.setText("Content :");
-		if (pathname.length()==0) {
-			sourceFolder.setText(OS.getWorkDir()+File.separator+"firmwares");
-		}
-		else sourceFolder.setText(pathname);
 		
 		Label lblWipe = new Label(shlFirmwareSelector, SWT.NONE);
 		FormData fd_lblWipe = new FormData();
@@ -271,7 +267,11 @@ public class FTFSelector extends Dialog {
 				gd_sourceFolder.widthHint = 498;
 				sourceFolder.setLayoutData(gd_sourceFolder);
 				sourceFolder.setEditable(false);
-				
+				if (pathname.length()==0) {
+					sourceFolder.setText(OS.getWorkDir()+File.separator+"firmwares");
+				}
+				else sourceFolder.setText(pathname);
+
 				Button btnNewButton = new Button(composite_1, SWT.NONE);
 				GridData gd_btnNewButton = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 				gd_btnNewButton.widthHint = 49;

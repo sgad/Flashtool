@@ -80,7 +80,7 @@ public class FTFSelector extends Dialog {
 	 */
 	private void createContents(String pathname, String ftfname) {
 		shlFirmwareSelector = new Shell(getParent(), getStyle());
-		shlFirmwareSelector.setSize(688, 486);
+		shlFirmwareSelector.setSize(695, 486);
 		shlFirmwareSelector.setText("Firmware Selector");
 		shlFirmwareSelector.addListener(SWT.Close, new Listener() {
 		      public void handleEvent(Event event) {
@@ -91,8 +91,7 @@ public class FTFSelector extends Dialog {
 		shlFirmwareSelector.setLayout(new FormLayout());
 		Button btnCancel = new Button(shlFirmwareSelector, SWT.NONE);
 		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.top = new FormAttachment(0, 426);
-		fd_btnCancel.left = new FormAttachment(0, 610);
+		fd_btnCancel.bottom = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -168,6 +167,7 @@ public class FTFSelector extends Dialog {
 		
 		Button btnNewButton = new Button(shlFirmwareSelector, SWT.NONE);
 		FormData fd_btnNewButton = new FormData();
+		fd_btnNewButton.top = new FormAttachment(lblSourceFolder, -5, SWT.TOP);
 		fd_btnNewButton.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
 		btnNewButton.setLayoutData(fd_btnNewButton);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
@@ -240,8 +240,8 @@ public class FTFSelector extends Dialog {
 		lblContent.setText("Content :");
 		
 		sourceFolder = new Text(shlFirmwareSelector, SWT.BORDER);
-		fd_btnNewButton.top = new FormAttachment(sourceFolder, -4, SWT.TOP);
-		fd_btnNewButton.left = new FormAttachment(sourceFolder, 6);
+		fd_btnNewButton.bottom = new FormAttachment(sourceFolder, 1, SWT.BOTTOM);
+		fd_btnNewButton.left = new FormAttachment(sourceFolder, 10);
 		FormData fd_sourceFolder = new FormData();
 		fd_sourceFolder.right = new FormAttachment(100, -59);
 		fd_sourceFolder.left = new FormAttachment(lblSourceFolder, 6);
@@ -278,6 +278,7 @@ public class FTFSelector extends Dialog {
 		lblMisc.setText("Misc : ");
 		
 		Composite compositeExclude = new Composite(shlFirmwareSelector, SWT.BORDER);
+		fd_btnCancel.right = new FormAttachment(compositeExclude, 0, SWT.RIGHT);
 		FormData fd_compositeExclude = new FormData();
 		fd_compositeExclude.bottom = new FormAttachment(0, 301);
 		fd_compositeExclude.right = new FormAttachment(0, 678);

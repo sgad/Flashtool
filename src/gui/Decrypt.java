@@ -73,7 +73,7 @@ public class Decrypt extends Dialog {
 	 */
 	private void createContents() {
 		shlDecruptWizard = new Shell(getParent(), getStyle());
-		shlDecruptWizard.setSize(532, 300);
+		shlDecruptWizard.setSize(539, 300);
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
 		
@@ -87,7 +87,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnNewButton = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnNewButton = new FormData();
-		fd_btnNewButton.top = new FormAttachment(lblNewLabel, -7, SWT.TOP);
+		fd_btnNewButton.top = new FormAttachment(lblNewLabel, -5, SWT.TOP);
 		btnNewButton.setLayoutData(fd_btnNewButton);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -129,6 +129,7 @@ public class Decrypt extends Dialog {
 		btnNewButton.setText("...");
 		
 		sourceFolder = new Text(shlDecruptWizard, SWT.BORDER);
+		fd_btnNewButton.left = new FormAttachment(sourceFolder, 6);
 		FormData fd_sourceFolder = new FormData();
 		fd_sourceFolder.right = new FormAttachment(0, 473);
 		fd_sourceFolder.top = new FormAttachment(0, 12);
@@ -215,8 +216,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnNewButton_1 = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.top = new FormAttachment(0, 106);
-		fd_btnNewButton_1.left = new FormAttachment(0, 229);
+		fd_btnNewButton_1.left = new FormAttachment(list, 16);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -235,9 +235,10 @@ public class Decrypt extends Dialog {
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlDecruptWizard, SWT.NONE);
+		fd_btnNewButton_1.bottom = new FormAttachment(100, -139);
 		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.top = new FormAttachment(0, 161);
-		fd_btnNewButton_2.left = new FormAttachment(0, 229);
+		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 30);
+		fd_btnNewButton_2.right = new FormAttachment(btnNewButton_1, 0, SWT.RIGHT);
 		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -264,8 +265,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnNewButton_3 = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.top = new FormAttachment(0, 240);
-		fd_btnNewButton_3.left = new FormAttachment(0, 454);
+		fd_btnNewButton_3.right = new FormAttachment(btnNewButton, 0, SWT.RIGHT);
 		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
 		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -276,9 +276,10 @@ public class Decrypt extends Dialog {
 		btnNewButton_3.setText("Cancel");
 		
 		Button btnNewButton_4 = new Button(shlDecruptWizard, SWT.NONE);
+		fd_btnNewButton_3.top = new FormAttachment(btnNewButton_4, 0, SWT.TOP);
 		FormData fd_btnNewButton_4 = new FormData();
-		fd_btnNewButton_4.top = new FormAttachment(0, 240);
-		fd_btnNewButton_4.left = new FormAttachment(0, 374);
+		fd_btnNewButton_4.right = new FormAttachment(100, -71);
+		fd_btnNewButton_4.top = new FormAttachment(list_1, 7);
 		btnNewButton_4.setLayoutData(fd_btnNewButton_4);
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override

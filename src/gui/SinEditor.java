@@ -57,7 +57,7 @@ public class SinEditor extends Dialog {
 	 */
 	private void createContents() {
 		shlSinEditor = new Shell(getParent(), getStyle());
-		shlSinEditor.setSize(470, 175);
+		shlSinEditor.setSize(481, 175);
 		shlSinEditor.setText("Sin Editor");
 		
 		Label lblNewLabel = new Label(shlSinEditor, SWT.NONE);
@@ -96,7 +96,7 @@ public class SinEditor extends Dialog {
 		        }
 			}
 		});
-		btnNewButton.setBounds(413, 31, 47, 26);
+		btnNewButton.setBounds(413, 30, 47, 26);
 		btnNewButton.setText("...");
 		
 		btnDumpHeader = new Button(shlSinEditor, SWT.NONE);
@@ -160,7 +160,7 @@ public class SinEditor extends Dialog {
 				shlSinEditor.dispose();
 			}
 		});
-		btnClose.setBounds(359, 111, 75, 25);
+		btnClose.setBounds(385, 111, 75, 25);
 		btnClose.setText("Close");
 	}
 }

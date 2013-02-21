@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.widgets.Composite;
@@ -248,14 +249,14 @@ public class Decrypt extends Dialog {
 		gd_lblNewLabel.widthHint = 92;
 		lblNewLabel.setLayoutData(gd_lblNewLabel);
 		lblNewLabel.setText("Source Folder : ");
-		
+		lblNewLabel.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
 		sourceFolder = new Text(composite, SWT.BORDER);
 		GridData gd_sourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sourceFolder.widthHint = 359;
 		sourceFolder.setLayoutData(gd_sourceFolder);
 		
 		Button btnNewButton = new Button(composite, SWT.NONE);
-		GridData gd_btnNewButton = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
+		GridData gd_btnNewButton = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnNewButton.widthHint = 32;
 		btnNewButton.setLayoutData(gd_btnNewButton);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
@@ -296,6 +297,7 @@ public class Decrypt extends Dialog {
 			}
 		});
 		btnNewButton.setText("...");
+		btnNewButton.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
 
 	}
 }

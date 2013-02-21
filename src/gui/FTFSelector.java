@@ -32,6 +32,8 @@ import gui.models.Firmware;
 import gui.models.FirmwareContentProvider;
 import gui.models.FirmwareLabelProvider;
 import gui.models.FirmwaresModel;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class FTFSelector extends Dialog {
 
@@ -156,49 +158,6 @@ public class FTFSelector extends Dialog {
 		    	  tableContentViewer.refresh();
 		      }
 		    });
-
-		Label lblSourceFolder = new Label(shlFirmwareSelector, SWT.NONE);
-		FormData fd_lblSourceFolder = new FormData();
-		fd_lblSourceFolder.top = new FormAttachment(0, 12);
-		fd_lblSourceFolder.left = new FormAttachment(compositeFirmware, 0, SWT.LEFT);
-		fd_lblSourceFolder.right = new FormAttachment(0, 109);
-		lblSourceFolder.setLayoutData(fd_lblSourceFolder);
-		lblSourceFolder.setText("Source folder :");
-		
-		Button btnNewButton = new Button(shlFirmwareSelector, SWT.NONE);
-		FormData fd_btnNewButton = new FormData();
-		fd_btnNewButton.top = new FormAttachment(lblSourceFolder, -5, SWT.TOP);
-		fd_btnNewButton.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
-		btnNewButton.setLayoutData(fd_btnNewButton);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(shlFirmwareSelector);
-
-		        // Set the initial filter path according
-		        // to anything they've selected or typed in
-		        dlg.setFilterPath(sourceFolder.getText());
-
-		        // Change the title bar text
-		        dlg.setText("Directory chooser");
-
-		        // Customizable message displayed in the dialog
-		        dlg.setMessage("Select a directory");
-
-		        // Calling open() will open and run the dialog.
-		        // It will return the selected directory, or
-		        // null if user cancels
-		        String dir = dlg.open();
-		        if (dir != null) {
-		          // Set the text box to the new selection
-		        	if (!sourceFolder.getText().equals(dir)) {
-		        		sourceFolder.setText(dir);
-		        		updateTables();
-		        	}
-		        }
-			}
-		});
-		btnNewButton.setText("...");
 		
 		Composite compositeContent = new Composite(shlFirmwareSelector, SWT.NONE);
 		FormData fd_compositeContent = new FormData();
@@ -238,16 +197,6 @@ public class FTFSelector extends Dialog {
 		fd_lblContent.left = new FormAttachment(0, 369);
 		lblContent.setLayoutData(fd_lblContent);
 		lblContent.setText("Content :");
-		
-		sourceFolder = new Text(shlFirmwareSelector, SWT.BORDER);
-		fd_btnNewButton.bottom = new FormAttachment(sourceFolder, 1, SWT.BOTTOM);
-		fd_btnNewButton.left = new FormAttachment(sourceFolder, 10);
-		FormData fd_sourceFolder = new FormData();
-		fd_sourceFolder.right = new FormAttachment(100, -59);
-		fd_sourceFolder.left = new FormAttachment(lblSourceFolder, 6);
-		fd_sourceFolder.top = new FormAttachment(0, 10);
-		sourceFolder.setLayoutData(fd_sourceFolder);
-		sourceFolder.setEditable(false);
 		if (pathname.length()==0) {
 			sourceFolder.setText(OS.getWorkDir()+File.separator+"firmwares");
 		}
@@ -301,6 +250,61 @@ public class FTFSelector extends Dialog {
 		fd_composite.top = new FormAttachment(0, 82);
 		fd_composite.left = new FormAttachment(0, 533);
 		composite.setLayoutData(fd_composite);
+		
+		Composite composite_1 = new Composite(shlFirmwareSelector, SWT.NONE);
+		composite_1.setLayout(new GridLayout(3, false));
+		FormData fd_composite_1 = new FormData();
+		fd_composite_1.bottom = new FormAttachment(lblNewLabel, -6);
+		fd_composite_1.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
+		fd_composite_1.left = new FormAttachment(0, 10);
+		fd_composite_1.top = new FormAttachment(0, 10);
+		composite_1.setLayoutData(fd_composite_1);
+		
+				Label lblSourceFolder = new Label(composite_1, SWT.NONE);
+				GridData gd_lblSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+				gd_lblSourceFolder.widthHint = 93;
+				lblSourceFolder.setLayoutData(gd_lblSourceFolder);
+				lblSourceFolder.setText("Source folder :");
+				
+				sourceFolder = new Text(composite_1, SWT.BORDER);
+				GridData gd_sourceFolder = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+				gd_sourceFolder.widthHint = 498;
+				sourceFolder.setLayoutData(gd_sourceFolder);
+				sourceFolder.setEditable(false);
+				
+				Button btnNewButton = new Button(composite_1, SWT.NONE);
+				GridData gd_btnNewButton = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+				gd_btnNewButton.widthHint = 49;
+				btnNewButton.setLayoutData(gd_btnNewButton);
+				btnNewButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						DirectoryDialog dlg = new DirectoryDialog(shlFirmwareSelector);
+
+				        // Set the initial filter path according
+				        // to anything they've selected or typed in
+				        dlg.setFilterPath(sourceFolder.getText());
+
+				        // Change the title bar text
+				        dlg.setText("Directory chooser");
+
+				        // Customizable message displayed in the dialog
+				        dlg.setMessage("Select a directory");
+
+				        // Calling open() will open and run the dialog.
+				        // It will return the selected directory, or
+				        // null if user cancels
+				        String dir = dlg.open();
+				        if (dir != null) {
+				          // Set the text box to the new selection
+				        	if (!sourceFolder.getText().equals(dir)) {
+				        		sourceFolder.setText(dir);
+				        		updateTables();
+				        	}
+				        }
+					}
+				});
+				btnNewButton.setText("...");
 		updateTables();		
 	}
 

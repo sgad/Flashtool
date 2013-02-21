@@ -30,6 +30,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class Decrypt extends Dialog {
 
@@ -77,65 +81,6 @@ public class Decrypt extends Dialog {
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
 		
-		Label lblNewLabel = new Label(shlDecruptWizard, SWT.NONE);
-		FormData fd_lblNewLabel = new FormData();
-		fd_lblNewLabel.right = new FormAttachment(0, 110);
-		fd_lblNewLabel.top = new FormAttachment(0, 15);
-		fd_lblNewLabel.left = new FormAttachment(0, 10);
-		lblNewLabel.setLayoutData(fd_lblNewLabel);
-		lblNewLabel.setText("Source Folder : ");
-		
-		Button btnNewButton = new Button(shlDecruptWizard, SWT.NONE);
-		FormData fd_btnNewButton = new FormData();
-		fd_btnNewButton.top = new FormAttachment(lblNewLabel, -5, SWT.TOP);
-		btnNewButton.setLayoutData(fd_btnNewButton);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dlg = new DirectoryDialog(shlDecruptWizard);
-
-		        // Set the initial filter path according
-		        // to anything they've selected or typed in
-		        dlg.setFilterPath(sourceFolder.getText());
-
-		        // Change the title bar text
-		        dlg.setText("Directory chooser");
-
-		        // Customizable message displayed in the dialog
-		        dlg.setMessage("Select a directory");
-
-		        // Calling open() will open and run the dialog.
-		        // It will return the selected directory, or
-		        // null if user cancels
-		        String dir = dlg.open();
-		        if (dir != null) {
-		          // Set the text box to the new selection
-		        	if (!sourceFolder.getText().equals(dir)) {
-		        		sourceFolder.setText(dir);
-		        		files = new Vector();
-		        		convert = new Vector();
-		    			File srcdir = new File(sourceFolder.getText());
-		    			File[] chld = srcdir.listFiles();
-		    			for(int i = 0; i < chld.length; i++) {
-		    				if (chld[i].getName().toUpperCase().startsWith("FILE") && chld[i].length()>20000)
-		    					files.add(chld[i]);
-		    			}
-		    			listViewerFiles.setInput(files);
-		    			listViewerConvert.setInput(convert);
-		        	}
-		        }
-			}
-		});
-		btnNewButton.setText("...");
-		
-		sourceFolder = new Text(shlDecruptWizard, SWT.BORDER);
-		fd_btnNewButton.left = new FormAttachment(sourceFolder, 6);
-		FormData fd_sourceFolder = new FormData();
-		fd_sourceFolder.right = new FormAttachment(0, 473);
-		fd_sourceFolder.top = new FormAttachment(0, 12);
-		fd_sourceFolder.left = new FormAttachment(0, 116);
-		sourceFolder.setLayoutData(fd_sourceFolder);
-		
 		listViewerFiles = new ListViewer(shlDecruptWizard, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
 		List list = listViewerFiles.getList();
 		FormData fd_list = new FormData();
@@ -180,7 +125,6 @@ public class Decrypt extends Dialog {
 		
 		listViewerConvert = new ListViewer(shlDecruptWizard, SWT.BORDER | SWT.V_SCROLL);
 		List list_1 = listViewerConvert.getList();
-		fd_btnNewButton.right = new FormAttachment(list_1, 0, SWT.RIGHT);
 		FormData fd_list_1 = new FormData();
 		fd_list_1.bottom = new FormAttachment(list, 0, SWT.BOTTOM);
 		fd_list_1.top = new FormAttachment(list, 0, SWT.TOP);
@@ -265,7 +209,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnNewButton_3 = new Button(shlDecruptWizard, SWT.NONE);
 		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.right = new FormAttachment(btnNewButton, 0, SWT.RIGHT);
+		fd_btnNewButton_3.right = new FormAttachment(100, -11);
 		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
 		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -289,6 +233,69 @@ public class Decrypt extends Dialog {
 			}
 		});
 		btnNewButton_4.setText("Convert");
+		
+		Composite composite = new Composite(shlDecruptWizard, SWT.NONE);
+		composite.setLayout(new GridLayout(3, false));
+		FormData fd_composite = new FormData();
+		fd_composite.bottom = new FormAttachment(lblAvailableFiles, -6);
+		fd_composite.left = new FormAttachment(list, 0, SWT.LEFT);
+		fd_composite.right = new FormAttachment(list_1, 0, SWT.RIGHT);
+		fd_composite.top = new FormAttachment(0, 10);
+		composite.setLayoutData(fd_composite);
+		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblNewLabel.widthHint = 92;
+		lblNewLabel.setLayoutData(gd_lblNewLabel);
+		lblNewLabel.setText("Source Folder : ");
+		
+		sourceFolder = new Text(composite, SWT.BORDER);
+		GridData gd_sourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_sourceFolder.widthHint = 359;
+		sourceFolder.setLayoutData(gd_sourceFolder);
+		
+		Button btnNewButton = new Button(composite, SWT.NONE);
+		GridData gd_btnNewButton = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
+		gd_btnNewButton.widthHint = 32;
+		btnNewButton.setLayoutData(gd_btnNewButton);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dlg = new DirectoryDialog(shlDecruptWizard);
+
+		        // Set the initial filter path according
+		        // to anything they've selected or typed in
+		        dlg.setFilterPath(sourceFolder.getText());
+
+		        // Change the title bar text
+		        dlg.setText("Directory chooser");
+
+		        // Customizable message displayed in the dialog
+		        dlg.setMessage("Select a directory");
+
+		        // Calling open() will open and run the dialog.
+		        // It will return the selected directory, or
+		        // null if user cancels
+		        String dir = dlg.open();
+		        if (dir != null) {
+		          // Set the text box to the new selection
+		        	if (!sourceFolder.getText().equals(dir)) {
+		        		sourceFolder.setText(dir);
+		        		files = new Vector();
+		        		convert = new Vector();
+		    			File srcdir = new File(sourceFolder.getText());
+		    			File[] chld = srcdir.listFiles();
+		    			for(int i = 0; i < chld.length; i++) {
+		    				if (chld[i].getName().toUpperCase().startsWith("FILE") && chld[i].length()>20000)
+		    					files.add(chld[i]);
+		    			}
+		    			listViewerFiles.setInput(files);
+		    			listViewerConvert.setInput(convert);
+		        	}
+		        }
+			}
+		});
+		btnNewButton.setText("...");
 
 	}
 }

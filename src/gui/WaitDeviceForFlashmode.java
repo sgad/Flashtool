@@ -66,7 +66,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 	 */
 	private void createContents() {
 		shlWaitForFlashmode = new Shell(getParent(), getStyle());
-		shlWaitForFlashmode.setSize(616, 418);
+		shlWaitForFlashmode.setSize(616, 425);
 		shlWaitForFlashmode.setText("Wait for Flashmode");
 		
 		Composite composite = new Composite(shlWaitForFlashmode, SWT.NONE);

@@ -125,7 +125,7 @@ public class MainSWT {
 
 	public void doDisableIdent() {
 		WidgetTask.setEnabled(tltmFlash,true);
-		WidgetTask.setEnabled(tltmRoot,false);
+		//WidgetTask.setEnabled(tltmRoot,false);
 		WidgetTask.setEnabled(tltmAskRoot,false);
 	}
 	
@@ -198,7 +198,7 @@ public class MainSWT {
 		});
 		mntmNewItem_1.setText("SEUS Decrypt");
 		
-		MenuItem mntmBundleCreation = new MenuItem(menu_4, SWT.NONE);
+		/*MenuItem mntmBundleCreation = new MenuItem(menu_4, SWT.NONE);
 		mntmBundleCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -206,7 +206,7 @@ public class MainSWT {
 				cre.open();
 			}
 		});
-		mntmBundleCreation.setText("Bundle creation");
+		mntmBundleCreation.setText("Bundle creation");*/
 		
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
@@ -288,7 +288,7 @@ public class MainSWT {
 		tltmFlash.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		tltmFlash.setToolTipText("Flash device");
 		
-		tltmBLU = new ToolItem(toolBar, SWT.NONE);
+		/*tltmBLU = new ToolItem(toolBar, SWT.NONE);
 		tltmBLU.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -301,7 +301,7 @@ public class MainSWT {
 		tltmRoot = new ToolItem(toolBar, SWT.NONE);
 		tltmRoot.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/root_32.png"));
 		tltmRoot.setEnabled(false);
-		tltmRoot.setToolTipText("Root device");
+		tltmRoot.setToolTipText("Root device");*/
 		
 		Button btnSaveLog = new Button(shlSonyericsson, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();

@@ -15,7 +15,7 @@ public class WidgetsTool {
 			if (ctl[i] instanceof Composite) setSize((Composite)ctl[i]);
 			FontData[] fD = ctl[i].getFont().getFontData();
 			if (OS.getName().equals("mac"))
-				fD[0].setHeight(10);
+				fD[0].setHeight(11);
 			ctl[i].setFont( new Font(Display.getCurrent(),fD[0]));
 		}
 	}

@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -26,6 +28,7 @@ public class About extends Dialog {
 	 */
 	public Object open() {
 		createContents();
+		WidgetsTool.setSize(shlAbout);
 		shlAbout.open();
 		shlAbout.layout();
 		Display display = getParent().getDisplay();

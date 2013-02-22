@@ -14,6 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import flashsystem.X10flash;
 import gui.tools.SearchFastbootJob;
 import gui.tools.SearchJob;
+import gui.tools.WidgetsTool;
 
 public class WaitDeviceForFastboot extends Dialog {
 
@@ -37,6 +38,7 @@ public class WaitDeviceForFastboot extends Dialog {
 	 */
 	public Object open() {
 		createContents();
+		WidgetsTool.setSize(shlWaitForFastbootmode);
 		shlWaitForFastbootmode.open();
 		shlWaitForFastbootmode.layout();
 		shlWaitForFastbootmode.addListener(SWT.Close, new Listener() {

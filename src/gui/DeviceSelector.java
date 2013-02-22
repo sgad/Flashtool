@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.WidgetsTool;
+
 import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -46,6 +48,7 @@ public class DeviceSelector extends Dialog {
 	public Object open() {
 		createContents();
 		fillTable();
+		WidgetsTool.setSize(shlDeviceSelector);
 		shlDeviceSelector.open();
 		shlDeviceSelector.layout();
 		Display display = getParent().getDisplay();

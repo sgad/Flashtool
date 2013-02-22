@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.WidgetsTool;
+
 import java.awt.Desktop;
 import java.net.URI;
 
@@ -47,6 +49,7 @@ public class BLUWizard extends Dialog {
 			btnGetUnlock.setEnabled(false);
 			textULCODE.setEditable(false);
 		}
+		WidgetsTool.setSize(shlBootloaderUnlockWizard);
 		shlBootloaderUnlockWizard.open();
 		shlBootloaderUnlockWizard.layout();
 		Display display = getParent().getDisplay();

@@ -3,6 +3,7 @@ package gui;
 import gui.models.Firmware;
 import gui.models.Firmwares;
 import gui.tools.FtfFilter;
+import gui.tools.WidgetsTool;
 
 import java.io.File;
 import java.util.Iterator;
@@ -65,6 +66,7 @@ public class Decrypt extends Dialog {
 	 */
 	public Vector open() {
 		createContents();
+		WidgetsTool.setSize(shlDecruptWizard);
 		shlDecruptWizard.open();
 		shlDecruptWizard.layout();
 		Display display = getParent().getDisplay();
@@ -81,7 +83,7 @@ public class Decrypt extends Dialog {
 	 */
 	private void createContents() {
 		shlDecruptWizard = new Shell(getParent(), getStyle());
-		shlDecruptWizard.setSize(539, 300);
+		shlDecruptWizard.setSize(539, 302);
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
 		
@@ -161,48 +163,6 @@ public class Decrypt extends Dialog {
 	          return ((File)element).getName();
 	        }
 	      });
-		
-		Button btnNewButton_1 = new Button(shlDecruptWizard, SWT.NONE);
-		FormData fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.left = new FormAttachment(list, 16);
-		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
-		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)listViewerFiles.getSelection();
-				Iterator i = selection.iterator();
-				while (i.hasNext()) {
-					File f = (File)i.next();
-					files.remove(f);
-					convert.add(f);
-					listViewerFiles.refresh();
-					listViewerConvert.refresh();
-				}
-			}
-		});
-		btnNewButton_1.setText("->");
-		
-		Button btnNewButton_2 = new Button(shlDecruptWizard, SWT.NONE);
-		fd_btnNewButton_1.bottom = new FormAttachment(100, -139);
-		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 30);
-		fd_btnNewButton_2.right = new FormAttachment(btnNewButton_1, 0, SWT.RIGHT);
-		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
-		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)listViewerConvert.getSelection();
-				Iterator i = selection.iterator();
-				while (i.hasNext()) {
-					File f = (File)i.next();
-					convert.remove(f);
-					files.add(f);
-					listViewerFiles.refresh();
-					listViewerConvert.refresh();
-				}
-			}
-		});
-		btnNewButton_2.setText("<-");
 		
 		Label lblNewLabel_1 = new Label(shlDecruptWizard, SWT.NONE);
 		FormData fd_lblNewLabel_1 = new FormData();
@@ -300,17 +260,57 @@ public class Decrypt extends Dialog {
 		});
 		btnSourceFolder.setText("...");
 		btnSourceFolder.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
-		setSize(shlDecruptWizard);
-	}
-
-	public void setSize(Shell c) {
-		Control[] ctl = c.getChildren();
-		for (int i=0;i<ctl.length;i++) {
-			FontData[] fD = ctl[i].getFont().getFontData();
-			if (OS.getName().equals("mac"))
-				fD[0].setHeight(9);
-			ctl[i].setFont( new Font(Display.getCurrent(),fD[0]));
-		}
+		
+		
+		Composite composite_1 = new Composite(shlDecruptWizard, SWT.NONE);
+		composite_1.setLayout(new GridLayout(1, false));
+		FormData fd_composite_1 = new FormData();
+		fd_composite_1.bottom = new FormAttachment(list, 120);
+		fd_composite_1.top = new FormAttachment(composite, 61);
+		fd_composite_1.left = new FormAttachment(list, 5);
+		fd_composite_1.right = new FormAttachment(list_1, -6);
+		composite_1.setLayoutData(fd_composite_1);
+		
+		Button btnNewButton_2 = new Button(composite_1, SWT.NONE);
+		GridData gd_btnNewButton_2 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_2.widthHint = 37;
+		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
+		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)listViewerConvert.getSelection();
+				Iterator i = selection.iterator();
+				while (i.hasNext()) {
+					File f = (File)i.next();
+					convert.remove(f);
+					files.add(f);
+					listViewerFiles.refresh();
+					listViewerConvert.refresh();
+				}
+			}
+		});
+		btnNewButton_2.setText("<-");
+		new Label(composite_1, SWT.NONE);
+		
+		Button btnNewButton_1 = new Button(composite_1, SWT.NONE);
+		GridData gd_btnNewButton_1 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_1.widthHint = 40;
+		btnNewButton_1.setLayoutData(gd_btnNewButton_1);
+		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)listViewerFiles.getSelection();
+				Iterator i = selection.iterator();
+				while (i.hasNext()) {
+					File f = (File)i.next();
+					files.remove(f);
+					convert.add(f);
+					listViewerFiles.refresh();
+					listViewerConvert.refresh();
+				}
+			}
+		});
+		btnNewButton_1.setText("->");
 	}
 
 }

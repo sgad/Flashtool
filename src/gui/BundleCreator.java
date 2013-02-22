@@ -1,5 +1,7 @@
 package gui;
 
+import gui.tools.WidgetsTool;
+
 import java.io.File;
 import java.util.Vector;
 
@@ -54,6 +56,7 @@ public class BundleCreator extends Dialog {
 	 */
 	public Object open() {
 		createContents();
+		WidgetsTool.setSize(shlBundler);
 		shlBundler.open();
 		shlBundler.layout();
 		Display display = getParent().getDisplay();

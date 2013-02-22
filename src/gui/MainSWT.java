@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -30,6 +32,8 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.logger.MyLogger;
 import org.system.AdbPhoneThread;
 import org.system.DeviceChangedListener;
@@ -46,6 +50,8 @@ import flashsystem.X10flash;
 import gui.tools.DecryptJob;
 import gui.tools.FlashJob;
 import gui.tools.WidgetTask;
+import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
@@ -66,6 +72,7 @@ public class MainSWT {
 		Display.setAppName("Flashtool");
 		Display display = Display.getDefault();
 		createContents();
+		WidgetsTool.setSize(shlSonyericsson);
 		guimode=true;
 		StatusListener phoneStatus = new StatusListener() {
 			public void statusChanged(StatusEvent e) {
@@ -113,6 +120,7 @@ public class MainSWT {
 				display.sleep();
 			}
 		}
+		System.out.println("here");
 	}
 
 	public void doDisableIdent() {
@@ -695,4 +703,5 @@ public class MainSWT {
 			e.printStackTrace();
 		}
 	}
+
 }

@@ -14,6 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 
 import flashsystem.SinFile;
 import gui.tools.ExtractSinDataJob;
+import gui.tools.WidgetsTool;
 
 public class SinEditor extends Dialog {
 
@@ -41,6 +42,7 @@ public class SinEditor extends Dialog {
 	 */
 	public Object open() {
 		createContents();
+		WidgetsTool.setSize(shlSinEditor);
 		shlSinEditor.open();
 		shlSinEditor.layout();
 		Display display = getParent().getDisplay();

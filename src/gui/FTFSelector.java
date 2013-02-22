@@ -32,6 +32,8 @@ import gui.models.Firmware;
 import gui.models.FirmwareContentProvider;
 import gui.models.FirmwareLabelProvider;
 import gui.models.FirmwaresModel;
+import gui.tools.WidgetsTool;
+
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
@@ -66,6 +68,7 @@ public class FTFSelector extends Dialog {
 	public Object open(String pathname, String ftfname) {
 		filename=ftfname;
 		createContents(pathname, ftfname);
+		WidgetsTool.setSize(shlFirmwareSelector);
 		shlFirmwareSelector.open();
 		shlFirmwareSelector.layout();
 		Display display = getParent().getDisplay();

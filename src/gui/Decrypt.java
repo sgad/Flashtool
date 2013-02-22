@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -80,7 +81,6 @@ public class Decrypt extends Dialog {
 	 */
 	private void createContents() {
 		shlDecruptWizard = new Shell(getParent(), getStyle());
-		setSize(shlDecruptWizard);
 		shlDecruptWizard.setSize(539, 300);
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
@@ -163,7 +163,6 @@ public class Decrypt extends Dialog {
 	      });
 		
 		Button btnNewButton_1 = new Button(shlDecruptWizard, SWT.NONE);
-		setSize(btnNewButton_1);
 		FormData fd_btnNewButton_1 = new FormData();
 		fd_btnNewButton_1.left = new FormAttachment(list, 16);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
@@ -184,7 +183,6 @@ public class Decrypt extends Dialog {
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlDecruptWizard, SWT.NONE);
-		setSize(btnNewButton_2);
 		fd_btnNewButton_1.bottom = new FormAttachment(100, -139);
 		FormData fd_btnNewButton_2 = new FormData();
 		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 30);
@@ -214,7 +212,6 @@ public class Decrypt extends Dialog {
 		lblNewLabel_1.setText("Files to convert :");
 		
 		Button btnCancel = new Button(shlDecruptWizard, SWT.NONE);
-		setSize(btnCancel);
 		FormData fd_btnCancel = new FormData();
 		fd_btnCancel.right = new FormAttachment(100, -11);
 		btnCancel.setLayoutData(fd_btnCancel);
@@ -227,7 +224,6 @@ public class Decrypt extends Dialog {
 		btnCancel.setText("Cancel");
 		
 		Button btnConvert = new Button(shlDecruptWizard, SWT.NONE);
-		setSize(btnConvert);
 		fd_btnCancel.top = new FormAttachment(btnConvert, 0, SWT.TOP);
 		FormData fd_btnConvert = new FormData();
 		fd_btnConvert.right = new FormAttachment(100, -71);
@@ -256,14 +252,12 @@ public class Decrypt extends Dialog {
 		gd_lblSourceFolder.widthHint = 92;
 		lblSourceFolder.setLayoutData(gd_lblSourceFolder);
 		lblSourceFolder.setText("Source Folder : ");
-		setSize(lblSourceFolder);
 		txtSourceFolder = new Text(composite, SWT.BORDER);
 		GridData gd_txtSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_txtSourceFolder.widthHint = 359;
 		txtSourceFolder.setLayoutData(gd_txtSourceFolder);
 		
 		Button btnSourceFolder = new Button(composite, SWT.NONE);
-		setSize(btnSourceFolder);
 		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnSourceFolder.widthHint = 32;
 		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
@@ -306,29 +300,17 @@ public class Decrypt extends Dialog {
 		});
 		btnSourceFolder.setText("...");
 		btnSourceFolder.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
-
-	}
-
-	public void setSize(Label c) {
-		FontData[] fD = c.getFont().getFontData();
-		System.out.println(fD[0].getHeight());
-		if (OS.getName().equals("mac"))
-			fD[0].setHeight(9);
-		c.setFont( new Font(Display.getCurrent(),fD[0]));
-	}
-
-	public void setSize(Button c) {
-		FontData[] fD = c.getFont().getFontData();
-		if (OS.getName().equals("mac"))
-			fD[0].setHeight(9);
-		c.setFont( new Font(Display.getCurrent(),fD[0]));
+		setSize(shlDecruptWizard);
 	}
 
 	public void setSize(Shell c) {
-		FontData[] fD = c.getFont().getFontData();
-		if (OS.getName().equals("mac"))
-			fD[0].setHeight(9);
-		c.setFont( new Font(Display.getCurrent(),fD[0]));
+		Control[] ctl = c.getChildren();
+		for (int i=0;i<ctl.length;i++) {
+			FontData[] fD = ctl[i].getFont().getFontData();
+			if (OS.getName().equals("mac"))
+				fD[0].setHeight(9);
+			ctl[i].setFont( new Font(Display.getCurrent(),fD[0]));
+		}
 	}
 
 }

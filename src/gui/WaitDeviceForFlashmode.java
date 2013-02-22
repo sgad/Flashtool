@@ -66,7 +66,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 	 */
 	private void createContents() {
 		shlWaitForFlashmode = new Shell(getParent(), getStyle());
-		shlWaitForFlashmode.setSize(616, 429);
+		shlWaitForFlashmode.setSize(616, 418);
 		shlWaitForFlashmode.setText("Wait for Flashmode");
 		
 		Composite composite = new Composite(shlWaitForFlashmode, SWT.NONE);
@@ -78,7 +78,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 		final GifCLabel lbl = new GifCLabel(composite_1, SWT.CENTER);
 		lbl.setText("");
 		lbl.setGifImage(this.getClass().getResourceAsStream("/gui/ressources/flashmode.gif"));
-		lbl.setBounds(10, 35, 350, 346);
+		lbl.setBounds(10, 35, 350, 339);
 		
 		Button btnCancel = new Button(shlWaitForFlashmode, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -89,7 +89,7 @@ public class WaitDeviceForFlashmode extends Dialog {
 				shlWaitForFlashmode.dispose();
 			}
 		});
-		btnCancel.setBounds(532, 364, 68, 23);
+		btnCancel.setBounds(538, 364, 68, 28);
 		btnCancel.setText("Cancel");
 	}
 

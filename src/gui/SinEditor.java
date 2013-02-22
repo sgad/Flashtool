@@ -57,9 +57,9 @@ public class SinEditor extends Dialog {
 		
 		composite_1 = new Composite(shlSinEditor, SWT.NONE);
 		fd_btnClose.top = new FormAttachment(composite_1, 57);
-		fd_btnClose.right = new FormAttachment(composite_1, 0, SWT.RIGHT);
 		composite_1.setLayout(new GridLayout(3, false));
 		FormData fd_composite_1 = new FormData();
+		fd_composite_1.bottom = new FormAttachment(0, 48);
 		fd_composite_1.top = new FormAttachment(0, 10);
 		fd_composite_1.left = new FormAttachment(btnDumpHeader, 0, SWT.LEFT);
 		fd_composite_1.right = new FormAttachment(100, -10);
@@ -74,7 +74,7 @@ public class SinEditor extends Dialog {
 		sourceFile = new Text(composite_1, SWT.BORDER);
 		sourceFile.setEnabled(false);
 		GridData gd_sourceFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_sourceFile.widthHint = 359;
+		gd_sourceFile.widthHint = 385;
 		sourceFile.setLayoutData(gd_sourceFile);
 		
 		button = new Button(composite_1, SWT.NONE);
@@ -106,7 +106,7 @@ public class SinEditor extends Dialog {
 			}
 		});
 		GridData gd_button = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_button.widthHint = 32;
+		gd_button.widthHint = 34;
 		button.setLayoutData(gd_button);
 		button.setText("...");
 		button.setFont(SWTResourceManager.getFont("Arial", 11, SWT.NORMAL));
@@ -199,6 +199,7 @@ public class SinEditor extends Dialog {
 		btnClose = new Button(shlSinEditor, SWT.NONE);
 		fd_btnClose = new FormData();
 		fd_btnClose.left = new FormAttachment(0, 437);
+		fd_btnClose.right = new FormAttachment(100, -10);
 		btnClose.setLayoutData(fd_btnClose);
 		btnClose.addSelectionListener(new SelectionAdapter() {
 			@Override

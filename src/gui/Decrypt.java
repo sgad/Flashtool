@@ -219,7 +219,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnSourceFolder = new Button(composite, SWT.NONE);
 		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_btnSourceFolder.widthHint = 32;
+		gd_btnSourceFolder.widthHint = 85;
 		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
 		btnSourceFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -265,7 +265,7 @@ public class Decrypt extends Dialog {
 		Composite composite_1 = new Composite(shlDecruptWizard, SWT.NONE);
 		composite_1.setLayout(new GridLayout(1, false));
 		FormData fd_composite_1 = new FormData();
-		fd_composite_1.bottom = new FormAttachment(list, 120);
+		fd_composite_1.bottom = new FormAttachment(100, -89);
 		fd_composite_1.top = new FormAttachment(composite, 61);
 		fd_composite_1.left = new FormAttachment(list, 5);
 		fd_composite_1.right = new FormAttachment(list_1, -6);
@@ -273,7 +273,7 @@ public class Decrypt extends Dialog {
 		
 		Button btnNewButton_2 = new Button(composite_1, SWT.NONE);
 		GridData gd_btnNewButton_2 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_2.widthHint = 37;
+		gd_btnNewButton_2.widthHint = 40;
 		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override

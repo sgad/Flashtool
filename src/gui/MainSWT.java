@@ -120,7 +120,7 @@ public class MainSWT {
 				display.sleep();
 			}
 		}
-		System.out.println("here");
+		System.exit(0);
 	}
 
 	public void doDisableIdent() {

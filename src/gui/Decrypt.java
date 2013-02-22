@@ -13,9 +13,9 @@ import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -29,17 +29,19 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
+import org.system.OS;
 
 public class Decrypt extends Dialog {
 
 	protected Shell shlDecruptWizard;
-	private Text sourceFolder;
+	private Text txtSourceFolder;
 	ListViewer listViewerFiles;
 	ListViewer listViewerConvert;
 	Vector files = new Vector();
@@ -78,6 +80,7 @@ public class Decrypt extends Dialog {
 	 */
 	private void createContents() {
 		shlDecruptWizard = new Shell(getParent(), getStyle());
+		setSize(shlDecruptWizard);
 		shlDecruptWizard.setSize(539, 300);
 		shlDecruptWizard.setText("Decrypt Wizard");
 		shlDecruptWizard.setLayout(new FormLayout());
@@ -160,6 +163,7 @@ public class Decrypt extends Dialog {
 	      });
 		
 		Button btnNewButton_1 = new Button(shlDecruptWizard, SWT.NONE);
+		setSize(btnNewButton_1);
 		FormData fd_btnNewButton_1 = new FormData();
 		fd_btnNewButton_1.left = new FormAttachment(list, 16);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
@@ -180,6 +184,7 @@ public class Decrypt extends Dialog {
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlDecruptWizard, SWT.NONE);
+		setSize(btnNewButton_2);
 		fd_btnNewButton_1.bottom = new FormAttachment(100, -139);
 		FormData fd_btnNewButton_2 = new FormData();
 		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 30);
@@ -208,32 +213,34 @@ public class Decrypt extends Dialog {
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Files to convert :");
 		
-		Button btnNewButton_3 = new Button(shlDecruptWizard, SWT.NONE);
-		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.right = new FormAttachment(100, -11);
-		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
-		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
+		Button btnCancel = new Button(shlDecruptWizard, SWT.NONE);
+		setSize(btnCancel);
+		FormData fd_btnCancel = new FormData();
+		fd_btnCancel.right = new FormAttachment(100, -11);
+		btnCancel.setLayoutData(fd_btnCancel);
+		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shlDecruptWizard.dispose();
 			}
 		});
-		btnNewButton_3.setText("Cancel");
+		btnCancel.setText("Cancel");
 		
-		Button btnNewButton_4 = new Button(shlDecruptWizard, SWT.NONE);
-		fd_btnNewButton_3.top = new FormAttachment(btnNewButton_4, 0, SWT.TOP);
-		FormData fd_btnNewButton_4 = new FormData();
-		fd_btnNewButton_4.right = new FormAttachment(100, -71);
-		fd_btnNewButton_4.top = new FormAttachment(list_1, 7);
-		btnNewButton_4.setLayoutData(fd_btnNewButton_4);
-		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
+		Button btnConvert = new Button(shlDecruptWizard, SWT.NONE);
+		setSize(btnConvert);
+		fd_btnCancel.top = new FormAttachment(btnConvert, 0, SWT.TOP);
+		FormData fd_btnConvert = new FormData();
+		fd_btnConvert.right = new FormAttachment(100, -71);
+		fd_btnConvert.top = new FormAttachment(list_1, 7);
+		btnConvert.setLayoutData(fd_btnConvert);
+		btnConvert.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (convert.size()>0) result=convert;
 				shlDecruptWizard.dispose();
 			}
 		});
-		btnNewButton_4.setText("Convert");
+		btnConvert.setText("Convert");
 		
 		Composite composite = new Composite(shlDecruptWizard, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
@@ -244,29 +251,30 @@ public class Decrypt extends Dialog {
 		fd_composite.top = new FormAttachment(0, 10);
 		composite.setLayoutData(fd_composite);
 		
-		Label lblNewLabel = new Label(composite, SWT.NONE);
-		GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.widthHint = 92;
-		lblNewLabel.setLayoutData(gd_lblNewLabel);
-		lblNewLabel.setText("Source Folder : ");
-		lblNewLabel.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
-		sourceFolder = new Text(composite, SWT.BORDER);
-		GridData gd_sourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_sourceFolder.widthHint = 359;
-		sourceFolder.setLayoutData(gd_sourceFolder);
+		Label lblSourceFolder = new Label(composite, SWT.NONE);
+		GridData gd_lblSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblSourceFolder.widthHint = 92;
+		lblSourceFolder.setLayoutData(gd_lblSourceFolder);
+		lblSourceFolder.setText("Source Folder : ");
+		setSize(lblSourceFolder);
+		txtSourceFolder = new Text(composite, SWT.BORDER);
+		GridData gd_txtSourceFolder = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_txtSourceFolder.widthHint = 359;
+		txtSourceFolder.setLayoutData(gd_txtSourceFolder);
 		
-		Button btnNewButton = new Button(composite, SWT.NONE);
-		GridData gd_btnNewButton = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_btnNewButton.widthHint = 32;
-		btnNewButton.setLayoutData(gd_btnNewButton);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		Button btnSourceFolder = new Button(composite, SWT.NONE);
+		setSize(btnSourceFolder);
+		GridData gd_btnSourceFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_btnSourceFolder.widthHint = 32;
+		btnSourceFolder.setLayoutData(gd_btnSourceFolder);
+		btnSourceFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dlg = new DirectoryDialog(shlDecruptWizard);
 
 		        // Set the initial filter path according
 		        // to anything they've selected or typed in
-		        dlg.setFilterPath(sourceFolder.getText());
+		        dlg.setFilterPath(txtSourceFolder.getText());
 
 		        // Change the title bar text
 		        dlg.setText("Directory chooser");
@@ -280,11 +288,11 @@ public class Decrypt extends Dialog {
 		        String dir = dlg.open();
 		        if (dir != null) {
 		          // Set the text box to the new selection
-		        	if (!sourceFolder.getText().equals(dir)) {
-		        		sourceFolder.setText(dir);
+		        	if (!txtSourceFolder.getText().equals(dir)) {
+		        		txtSourceFolder.setText(dir);
 		        		files = new Vector();
 		        		convert = new Vector();
-		    			File srcdir = new File(sourceFolder.getText());
+		    			File srcdir = new File(txtSourceFolder.getText());
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
 		    				if (chld[i].getName().toUpperCase().startsWith("FILE") && chld[i].length()>20000)
@@ -296,8 +304,31 @@ public class Decrypt extends Dialog {
 		        }
 			}
 		});
-		btnNewButton.setText("...");
-		btnNewButton.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
+		btnSourceFolder.setText("...");
+		btnSourceFolder.setFont(new Font(Display.getCurrent(),"Arial",11,SWT.NONE));
 
 	}
+
+	public void setSize(Label c) {
+		FontData[] fD = c.getFont().getFontData();
+		System.out.println(fD[0].getHeight());
+		if (OS.getName().equals("mac"))
+			fD[0].setHeight(9);
+		c.setFont( new Font(Display.getCurrent(),fD[0]));
+	}
+
+	public void setSize(Button c) {
+		FontData[] fD = c.getFont().getFontData();
+		if (OS.getName().equals("mac"))
+			fD[0].setHeight(9);
+		c.setFont( new Font(Display.getCurrent(),fD[0]));
+	}
+
+	public void setSize(Shell c) {
+		FontData[] fD = c.getFont().getFontData();
+		if (OS.getName().equals("mac"))
+			fD[0].setHeight(9);
+		c.setFont( new Font(Display.getCurrent(),fD[0]));
+	}
+
 }

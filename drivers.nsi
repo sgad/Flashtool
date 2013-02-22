@@ -131,12 +131,17 @@ Section /o "Xperia VL driver" SEC18
   File /r "Drivers\ADB\Xperia VL Drivers\*"
 SectionEnd
 
-Section /o "Flashmode Drivers" SEC19
+Section /o "Xperia Z and SO-02E drivers" SEC19
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia Z and SO-02E drivers"
+  File /r "Drivers\ADB\Xperia Z and SO-02E drivers\*"
+SectionEnd
+
+Section /o "Flashmode Drivers" SEC20
   SetOutPath "$TEMP\Flashtool\GordonGate"
   File /r "Drivers\GordonGate\*"
 SectionEnd
 
-Section /o "Fastboot Drivers" SEC20
+Section /o "Fastboot Drivers" SEC21
   SetOutPath "$TEMP\Flashtool\Fastboot"
   File /r "Drivers\FASTBOOT\*"
 SectionEnd
@@ -176,6 +181,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC18} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC19} ""
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC20} ""
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC21} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit

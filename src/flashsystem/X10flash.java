@@ -2,6 +2,8 @@ package flashsystem;
 
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -253,6 +255,7 @@ public class X10flash {
 		}
 		else {
 			loader = getDefaultLoader();
+			if (!new File(loader).exists()) loader="";
 			if (loader.length()==0)
 				if (_bundle.hasLoader()) {
 					MyLogger.getLogger().info("Device loader has not been identified. Using the one from the bundle");

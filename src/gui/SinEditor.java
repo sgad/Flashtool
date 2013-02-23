@@ -54,62 +54,6 @@ public class SinEditor extends Dialog {
 	public Object open() {
 		createContents();
 		WidgetsTool.setSize(shlSinEditor);
-		
-		composite_1 = new Composite(shlSinEditor, SWT.NONE);
-		fd_btnClose.top = new FormAttachment(composite_1, 57);
-		composite_1.setLayout(new GridLayout(3, false));
-		FormData fd_composite_1 = new FormData();
-		fd_composite_1.bottom = new FormAttachment(0, 48);
-		fd_composite_1.top = new FormAttachment(0, 10);
-		fd_composite_1.left = new FormAttachment(btnDumpHeader, 0, SWT.LEFT);
-		fd_composite_1.right = new FormAttachment(100, -10);
-		composite_1.setLayoutData(fd_composite_1);
-		
-		lblSinFile = new Label(composite_1, SWT.NONE);
-		GridData gd_lblSinFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblSinFile.widthHint = 62;
-		lblSinFile.setLayoutData(gd_lblSinFile);
-		lblSinFile.setText("Sin file :");
-		
-		sourceFile = new Text(composite_1, SWT.BORDER);
-		sourceFile.setEnabled(false);
-		GridData gd_sourceFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_sourceFile.widthHint = 385;
-		sourceFile.setLayoutData(gd_sourceFile);
-		
-		button = new Button(composite_1, SWT.NONE);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(shlSinEditor);
-
-		        // Set the initial filter path according
-		        // to anything they've selected or typed in
-		        dlg.setFilterPath(sourceFile.getText());
-		        dlg.setFilterExtensions(new String[]{"*.sin"});
-
-		        // Change the title bar text
-		        dlg.setText("SIN File Chooser");
-		        // Calling open() will open and run the dialog.
-		        // It will return the selected directory, or
-		        // null if user cancels
-		        String dir = dlg.open();
-		        if (dir != null) {
-		          // Set the text box to the new selection
-		        	if (!sourceFile.getText().equals(dir)) {
-		        		sourceFile.setText(dir);
-		        		btnDumpHeader.setEnabled(true);
-		        		btnDumpData.setEnabled(true);
-		        		btnNewButton_1.setEnabled(true);
-		        	}
-		        }
-			}
-		});
-		GridData gd_button = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_button.widthHint = 34;
-		button.setLayoutData(gd_button);
-		button.setText("...");
-		button.setFont(SWTResourceManager.getFont("Arial", 11, SWT.NORMAL));
 		shlSinEditor.open();
 		shlSinEditor.layout();
 		Display display = getParent().getDisplay();
@@ -208,5 +152,59 @@ public class SinEditor extends Dialog {
 			}
 		});
 		btnClose.setText("Close");
+		composite_1 = new Composite(shlSinEditor, SWT.NONE);
+		fd_btnClose.top = new FormAttachment(composite_1, 57);
+		composite_1.setLayout(new GridLayout(3, false));
+		FormData fd_composite_1 = new FormData();
+		fd_composite_1.bottom = new FormAttachment(0, 48);
+		fd_composite_1.top = new FormAttachment(0, 10);
+		fd_composite_1.left = new FormAttachment(btnDumpHeader, 0, SWT.LEFT);
+		fd_composite_1.right = new FormAttachment(100, -10);
+		composite_1.setLayoutData(fd_composite_1);
+		
+		lblSinFile = new Label(composite_1, SWT.NONE);
+		GridData gd_lblSinFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblSinFile.widthHint = 62;
+		lblSinFile.setLayoutData(gd_lblSinFile);
+		lblSinFile.setText("Sin file :");
+		
+		sourceFile = new Text(composite_1, SWT.BORDER);
+		sourceFile.setEnabled(false);
+		GridData gd_sourceFile = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_sourceFile.widthHint = 385;
+		sourceFile.setLayoutData(gd_sourceFile);
+		
+		button = new Button(composite_1, SWT.NONE);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dlg = new FileDialog(shlSinEditor);
+
+		        // Set the initial filter path according
+		        // to anything they've selected or typed in
+		        dlg.setFilterPath(sourceFile.getText());
+		        dlg.setFilterExtensions(new String[]{"*.sin"});
+
+		        // Change the title bar text
+		        dlg.setText("SIN File Chooser");
+		        // Calling open() will open and run the dialog.
+		        // It will return the selected directory, or
+		        // null if user cancels
+		        String dir = dlg.open();
+		        if (dir != null) {
+		          // Set the text box to the new selection
+		        	if (!sourceFile.getText().equals(dir)) {
+		        		sourceFile.setText(dir);
+		        		btnDumpHeader.setEnabled(true);
+		        		btnDumpData.setEnabled(true);
+		        		btnNewButton_1.setEnabled(true);
+		        	}
+		        }
+			}
+		});
+		GridData gd_button = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_button.widthHint = 34;
+		button.setLayoutData(gd_button);
+		button.setText("...");
 	}
 }

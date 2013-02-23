@@ -180,6 +180,22 @@ public class MainSWT {
 		});
 		mntmNewItem.setText("Sin Editor");
 		
+		MenuItem mntmExtractors = new MenuItem(menu_4, SWT.CASCADE);
+		mntmExtractors.setText("Extractors");
+		
+		Menu menu_5 = new Menu(mntmExtractors);
+		mntmExtractors.setMenu(menu_5);
+		
+		MenuItem mntmElf = new MenuItem(menu_5, SWT.NONE);
+		mntmElf.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ElfEditor elfedit = new ElfEditor(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				elfedit.open();
+			}
+		});
+		mntmElf.setText("ELF");
+		
 		MenuItem mntmNewItem_1 = new MenuItem(menu_4, SWT.NONE);
 		mntmNewItem_1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -703,5 +719,4 @@ public class MainSWT {
 			e.printStackTrace();
 		}
 	}
-
 }

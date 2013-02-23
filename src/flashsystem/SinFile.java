@@ -144,30 +144,16 @@ public class SinFile {
 						foutpart.write(sinheader.getPartitionInfo());
 						foutpart.flush();
 						foutpart.close();
-					}
-		
-					// To fill the empty file with FF values
-					byte[] empty = new byte[65*1024];
-					for (int i=0; i<empty.length;i++)
-						empty[i] = (byte)0xFF;		
-					// Creation of empty file
-					File f = new File(getImageFileName());
-					f.delete();
-					RandomAccessFile fout = new RandomAccessFile(f,"rw");
+					}		
 					MyLogger.getLogger().info("Generating container file");
-					MyLogger.getLogger().info("Output file size : " + sinheader.getOutfileLengthString());
-					for (long i = 0; i<sinheader.getOutfileLength()/empty.length; i++) {
-						fout.write(empty);
-					}
-					for (long i = 0; i<sinheader.getOutfileLength()%empty.length; i++) {
-						fout.write(0xFF);
-					}
+					RandomAccessFile fout = OS.generateEmptyFile(getImageFileName(), sinheader.getOutfileLength(), (byte)0xFF);
 					MyLogger.getLogger().info("Finished Generating container file");
 					RandomAccessFile findata = new RandomAccessFile(sinfile,"r");		
 					// Positionning in files
 					MyLogger.getLogger().info("Extracting data into container");
 					findata.seek(sinheader.getHeaderSize());
 					Vector<SinHashBlock> blocks = sinheader.getHashBlocks();
+					MyLogger.initProgress(blocks.size());
 					for (int i=0;i<blocks.size();i++) {
 						SinHashBlock b = blocks.elementAt(i);
 						byte[] data = new byte[b.getLength()];
@@ -175,13 +161,16 @@ public class SinFile {
 						b.validate(data);
 						fout.seek(blocks.size()==1?0:b.getOffset());
 						fout.write(data);
+						MyLogger.updateProgress();
 					}
+					MyLogger.initProgress(0);
 					fout.close();
 					findata.close();
 					MyLogger.getLogger().info("Data Extraction finished");
 				}
 				catch (Exception e) {
 					MyLogger.getLogger().error("Error while extracting data : "+e.getMessage());
+					MyLogger.initProgress(0);
 					e.printStackTrace();
 				}
 	}

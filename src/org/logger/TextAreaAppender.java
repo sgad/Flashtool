@@ -11,6 +11,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -84,8 +85,13 @@ public class TextAreaAppender extends WriterAppender {
 	
 	public static void append(final Color color, final String message) {
 		if (styledText != null) {
-					styledText.setForeground(color);
 					styledText.append(message);
+					StyleRange styleRange = new StyleRange();
+					styleRange.start = styledText.getCharCount()-message.length();
+					styleRange.length = message.length();
+					styleRange.fontStyle = SWT.NORMAL;
+					styleRange.foreground = color;
+					styledText.setStyleRange(styleRange);
 					styledText.setSelection(styledText.getCharCount());
 		}
     }

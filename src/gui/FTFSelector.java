@@ -181,6 +181,7 @@ public class FTFSelector extends Dialog {
 		columnsContent[0].setText("Filename");
 	    for (int i = 0, n = tableContent.getColumnCount(); i < n; i++) {
 	    	tableContent.getColumn(i).pack();
+	    	tableContent.getColumn(i).setWidth(153);
 	      }
 		tableContent.setHeaderVisible(true);
 		tableContent.setLinesVisible(true);

@@ -475,13 +475,13 @@ public class MainSWT {
     			}
     			if (Devices.getCurrent().isRecovery()) {
     				MyLogger.getLogger().info("Phone in recovery mode");
-    				WidgetTask.setEnabled(tltmRoot,false);
+    				//WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
     				doGiveRoot();
     			}
     			else {
     				boolean hasSU = Devices.getCurrent().hasSU();
-    				WidgetTask.setEnabled(tltmRoot, !hasSU);
+    				//WidgetTask.setEnabled(tltmRoot, !hasSU);
     				if (hasSU) {
     					boolean hasRoot = Devices.getCurrent().hasRoot();
     					if (hasRoot) {

@@ -567,7 +567,7 @@ public class MainSWT {
 			if (!AdbUtility.exists("/system/flashtool")) {
 				Devices.getCurrent().doBusyboxHelper();
 				MyLogger.getLogger().info("Installing toolbox to device...");
-				AdbUtility.push(OS.getWorkDir()+File.pathSeparator+"custom"+File.pathSeparator+"root"+File.pathSeparator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
 				org.system.Shell ftshell = new org.system.Shell("installftkit");
 				ftshell.runRoot();
 			}

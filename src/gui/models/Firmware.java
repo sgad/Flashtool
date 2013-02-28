@@ -13,6 +13,7 @@ public class Firmware {
 	  private String version;
 	  private String branding;
 	  private Firmwares firmwares;
+	  private Bundle bundle;
 
 	  private List content;
 
@@ -25,8 +26,8 @@ public class Firmware {
 	    version = pversion;
 	    branding = pbranding;
 	    content = new LinkedList();
-	    Bundle b = new Bundle(pfilename,Bundle.JARTYPE);
-		Enumeration<String> e = b.getMeta().getAllEntries(true);
+	    bundle = new Bundle(pfilename,Bundle.JARTYPE);
+		Enumeration<String> e = bundle.getMeta().getAllEntries(true);
 		while (e.hasMoreElements()) {
 			String elem = e.nextElement();
 			add(new Content(elem));
@@ -49,6 +50,10 @@ public class Firmware {
 		    return branding;
 	  }
 
+	  public Bundle getBundle() {
+		  return bundle;
+	  }
+	  
 	  public boolean add(Content fcontent) {
 	    boolean added = content.add(fcontent);
 	    if (added)
@@ -56,6 +61,26 @@ public class Firmware {
 	    return added;
 	  }
 
+	  public void disableCateg(String categ) {
+		  bundle.getMeta().setCategEnabled(categ, false);
+		  content.clear();
+			Enumeration<String> e = bundle.getMeta().getAllEntries(true);
+			while (e.hasMoreElements()) {
+				String elem = e.nextElement();
+				add(new Content(elem));
+		    }
+
+	  }
+	  
+	  public void enableCateg(String categ) {
+		  bundle.getMeta().setCategEnabled(categ, true);
+		  content.clear();
+			Enumeration<String> e = bundle.getMeta().getAllEntries(true);
+			while (e.hasMoreElements()) {
+				String elem = e.nextElement();
+				add(new Content(elem));
+		    }
+	  }
 	  /**
 	   * Gets the players
 	   * 

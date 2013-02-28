@@ -214,7 +214,7 @@ public class MainSWT {
 		});
 		mntmNewItem_1.setText("SEUS Decrypt");
 		
-		/*MenuItem mntmBundleCreation = new MenuItem(menu_4, SWT.NONE);
+		MenuItem mntmBundleCreation = new MenuItem(menu_4, SWT.NONE);
 		mntmBundleCreation.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,7 +222,7 @@ public class MainSWT {
 				cre.open();
 			}
 		});
-		mntmBundleCreation.setText("Bundle creation");*/
+		mntmBundleCreation.setText("Bundle Creation");
 		
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
@@ -304,7 +304,7 @@ public class MainSWT {
 		tltmFlash.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/flash_32.png"));
 		tltmFlash.setToolTipText("Flash device");
 		
-		/*tltmBLU = new ToolItem(toolBar, SWT.NONE);
+		tltmBLU = new ToolItem(toolBar, SWT.NONE);
 		tltmBLU.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -314,7 +314,7 @@ public class MainSWT {
 		tltmBLU.setToolTipText("Bootloader Unlock");
 		tltmBLU.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/blu_32.png"));
 		
-		tltmRoot = new ToolItem(toolBar, SWT.NONE);
+		/*tltmRoot = new ToolItem(toolBar, SWT.NONE);
 		tltmRoot.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/root_32.png"));
 		tltmRoot.setEnabled(false);
 		tltmRoot.setToolTipText("Root device");*/

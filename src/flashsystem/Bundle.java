@@ -64,6 +64,7 @@ public final class Bundle {
 			_device = _firmware.getManifest().getMainAttributes().getValue("device");
 			_version = _firmware.getManifest().getMainAttributes().getValue("version");
 			_branding = _firmware.getManifest().getMainAttributes().getValue("branding");
+			_cmd25 = _firmware.getManifest().getMainAttributes().getValue("cmd25");
 			Enumeration<JarEntry> e = _firmware.entries();
 			while (e.hasMoreElements()) {
 				BundleEntry entry = new BundleEntry(this,e.nextElement());

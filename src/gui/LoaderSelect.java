@@ -61,12 +61,12 @@ public class LoaderSelect extends Dialog {
 		shell.setText(getText());
 		
 		btnLocked = new Button(shell, SWT.RADIO);
-		btnLocked.setBounds(42, 10, 90, 16);
+		btnLocked.setBounds(42, 10, 110, 16);
 		btnLocked.setText("Locked loader");
 		btnLocked.setSelection(true);
 		
 		Button btnUnlocked = new Button(shell, SWT.RADIO);
-		btnUnlocked.setBounds(42, 32, 90, 16);
+		btnUnlocked.setBounds(42, 32, 110, 16);
 		btnUnlocked.setText("Unlocked loader");
 		
 		Button btnCancel = new Button(shell, SWT.NONE);

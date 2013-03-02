@@ -1,5 +1,6 @@
 package org.system;
 
+import java.io.File;
 import java.util.HashSet;
 import org.adb.AdbUtility;
 
@@ -82,6 +83,17 @@ public class DeviceEntry {
 	
 	public DeviceEntry(PropertiesFile entry) {
 		_entry = entry;
+	}
+	
+	public DeviceEntry(String Id) {
+		_entry = new PropertiesFile();
+		try {
+			String path = OS.getWorkDir()+File.separator+"devices"+File.separator+Id+File.separator+Id+".properties";
+			_entry.open("",path);
+		}
+		catch (Exception e) {
+		}
+		                     
 	}
 	
 	public String getId() {

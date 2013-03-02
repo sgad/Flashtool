@@ -159,9 +159,6 @@ public class DeviceSelector extends Dialog {
 				  tableDevices.setSortColumn(tableDevices.getColumn(i));  
 			  }
 		}
-
-		fillTable();
-		//tableDevices.clearAll();
 	}
 	
 	public void fillTable() {

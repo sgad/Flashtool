@@ -6,6 +6,7 @@ import gui.models.CategoriesContentProvider;
 import gui.models.CategoriesModel;
 import gui.models.Category;
 import gui.models.SinfilesLabelProvider;
+import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.createFTFJob;
 
@@ -17,6 +18,7 @@ import java.util.Vector;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -41,6 +43,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
+import org.system.DeviceEntry;
+import org.system.OS;
 
 public class BundleCreator extends Dialog {
 
@@ -195,15 +199,48 @@ public class BundleCreator extends Dialog {
 		btnCreate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (sourceFolder.getText().length()==0) {
+					showErrorMessageBox("You must point to a folder containing sin files");
+					return;					
+				}
+				if ((device.getText().length()==0) || (version.getText().length()==0) || (branding.getText().length()==0)) {
+					showErrorMessageBox("Device, Versio, Branding : all fields must be set");
+					return;
+				}
+				File f = new File(OS.getWorkDir()+File.separator+"firmwares"+File.separator+device.getText()+"_"+version.getText()+"_"+branding.getText()+".ftf");
+				if (f.exists()) {
+					showErrorMessageBox("This bundle name already exists");
+					return;
+				}
 				Bundle b = new Bundle();
 				b.setMeta(meta);
 				b.setDevice(device.getText());
 				b.setVersion(version.getText());
 				b.setBranding(branding.getText());
 				b.setCmd25(btnNoFinalVerification.getSelection()?"true":"false");
+				if (!b.hasLoader()) {
+					String result = WidgetTask.openDeviceSelector(shlBundler);
+					if (result.length()>0) {
+						DeviceEntry ent = new DeviceEntry(result);
+						if (ent.hasUnlockedLoader()) {
+							String res = WidgetTask.openLoaderSelect(shlBundler);
+							if (res.equals("U"))
+								b.setLoader(new File(ent.getLoaderUnlocked()));
+							else
+								if (res.equals("L"))
+									b.setLoader(new File(ent.getLoader()));
+								else {
+									showErrorMessageBox("This bundle must contain a loader");
+									return;
+								}
+
+						}
+					}
+				}
 				createFTFJob j = new createFTFJob("Create FTF");
 				j.setBundle(b);
 				j.schedule();
+				shlBundler.dispose();
 			}
 		});
 		FormData fd_btnCreate = new FormData();
@@ -263,8 +300,9 @@ public class BundleCreator extends Dialog {
 						}
 					}
 					if (o instanceof File) {
-						files.add((File)o);
-						meta.remove(((File)o).getName());
+						String internal = ((File)o).getName();
+						files.add(new File(meta.getPath(internal)));
+						meta.remove(internal);
 						model.refresh(meta);
 						treeViewerCategories.setAutoExpandLevel(2);
 						treeViewerCategories.refresh();
@@ -339,11 +377,6 @@ public class BundleCreator extends Dialog {
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
 		    				if (chld[i].getName().toUpperCase().endsWith("SIN")) {
-		    					try {
-		    						meta.process(chld[i].getName(), chld[i].getAbsolutePath());
-		    						meta.remove(chld[i].getName());
-		    					}
-		    					catch (Exception ex) {}
 		    					files.add(chld[i]);
 		    				}
 		    			}
@@ -429,6 +462,13 @@ public class BundleCreator extends Dialog {
 		gd_btnNoFinalVerification.heightHint = 24;
 		btnNoFinalVerification.setLayoutData(gd_btnNoFinalVerification);
 		btnNoFinalVerification.setText("No final verification");
-
 	}
+	
+	public void showErrorMessageBox(String message) {
+		MessageBox mb = new MessageBox(shlBundler,SWT.ICON_ERROR|SWT.OK);
+		mb.setText("Errorr");
+		mb.setMessage(message);
+		int result = mb.open();
+	}
+
 }

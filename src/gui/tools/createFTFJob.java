@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.logger.MyLogger;
+
 import flashsystem.Bundle;
 
 public class createFTFJob extends Job {
@@ -21,6 +23,7 @@ public class createFTFJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		bundle.createFTF();
+    		MyLogger.getLogger().info("Bundle creation finished");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

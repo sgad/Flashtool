@@ -15,6 +15,7 @@ import flashsystem.X10flash;
 import gui.tools.SearchFastbootJob;
 import gui.tools.SearchJob;
 import gui.tools.WidgetsTool;
+import org.eclipse.swt.widgets.Label;
 
 public class WaitDeviceForFastboot extends Dialog {
 
@@ -72,6 +73,22 @@ public class WaitDeviceForFastboot extends Dialog {
 		
 		Composite composite = new Composite(shlWaitForFastbootmode, SWT.NONE);
 		composite.setBounds(10, 10, 200, 348);
+		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setBounds(10, 120, 180, 15);
+		lblNewLabel.setText("1 - Unplug the device");
+		
+		Label lblNewLabel_1 = new Label(composite, SWT.NONE);
+		lblNewLabel_1.setBounds(10, 141, 180, 15);
+		lblNewLabel_1.setText("2 - Power off the device");
+		
+		Label lblNewLabel_2 = new Label(composite, SWT.NONE);
+		lblNewLabel_2.setBounds(10, 162, 180, 15);
+		lblNewLabel_2.setText("3 - Press the menu button");
+		
+		Label lblNewLabel_3 = new Label(composite, SWT.NONE);
+		lblNewLabel_3.setBounds(10, 183, 180, 15);
+		lblNewLabel_3.setText("4 - Plug the USB cable");
 		
 		Composite composite_1 = new Composite(shlWaitForFastbootmode, SWT.NONE);
 		composite_1.setBounds(216, 10, 384, 348);

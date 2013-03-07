@@ -14,6 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import flashsystem.X10flash;
 import gui.tools.SearchJob;
 import gui.tools.WidgetsTool;
+import org.eclipse.swt.widgets.Label;
 
 public class WaitDeviceForFlashmode extends Dialog {
 
@@ -72,6 +73,22 @@ public class WaitDeviceForFlashmode extends Dialog {
 		Composite composite = new Composite(shlWaitForFlashmode, SWT.NONE);
 		composite.setBounds(10, 10, 200, 348);
 		
+		Label lblNewLabel = new Label(composite, SWT.NONE);
+		lblNewLabel.setBounds(10, 122, 180, 15);
+		lblNewLabel.setText("1 - Unplug the device");
+		
+		Label lblPower = new Label(composite, SWT.NONE);
+		lblPower.setBounds(10, 143, 180, 15);
+		lblPower.setText("2 - Power off the device");
+		
+		Label lblNewLabel_1 = new Label(composite, SWT.NONE);
+		lblNewLabel_1.setBounds(10, 164, 180, 15);
+		lblNewLabel_1.setText("3 - Press the back button");
+		
+		Label lblPlug = new Label(composite, SWT.NONE);
+		lblPlug.setBounds(10, 185, 180, 15);
+		lblPlug.setText("4 - Plug the USB cable");
+		
 		Composite composite_1 = new Composite(shlWaitForFlashmode, SWT.NONE);
 		composite_1.setBounds(216, 10, 384, 348);
 		
@@ -92,5 +109,4 @@ public class WaitDeviceForFlashmode extends Dialog {
 		btnCancel.setBounds(538, 364, 68, 28);
 		btnCancel.setText("Cancel");
 	}
-
 }

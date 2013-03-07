@@ -26,17 +26,17 @@ public class BundleMetaData {
 		_categex.setProperty("BASEBAND", "Exclude baseband");
 		_categex.setProperty("KERNEL", "Exclude kernel");
 		_categex.setProperty("PARTITION", "Exclude partition");
-		_categex.setProperty("NONE", "Exclude uncategorized");
+		_categex.setProperty("UNKNOWN", "Exclude uncategorized");
 		_categex.setProperty("FOTA", "Exclude Fota");
 		_categex.setProperty("TA", "Exclude TA");
 		_categwipe.setProperty("DATA", "Wipe data");
 		_categwipe.setProperty("CACHE", "Wipe cache");
-		_categwipe.setProperty("LOG", "Wipe apps log");
+		_categwipe.setProperty("APPSLOG", "Wipe apps log");
 		_catorders.setProperty("1", "KERNEL");
 		_catorders.setProperty("2", "FOTA");
 		_catorders.setProperty("3", "BASEBAND");
-		_catorders.setProperty("4", "NONE");
-		_catorders.setProperty("5", "LOG");
+		_catorders.setProperty("4", "UNKNWONW");
+		_catorders.setProperty("5", "APPSLOG");
 		_catorders.setProperty("6", "SYSTEM");
 		_catorders.setProperty("7", "DATA");
 		_catorders.setProperty("8", "CACHE");
@@ -106,7 +106,7 @@ public class BundleMetaData {
 		else if (intname.toUpperCase().contains("FOTA"))
 			add(intname,"fota".toUpperCase());
 		else if (intname.toUpperCase().contains("APPS_LOG"))
-			add(intname,"log".toUpperCase());
+			add(intname,"appslog".toUpperCase());
 		else if (intname.toUpperCase().contains("CACHE"))
 			add(intname,"cache".toUpperCase());
 		else if (intname.toUpperCase().contains("KERNEL"))
@@ -118,7 +118,7 @@ public class BundleMetaData {
 		else if (intname.toUpperCase().endsWith(".TA"))
 			add(intname,"ta".toUpperCase());
 		else
-			add(intname,"none".toUpperCase());
+			add(intname,"unknown".toUpperCase());
 	}
 	
 	public void add(String intname, String categorie) throws Exception {

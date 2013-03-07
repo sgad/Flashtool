@@ -1,14 +1,17 @@
 package gui;
 
+import flashsystem.TaEntry;
+import flashsystem.X10flash;
+import gui.tools.BLUnlockJob;
 import gui.tools.WidgetsTool;
 
-import java.awt.Desktop;
-import java.net.URI;
-
+import org.adb.FastbootUtility;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
@@ -16,6 +19,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.logger.MyLogger;
+import org.system.RunOutputs;
 
 public class BLUWizard extends Dialog {
 
@@ -25,6 +30,7 @@ public class BLUWizard extends Dialog {
 	private Text textULCODE;
 	private Button btnGetUnlock;
 	private Button btnUnlock;
+	private X10flash _flash;
 
 	/**
 	 * Create the dialog.
@@ -33,19 +39,22 @@ public class BLUWizard extends Dialog {
 	 */
 	public BLUWizard(Shell parent, int style) {
 		super(parent, style);
-		setText("Bootmode chooser");
 	}
 
 	/**
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(String imei, String ulcode) {
+	public Object open(String imei, String ulcode,X10flash flash) {
+		_flash = flash;
 		createContents();
 		textIMEI.setText(imei);
 		textULCODE.setText(ulcode);
 		if (ulcode.length()>0) {
-			btnUnlock.setEnabled(false);
+			btnUnlock.setEnabled(true);
+			if (flash!=null) {
+				btnUnlock.setText("Relock");
+			}
 			btnGetUnlock.setEnabled(false);
 			textULCODE.setEditable(false);
 		}
@@ -72,7 +81,7 @@ public class BLUWizard extends Dialog {
 		    	  event.doit = true;
 		      }
 		    });
-		shlBootloaderUnlockWizard.setSize(286, 219);
+		shlBootloaderUnlockWizard.setSize(286, 183);
 		shlBootloaderUnlockWizard.setText("BootLoader Unlock Wizard");
 		
 		Label lblImei = new Label(shlBootloaderUnlockWizard, SWT.NONE);
@@ -81,27 +90,59 @@ public class BLUWizard extends Dialog {
 		
 		textIMEI = new Text(shlBootloaderUnlockWizard, SWT.BORDER);
 		textIMEI.setEditable(false);
-		textIMEI.setBounds(92, 7, 164, 21);
+		textIMEI.setBounds(106, 7, 164, 21);
 		
 		btnGetUnlock = new Button(shlBootloaderUnlockWizard, SWT.NONE);
 		btnGetUnlock.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				showInBrowser("http://unlockbootloader.sonymobile.com/unlock/step1");
+				Program.launch("http://unlockbootloader.sonymobile.com/unlock/step1");
 			}
 		});
-		btnGetUnlock.setBounds(110, 40, 118, 25);
+		btnGetUnlock.setBounds(127, 34, 118, 25);
 		btnGetUnlock.setText("Get Unlock Code");
 		
 		Label lblUnlockCode = new Label(shlBootloaderUnlockWizard, SWT.NONE);
-		lblUnlockCode.setBounds(10, 82, 85, 15);
+		lblUnlockCode.setBounds(10, 68, 85, 15);
 		lblUnlockCode.setText("Unlock Code :");
 		
 		textULCODE = new Text(shlBootloaderUnlockWizard, SWT.BORDER);
-		textULCODE.setBounds(92, 79, 164, 21);
+		textULCODE.setBounds(106, 65, 164, 21);
 		
 		btnUnlock = new Button(shlBootloaderUnlockWizard, SWT.NONE);
-		btnUnlock.setBounds(133, 114, 75, 25);
+		btnUnlock.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (textULCODE.getText().length()==0) {
+					showErrorMessageBox("Your must enter an unlock code");
+					return;
+				}
+				if (_flash==null) {
+					BLUnlockJob bj = new BLUnlockJob("Unlock Job");
+					bj.setULCode(textULCODE.getText());
+					bj.schedule();
+					btnUnlock.setEnabled(false);
+				}
+				else {
+					TaEntry ta = new TaEntry();
+					ta.setPartition(2226);
+					byte[] data = new byte[2];data[0]=0;data[1]=0;
+					ta.setData(data);
+					try {
+						MyLogger.getLogger().info("Relocking device");
+						_flash.openTA(2);
+						_flash.sendTAUnit(ta);
+						_flash.closeTA();
+						MyLogger.getLogger().info("Relock finished");
+						btnUnlock.setEnabled(false);
+					}
+					catch (Exception exc) {
+						exc.printStackTrace();
+					}
+				}
+			}
+		});
+		btnUnlock.setBounds(144, 92, 75, 25);
 		btnUnlock.setText("Unlock");
 		
 		Button btnNewButton_2 = new Button(shlBootloaderUnlockWizard, SWT.NONE);
@@ -111,19 +152,16 @@ public class BLUWizard extends Dialog {
 				shlBootloaderUnlockWizard.dispose();
 			}
 		});
-		btnNewButton_2.setBounds(195, 155, 75, 25);
-		btnNewButton_2.setText("Cancel");
+		btnNewButton_2.setBounds(195, 123, 75, 25);
+		btnNewButton_2.setText("Close");
 
 	}
 
-	private boolean showInBrowser(String url){
-		try {
-			Desktop.getDesktop().browse(new URI(url));
-		} 
-		catch (Exception e) {
-		} 
-        return true;
-        // some mod here
+	public void showErrorMessageBox(String message) {
+		MessageBox mb = new MessageBox(shlBootloaderUnlockWizard,SWT.ICON_ERROR|SWT.OK);
+		mb.setText("Errorr");
+		mb.setMessage(message);
+		int result = mb.open();
 	}
 
 }

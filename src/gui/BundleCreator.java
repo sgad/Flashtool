@@ -48,7 +48,7 @@ import org.system.OS;
 
 public class BundleCreator extends Dialog {
 
-	protected Object result;
+	protected Object result = new String("Create");
 	protected Shell shlBundler;
 	private Text sourceFolder;
 	private Text device;
@@ -88,6 +88,33 @@ public class BundleCreator extends Dialog {
 		createContents();
 		WidgetsTool.setSize(shlBundler);
 		
+		shlBundler.open();
+		shlBundler.layout();
+		Display display = getParent().getDisplay();
+		while (!shlBundler.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+
+	public Object open(String folder) {
+		createContents();
+		WidgetsTool.setSize(shlBundler);
+		sourceFolder.setText(folder);
+		meta.clear();
+		files = new Vector();
+		File srcdir = new File(sourceFolder.getText());
+		File[] chld = srcdir.listFiles();
+		for(int i = 0; i < chld.length; i++) {
+			if (chld[i].getName().toUpperCase().endsWith("SIN")) {
+				files.add(chld[i]);
+			}
+		}
+		model.refresh(meta);
+		treeViewerCategories.setInput(model);
+		listViewerFiles.setInput(files);
 		shlBundler.open();
 		shlBundler.layout();
 		Display display = getParent().getDisplay();
@@ -186,6 +213,7 @@ public class BundleCreator extends Dialog {
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				result = new String("Cancel");
 				shlBundler.dispose();
 			}
 		});

@@ -2,16 +2,13 @@
 
 <project default="all" name="Create Windows Package">
 	
-	<target name="all" depends="loadprops, clean, binaries, dodrivers, dosetup"/>
+	<target name="all" depends="clean, binaries, dodrivers, dosetup"/>
 
-	<target name="main_lib">
-        <tstamp>
-             <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
-        </tstamp>
+	<target name="main_lib" depends="loadprops">
         <jar destfile="../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>
-                <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${TODAY}"/>
+                <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${Internal-Date}"/>
             	<attribute name="Internal-Version" value="${Internal-Version}"/>
             </manifest>
         	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>

@@ -203,7 +203,13 @@ public final class Bundle {
 	    FileOutputStream stream = new FileOutputStream(ftf);
 	    JarOutputStream out = new JarOutputStream(stream, manifest);
 	    out.setLevel(Deflater.BEST_SPEED);
-		Enumeration<BundleEntry> e = allEntries();
+	    long size = 0L;
+		Enumeration<BundleEntry> esize = allEntries();
+		while (esize.hasMoreElements()) {
+			size += esize.nextElement().getSize();
+		}
+		MyLogger.initProgress(size/10240+(size%10240>0?1:0));
+	    Enumeration<BundleEntry> e = allEntries();
 		while (e.hasMoreElements()) {
 			BundleEntry entry = e.nextElement();
 			String name = entry.getName();
@@ -218,11 +224,13 @@ public final class Bundle {
 	          if (nRead <= 0)
 	            break;
 	          out.write(buffer, 0, nRead);
+	          MyLogger.updateProgress();
 	        }
 	        in.close();
 		}
 		out.close();
 	    stream.close();
+	    MyLogger.initProgress(0);
 	}
 
 	private void saveEntry(BundleEntry entry) throws IOException {
@@ -232,7 +240,7 @@ public final class Bundle {
 			String outname = "."+OS.getFileSeparator()+"firmwares"+OS.getFileSeparator()+"prepared"+OS.getFileSeparator()+entry.getName();
 			MyLogger.getLogger().debug("Writing Entry to "+outname);
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[10240];
 			int len;
 			while((len = in.read(buffer)) >= 0)
 				out.write(buffer, 0, len);

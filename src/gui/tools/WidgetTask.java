@@ -2,6 +2,7 @@ package gui.tools;
 
 import flashsystem.X10flash;
 import gui.BootModeSelector;
+import gui.BundleCreator;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.WaitDeviceForFastboot;
@@ -45,6 +46,21 @@ public class WidgetTask {
 					public void run() {
 			    		LoaderSelect dial = new LoaderSelect(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openBundleCreator(final Shell parent, final String folder) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		BundleCreator cre = new BundleCreator(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = cre.open(folder);
 						res.setResult(obj);
 						
 					}

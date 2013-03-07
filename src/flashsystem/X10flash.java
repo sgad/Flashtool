@@ -29,6 +29,7 @@ public class X10flash {
     private boolean modded_loader=false;
     private String currentdevice = "";
     private int maxpacketsize = 0;
+    private String serial = "";
 
     public X10flash(Bundle bundle) {
     	_bundle=bundle;
@@ -340,6 +341,7 @@ public class X10flash {
     	currentdevice = cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID2, false);
     	info = info + " - "+cmd.getLastReplyString();
+    	serial = cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID3, false);
     	info = info + " - "+cmd.getLastReplyString();
     	cmd.send(Command.CMD12, Command.TA_DEVID4, false);
@@ -478,4 +480,7 @@ public class X10flash {
     	return found;
     }
 
+    public String getSerial() {
+    	return serial;
+    }
 }

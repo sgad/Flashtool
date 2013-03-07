@@ -61,7 +61,6 @@ public class FTFSelector extends Dialog {
 	private Button btnCheckCmd25;
 	private Composite compositeContent;
 	private Composite compositeMisc;
-	private Properties btnHandles = new Properties();
 	private Button btnCancel;
 	private Label lblMisc;
 	private Label lblWipe;
@@ -380,7 +379,6 @@ public class FTFSelector extends Dialog {
 	}
 	
 	public void updateCheckBoxes() {
-		btnHandles.clear();
 		Control[] ctl = compositeWipe.getChildren();
 		for (int i = 0;i<ctl.length;i++) {
 			ctl[i].dispose();
@@ -424,7 +422,6 @@ public class FTFSelector extends Dialog {
 						tableContentViewer.refresh();
 					}
 				});
-				btnHandles.put(btnExclude.handle, categ);
 	    	}
 	    	Enumeration<String> wipe = result.getMeta().getWipe();
 	    	while (wipe.hasMoreElements()) {
@@ -447,7 +444,6 @@ public class FTFSelector extends Dialog {
 						tableContentViewer.refresh();
 					}
 				});
-				btnHandles.put(btnWipe.handle, categ);
 	    	}
 			btnCheckCmd25 = new Button(compositeMisc, SWT.CHECK);
 			btnCheckCmd25.addSelectionListener(new SelectionAdapter() {

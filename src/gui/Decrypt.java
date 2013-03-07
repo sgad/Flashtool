@@ -271,28 +271,6 @@ public class Decrypt extends Dialog {
 		fd_composite_1.right = new FormAttachment(list_1, -6);
 		composite_1.setLayoutData(fd_composite_1);
 		
-		Button btnNewButton_2 = new Button(composite_1, SWT.NONE);
-		GridData gd_btnNewButton_2 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_2.heightHint = 26;
-		gd_btnNewButton_2.widthHint = 40;
-		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
-		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)listViewerConvert.getSelection();
-				Iterator i = selection.iterator();
-				while (i.hasNext()) {
-					File f = (File)i.next();
-					convert.remove(f);
-					files.add(f);
-					listViewerFiles.refresh();
-					listViewerConvert.refresh();
-				}
-			}
-		});
-		btnNewButton_2.setText("<-");
-		new Label(composite_1, SWT.NONE);
-		
 		Button btnNewButton_1 = new Button(composite_1, SWT.NONE);
 		GridData gd_btnNewButton_1 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
 		gd_btnNewButton_1.heightHint = 26;
@@ -313,6 +291,28 @@ public class Decrypt extends Dialog {
 			}
 		});
 		btnNewButton_1.setText("->");
+		new Label(composite_1, SWT.NONE);
+		
+		Button btnNewButton_2 = new Button(composite_1, SWT.NONE);
+		GridData gd_btnNewButton_2 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_2.heightHint = 26;
+		gd_btnNewButton_2.widthHint = 40;
+		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
+		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)listViewerConvert.getSelection();
+				Iterator i = selection.iterator();
+				while (i.hasNext()) {
+					File f = (File)i.next();
+					convert.remove(f);
+					files.add(f);
+					listViewerFiles.refresh();
+					listViewerConvert.refresh();
+				}
+			}
+		});
+		btnNewButton_2.setText("<-");
 	}
 
 }

@@ -5,6 +5,8 @@ import gui.tools.WidgetsTool;
 import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Properties;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -48,6 +50,25 @@ public class DeviceSelector extends Dialog {
 	public Object open() {
 		createContents();
 		fillTable();
+		WidgetsTool.setSize(shlDeviceSelector);
+		shlDeviceSelector.open();
+		shlDeviceSelector.layout();
+		Display display = getParent().getDisplay();
+		while (!shlDeviceSelector.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+	/**
+	 * Open the dialog.
+	 * @return the result
+	 */
+
+	public Object open(Properties p) {
+		createContents();
+		fillTable(p);
 		WidgetsTool.setSize(shlDeviceSelector);
 		shlDeviceSelector.open();
 		shlDeviceSelector.layout();
@@ -176,4 +197,21 @@ public class DeviceSelector extends Dialog {
 		tableDevices.pack();
 		tableDevices.setRedraw(true);
 	}
+
+	public void fillTable(Properties p) {
+		tableDevices.setRedraw(false);
+		Enumeration<Object> e = p.keys();
+	    while (e.hasMoreElements()) {
+	    	TableItem item = new TableItem(tableDevices, SWT.NONE);
+	    	String key = (String)e.nextElement();
+	    	item.setText(0, key);
+	    	item.setText(1, p.getProperty(key));
+	    }
+		for (int i = 0, n = tableDevices.getColumnCount(); i < n; i++) {
+			  tableDevices.getColumn(i).pack();
+		}
+		tableDevices.pack();
+		tableDevices.setRedraw(true);
+	}
+
 }

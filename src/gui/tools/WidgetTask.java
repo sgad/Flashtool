@@ -1,5 +1,7 @@
 package gui.tools;
 
+import java.util.Properties;
+
 import flashsystem.X10flash;
 import gui.BootModeSelector;
 import gui.BundleCreator;
@@ -31,6 +33,23 @@ public class WidgetTask {
 					public void run() {
 			    		DeviceSelector dial = new DeviceSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
+			    		if (obj==null) obj = new String("");
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openDeviceSelector(final Shell parent, final Properties p) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		DeviceSelector dial = new DeviceSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open(p);
+			    		if (obj==null) obj = new String("");
 						res.setResult(obj);
 						
 					}

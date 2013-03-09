@@ -1,21 +1,24 @@
 package gui;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.zip.Deflater;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -36,14 +39,14 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.logger.MyLogger;
 import org.system.AdbPhoneThread;
+import org.system.Device;
 import org.system.DeviceChangedListener;
 import org.system.DeviceEntry;
 import org.system.DeviceProperties;
 import org.system.Devices;
+import org.system.FTDEntry;
 import org.system.GlobalConfig;
 import org.system.OS;
 import org.system.StatusEvent;
@@ -52,11 +55,13 @@ import org.system.TextFile;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
 import flashsystem.X10flash;
+import gui.tools.BackupTAJob;
 import gui.tools.DecryptJob;
+import gui.tools.FTDExplodeJob;
 import gui.tools.FlashJob;
+import gui.tools.MsgBox;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
-
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
@@ -68,6 +73,8 @@ public class MainSWT {
 	protected ToolItem tltmRoot;
 	protected ToolItem tltmAskRoot;
 	protected ToolItem tltmBLU;
+	protected MenuItem mntmSwitchPro;
+	protected MenuItem mntmAdvanced;
 	protected VersionChecker vcheck=null;
 	
 	/**
@@ -159,6 +166,21 @@ public class MainSWT {
 		Menu menu_1 = new Menu(mntmFile);
 		mntmFile.setMenu(menu_1);
 		
+		mntmSwitchPro = new MenuItem(menu_1, SWT.NONE);
+		mntmSwitchPro.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean ispro = GlobalConfig.getProperty("devfeatures").equals("yes");
+    			GlobalConfig.setProperty("devfeatures", ispro?"no":"yes");
+    			mntmAdvanced.setEnabled(!ispro);
+    			mntmSwitchPro.setText(!ispro?"Switch Simple":"Switch Pro");
+    			//mnDev.setVisible(!ispro);
+    			//mntmSwitchPro.setText(Language.getMessage(mntmSwitchPro.getName()));
+    		    //mnDev.setText(Language.getMessage(mnDev.getName()));
+			}
+		});
+		mntmSwitchPro.setText(GlobalConfig.getProperty("devfeatures").equals("yes")?"Switch Simple":"Switch Pro");
+		
 		MenuItem mntmExit = new MenuItem(menu_1, SWT.NONE);
 		mntmExit.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -231,6 +253,120 @@ public class MainSWT {
 			}
 		});
 		mntmBundleCreation.setText("Bundle Creation");
+		
+		mntmAdvanced = new MenuItem(menu, SWT.CASCADE);
+		mntmAdvanced.setText("Advanced");
+		
+		
+		Menu AdvancedMenu = new Menu(mntmAdvanced);
+		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
+		mntmAdvanced.setMenu(AdvancedMenu);
+		
+		MenuItem mntmTrimArea = new MenuItem(AdvancedMenu, SWT.CASCADE);
+		mntmTrimArea.setText("Trim Area");
+		
+		Menu menu_9 = new Menu(mntmTrimArea);
+		mntmTrimArea.setMenu(menu_9);
+		
+		MenuItem mntmBackup = new MenuItem(menu_9, SWT.NONE);
+		mntmBackup.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doBackupTA();
+			}
+		});
+		mntmBackup.setText("Backup");
+		
+		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
+		mntmDevices.setText("Devices");
+		
+		Menu menu_6 = new Menu(mntmDevices);
+		mntmDevices.setMenu(menu_6);
+		
+		MenuItem mntmCheckDrivers = new MenuItem(menu_6, SWT.NONE);
+		mntmCheckDrivers.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Device.CheckAdbDrivers();
+			}
+		});
+		mntmCheckDrivers.setText("Check drivers");
+		
+		MenuItem mntmEditor = new MenuItem(menu_6, SWT.CASCADE);
+		mntmEditor.setText("Manage");
+		
+		Menu menu_7 = new Menu(mntmEditor);
+		mntmEditor.setMenu(menu_7);
+		
+		MenuItem mntmEdit = new MenuItem(menu_7, SWT.NONE);
+		mntmEdit.setText("Edit");
+		
+		MenuItem mntmAdd = new MenuItem(menu_7, SWT.NONE);
+		mntmAdd.setText("Add");
+		
+		MenuItem mntmRemove = new MenuItem(menu_7, SWT.NONE);
+		mntmRemove.setText("Remove");
+		
+		MenuItem mntmExport = new MenuItem(menu_7, SWT.NONE);
+		mntmExport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Devices.listDevices(true);
+				String devid = WidgetTask.openDeviceSelector(shlSonyericsson);
+        		if (devid.length()>0) {
+        			try {
+        				doExportDevice(devid);
+        				MyLogger.getLogger().info("Device "+devid+" Exported successfully");
+        			}
+        			catch (Exception ex) {
+        				MyLogger.getLogger().error(ex.getMessage());
+        			}
+        		}
+			}
+		});
+		mntmExport.setText("Export");
+		
+		MenuItem mntmImport = new MenuItem(menu_7, SWT.NONE);
+		mntmImport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Devices.listDevices(true);
+        		Properties list = new Properties();
+        		File[] lfiles = new File(OS.getWorkDir()+File.separator+"devices").listFiles();
+        		for (int i=0;i<lfiles.length;i++) {
+        			if (lfiles[i].getName().endsWith(".ftd")) {
+        				String name = lfiles[i].getName();
+        				name = name.substring(0,name.length()-4);
+        				try {
+        				FTDEntry entry = new FTDEntry(name);
+        				list.setProperty(entry.getId(), entry.getName());
+        				} catch (Exception ex) {}
+        			}
+        		}
+        		if (list.size()>0) {
+        			String devid = WidgetTask.openDeviceSelector(shlSonyericsson,list);
+	        		if (devid.length()>0) {
+						try {
+							FTDEntry entry = new FTDEntry(devid);
+							MsgBox.setCurrentShell(shlSonyericsson);
+							FTDExplodeJob j = new FTDExplodeJob("FTD Explode job");
+							j.setFTD(entry);
+							j.schedule();
+						}
+						catch (Exception ex) {
+							MyLogger.getLogger().error(ex.getMessage());
+						}
+	        		}
+	        		else {
+	        			MyLogger.getLogger().info("Import canceled");
+	        		}
+        		}
+        		else {
+        			MsgBox.error("No device to import");
+        		}
+			}
+		});
+		mntmImport.setText("Import");
 		
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
@@ -779,4 +915,59 @@ public class MainSWT {
 			e.printStackTrace();
 		}
 	}
+
+	public void doExportDevice(String device) throws Exception {
+		File ftd = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device+".ftd");
+		byte buffer[] = new byte[10240];
+	    FileOutputStream stream = new FileOutputStream(ftd);
+	    JarOutputStream out = new JarOutputStream(stream);
+	    out.setLevel(Deflater.BEST_SPEED);
+	    File root = new File(OS.getWorkDir()+OS.getFileSeparator()+"devices"+OS.getFileSeparator()+device);
+	    int rootindex = root.getAbsolutePath().length();
+		Collection<File> c = OS.listFileTree(root);
+		Iterator<File> i = c.iterator();
+		while (i.hasNext()) {
+			File entry = i.next();
+			String name = entry.getAbsolutePath().substring(rootindex-device.length());
+			if (entry.isDirectory()) name = name+"/";
+		    JarEntry jarAdd = new JarEntry(name);
+	        out.putNextEntry(jarAdd);
+	        if (!entry.isDirectory()) {
+	        InputStream in = new FileInputStream(entry);
+	        while (true) {
+	          int nRead = in.read(buffer, 0, buffer.length);
+	          if (nRead <= 0)
+	            break;
+	          out.write(buffer, 0, nRead);
+	        }
+	        in.close();
+	        }
+		}
+		out.close();
+	    stream.close();
+	}
+
+	public void doBackupTA() {
+		Bundle bundle = new Bundle();
+		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
+		final X10flash flash = new X10flash(bundle);
+		try {
+			MyLogger.getLogger().info("Please connect your device into flashmode.");
+			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
+			if (result.equals("OK")) {
+				BackupTAJob fjob = new BackupTAJob("Flash");
+				fjob.setFlash(flash);
+				fjob.schedule();
+			}
+			else
+				MyLogger.getLogger().info("Flash canceled");
+		}
+		catch (Exception e){
+			MyLogger.getLogger().error(e.getMessage());
+			MyLogger.getLogger().info("Flash canceled");
+			if (flash.getBundle()!=null)
+				flash.getBundle().close();
+		}
+	}
+
 }

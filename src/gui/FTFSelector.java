@@ -7,8 +7,6 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.swing.JCheckBox;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;

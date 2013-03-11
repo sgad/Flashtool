@@ -19,8 +19,6 @@ public class Main {
 			else {
 				MainSWT window = new MainSWT();
 				window.open();
-				//MainSwing swing = new MainSwing();
-				//swing.processSwingUI();
 			}
 		}
 		catch (Exception e) {
@@ -76,10 +74,10 @@ public class Main {
 			FlasherConsole.init(true);
 			FlasherConsole.doRoot();
 		}
-		if (action.toLowerCase().equals("blunlock")) {
+/*		if (action.toLowerCase().equals("blunlock")) {
 			FlasherConsole.init(true);
 			FlasherConsole.doBLUnlock();        		
-		}
+		}*/
 		FlasherConsole.exit();		
 	}
 

@@ -53,21 +53,21 @@ public class TextAreaAppender extends WriterAppender {
 	
 	}
 
-	/** Set the target JTextArea for the logging information to appear. */
+	/** Set the target TextArea for the logging information to appear. */
 	static public void setTextArea(StyledText styledText) {
 		TextAreaAppender.styledText = styledText;
 	}
 
 	/**
 	 * Format and then append the loggingEvent to the stored
-	 * JTextArea.
+	 * TextArea.
 	 */
 	public void append(LoggingEvent loggingEvent) {
 		final String message = this.layout.format(loggingEvent);
 		final Level level = loggingEvent.getLevel();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				// Append formatted message to textarea using the Swing Thread.
+				// Append formatted message to textarea.
 				builder.append(message);
 				if (level==Level.ERROR) {
 					append(styledText.getDisplay().getSystemColor(SWT.COLOR_RED),message);

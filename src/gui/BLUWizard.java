@@ -31,6 +31,7 @@ public class BLUWizard extends Dialog {
 	private Button btnGetUnlock;
 	private Button btnUnlock;
 	private X10flash _flash;
+	private String _action;
 
 	/**
 	 * Create the dialog.
@@ -45,14 +46,15 @@ public class BLUWizard extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(String imei, String ulcode,X10flash flash) {
+	public Object open(String imei, String ulcode,X10flash flash, String action) {
+		_action = action;
 		_flash = flash;
 		createContents();
 		textIMEI.setText(imei);
 		textULCODE.setText(ulcode);
 		if (ulcode.length()>0) {
 			btnUnlock.setEnabled(true);
-			if (flash!=null) {
+			if (_action.equals("R")) {
 				btnUnlock.setText("Relock");
 			}
 			btnGetUnlock.setEnabled(false);
@@ -124,20 +126,38 @@ public class BLUWizard extends Dialog {
 					btnUnlock.setEnabled(false);
 				}
 				else {
-					TaEntry ta = new TaEntry();
-					ta.setPartition(2226);
-					byte[] data = new byte[2];data[0]=0;data[1]=0;
-					ta.setData(data);
-					try {
-						MyLogger.getLogger().info("Relocking device");
-						_flash.openTA(2);
-						_flash.sendTAUnit(ta);
-						_flash.closeTA();
-						MyLogger.getLogger().info("Relock finished");
-						btnUnlock.setEnabled(false);
+					if (_action.equals("R")) {
+						TaEntry ta = new TaEntry();
+						ta.setPartition(2226);
+						byte[] data = new byte[2];data[0]=0;data[1]=0;
+						ta.setData(data);
+						try {
+							MyLogger.getLogger().info("Relocking device");
+							_flash.openTA(2);
+							_flash.sendTAUnit(ta);
+							_flash.closeTA();
+							MyLogger.getLogger().info("Relock finished");
+							btnUnlock.setEnabled(false);
+						}
+						catch (Exception exc) {
+							exc.printStackTrace();
+						}
 					}
-					catch (Exception exc) {
-						exc.printStackTrace();
+					else {
+						TaEntry ta = new TaEntry();
+						ta.setPartition(2226);
+						ta.setData(textULCODE.getText().getBytes());
+						try {
+							MyLogger.getLogger().info("Unlocking device");
+							_flash.openTA(2);
+							_flash.sendTAUnit(ta);
+							_flash.closeTA();
+							MyLogger.getLogger().info("Unlock finished");
+							btnUnlock.setEnabled(false);
+						}
+						catch (Exception exc) {
+							exc.printStackTrace();
+						}
 					}
 				}
 			}

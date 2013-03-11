@@ -865,7 +865,7 @@ public class MainSWT {
 						MyLogger.getLogger().info("Unlock code saved to "+serial.getAbsolutePath());
 					}
 					BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-					wiz.open(imei,ulcode,flash);
+					wiz.open(imei,ulcode,flash,"R");
 					bundle.close();
 					flash.closeDevice();
 					MyLogger.initProgress(0);
@@ -873,24 +873,32 @@ public class MainSWT {
 					DeviceChangedListener.pause(false);
 				}
 				else {
-					bundle.close();
-					flash.closeDevice();
-					MyLogger.initProgress(0);
-					DeviceChangedListener.pause(false);
 					if (blstatus.equals("ROOTABLE")) {
-						MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
 						File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+flash.getSerial()+File.separator+"ulcode.txt");
 						if (f.exists()) {
 							TextFile t = new TextFile(f.getAbsolutePath(),"ISO-8859-1");
 							ulcode = t.getLines().iterator().next();
-						}
-						result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
-						if (result.equals("OK")) {
 							BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-							wiz.open(imei,ulcode,null);
+							wiz.open(imei,ulcode,flash,"U");
+							bundle.close();
+							flash.closeDevice();
+							MyLogger.initProgress(0);
+							DeviceChangedListener.pause(false);
 						}
 						else {
-							MyLogger.getLogger().info("Bootloader unlock canceled");
+							bundle.close();
+							flash.closeDevice();
+							MyLogger.initProgress(0);
+							DeviceChangedListener.pause(false);
+							MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+							result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
+							if (result.equals("OK")) {
+								BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+								wiz.open(imei,ulcode,null,"U");
+							}
+							else {
+								MyLogger.getLogger().info("Bootloader unlock canceled");
+							}
 						}
 					}
 					else {

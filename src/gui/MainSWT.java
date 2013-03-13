@@ -135,7 +135,8 @@ public class MainSWT {
 				display.sleep();
 			}
 		}
-		//System.exit(0);
+		if (OS.getName().equals("mac"))
+			System.exit(0);
 	}
 
 	public void doDisableIdent() {

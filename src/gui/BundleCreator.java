@@ -64,11 +64,12 @@ public class BundleCreator extends Dialog {
 	private FormData fd_btnNewButton_1;
 	private Button btnNewButton_1;
 	private Composite composite_5;
-	private Label lblNewLabel_4;
 	private BundleMetaData meta = new BundleMetaData();
 	private CategoriesModel model = new CategoriesModel(meta);
 	TreeViewer treeViewerCategories;
 	Button btnNoFinalVerification;
+	private Label lblNewLabel_3;
+	private FormData fd_lblNewLabel;
 
 	/**
 	 * Create the dialog.
@@ -87,6 +88,15 @@ public class BundleCreator extends Dialog {
 	public Object open() {
 		createContents();
 		WidgetsTool.setSize(shlBundler);
+		
+		Label lblFirmwareContent = new Label(shlBundler, SWT.NONE);
+		fd_lblNewLabel.right = new FormAttachment(lblFirmwareContent, -67);
+		FormData fd_lblFirmwareContent = new FormData();
+		fd_lblFirmwareContent.right = new FormAttachment(composite_5, 0, SWT.RIGHT);
+		fd_lblFirmwareContent.bottom = new FormAttachment(composite_5, -6);
+		fd_lblFirmwareContent.left = new FormAttachment(composite_5, 0, SWT.LEFT);
+		lblFirmwareContent.setLayoutData(fd_lblFirmwareContent);
+		lblFirmwareContent.setText("Firmware content :");
 		shlBundler.open();
 		shlBundler.layout();
 		Display display = getParent().getDisplay();
@@ -138,7 +148,6 @@ public class BundleCreator extends Dialog {
 		list = listViewerFiles.getList();
 		FormData fd_list = new FormData();
 		fd_list.left = new FormAttachment(0, 10);
-		fd_list.bottom = new FormAttachment(100, -40);
 		list.setLayoutData(fd_list);
 	    listViewerFiles.setContentProvider(new IStructuredContentProvider() {
 	        public Object[] getElements(Object inputElement) {
@@ -170,16 +179,19 @@ public class BundleCreator extends Dialog {
 	        }
 
 	      });
-		Label lblNewLabel_3 = new Label(shlBundler, SWT.NONE);
+		lblNewLabel_3 = new Label(shlBundler, SWT.NONE);
 		fd_list.top = new FormAttachment(lblNewLabel_3, 6);
-		FormData fd_lblNewLabel_3 = new FormData();
-		fd_lblNewLabel_3.left = new FormAttachment(0, 10);
-		lblNewLabel_3.setLayoutData(fd_lblNewLabel_3);
+		fd_lblNewLabel = new FormData();
+		fd_lblNewLabel.left = new FormAttachment(0, 10);
+		lblNewLabel_3.setLayoutData(fd_lblNewLabel);
 		lblNewLabel_3.setText("folder list :");
 		
 		composite_5 = new Composite(shlBundler, SWT.NONE);
+		fd_list.bottom = new FormAttachment(composite_5, 0, SWT.BOTTOM);
 		composite_5.setLayout(new TreeColumnLayout());
 		FormData fd_composite_5 = new FormData();
+		fd_composite_5.top = new FormAttachment(lblNewLabel_3, 6);
+		fd_composite_5.right = new FormAttachment(100, -10);
 		composite_5.setLayoutData(fd_composite_5);
 		
 		treeViewerCategories = new TreeViewer(composite_5, SWT.BORDER | SWT.MULTI);
@@ -207,7 +219,6 @@ public class BundleCreator extends Dialog {
 		
 		Button btnCancel = new Button(shlBundler, SWT.NONE);
 		fd_composite_5.bottom = new FormAttachment(btnCancel, -5);
-		fd_composite_5.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
 		fd_composite_5.bottom = new FormAttachment(btnCancel, -5);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -278,7 +289,7 @@ public class BundleCreator extends Dialog {
 		
 		btnNewButton_1 = new Button(shlBundler, SWT.NONE);
 		fd_list.right = new FormAttachment(btnNewButton_1, -6);
-		fd_composite_5.left = new FormAttachment(list, 100);
+		fd_composite_5.left = new FormAttachment(btnNewButton_1, 6);
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -299,12 +310,13 @@ public class BundleCreator extends Dialog {
 			}
 		});
 		fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.right = new FormAttachment(composite_5, -6);
 		fd_btnNewButton_1.left = new FormAttachment(0, 353);
+		fd_btnNewButton_1.right = new FormAttachment(100, -224);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlBundler, SWT.NONE);
+		fd_btnNewButton_1.bottom = new FormAttachment(100, -143);
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -339,22 +351,10 @@ public class BundleCreator extends Dialog {
 		});
 		FormData fd_btnNewButton_2 = new FormData();
 		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 23);
-		fd_btnNewButton_2.right = new FormAttachment(composite_5, -6);
+		fd_btnNewButton_2.right = new FormAttachment(btnNewButton_1, 0, SWT.RIGHT);
 		fd_btnNewButton_2.left = new FormAttachment(0, 353);
 		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
 		btnNewButton_2.setText("<-");
-		
-		lblNewLabel_4 = new Label(shlBundler, SWT.NONE);
-		fd_composite_5.top = new FormAttachment(lblNewLabel_4, 6);
-		fd_btnNewButton_1.top = new FormAttachment(lblNewLabel_4, 65);
-		fd_composite_5.left = new FormAttachment(lblNewLabel_4, 10, SWT.LEFT);
-		fd_lblNewLabel_3.right = new FormAttachment(lblNewLabel_4, -299);
-		FormData fd_lblNewLabel_4 = new FormData();
-		fd_lblNewLabel_4.left = new FormAttachment(0, 397);
-		fd_lblNewLabel_4.right = new FormAttachment(100, -130);
-		fd_lblNewLabel_4.top = new FormAttachment(lblNewLabel_3, 0, SWT.TOP);
-		lblNewLabel_4.setLayoutData(fd_lblNewLabel_4);
-		lblNewLabel_4.setText("Firmware content :");
 		Composite composite = new Composite(shlBundler, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 		FormData fd_composite = new FormData();
@@ -456,7 +456,7 @@ public class BundleCreator extends Dialog {
 		version.setLayoutData(gd_version);
 		
 		Composite composite_3 = new Composite(shlBundler, SWT.NONE);
-		fd_lblNewLabel_3.top = new FormAttachment(composite_3, 6);
+		fd_lblNewLabel.top = new FormAttachment(composite_3, 6);
 		fd_composite_1.right = new FormAttachment(100, -298);
 		composite_3.setLayout(new GridLayout(2, false));
 		FormData fd_composite_3 = new FormData();
@@ -480,10 +480,10 @@ public class BundleCreator extends Dialog {
 		fd_composite_3.bottom = new FormAttachment(100, -256);
 		composite_4.setLayout(new GridLayout(1, false));
 		FormData fd_composite_4 = new FormData();
+		fd_composite_4.bottom = new FormAttachment(composite_5, -63);
+		fd_composite_4.top = new FormAttachment(composite, 39);
 		fd_composite_4.left = new FormAttachment(composite_2, 54);
 		fd_composite_4.right = new FormAttachment(100, -10);
-		fd_composite_4.bottom = new FormAttachment(lblNewLabel_4, -43);
-		fd_composite_4.top = new FormAttachment(composite, 39);
 		composite_4.setLayoutData(fd_composite_4);
 		
 		btnNoFinalVerification = new Button(composite_4, SWT.CHECK);
@@ -499,5 +499,4 @@ public class BundleCreator extends Dialog {
 		mb.setMessage(message);
 		int result = mb.open();
 	}
-
 }

@@ -3,9 +3,13 @@ package gui;
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
+import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
+import gui.tools.WriteTAJob;
 
 import org.adb.FastbootUtility;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -122,6 +126,19 @@ public class BLUWizard extends Dialog {
 				if (_flash==null) {
 					BLUnlockJob bj = new BLUnlockJob("Unlock Job");
 					bj.setULCode(textULCODE.getText());
+					bj.addJobChangeListener(new IJobChangeListener() {
+						public void aboutToRun(IJobChangeEvent event) {}
+						public void awake(IJobChangeEvent event) {}
+						public void running(IJobChangeEvent event) {}
+						public void scheduled(IJobChangeEvent event) {}
+						public void sleeping(IJobChangeEvent event) {}
+
+						public void done(IJobChangeEvent event) {
+							BLUnlockJob res = (BLUnlockJob) event.getJob();
+							WidgetTask.setEnabled(btnUnlock,!res.unlockSuccess());
+						}
+
+					});
 					bj.schedule();
 					btnUnlock.setEnabled(false);
 				}
@@ -131,33 +148,45 @@ public class BLUWizard extends Dialog {
 						ta.setPartition(2226);
 						byte[] data = new byte[2];data[0]=0;data[1]=0;
 						ta.setData(data);
-						try {
-							MyLogger.getLogger().info("Relocking device");
-							_flash.openTA(2);
-							_flash.sendTAUnit(ta);
-							_flash.closeTA();
-							MyLogger.getLogger().info("Relock finished");
-							btnUnlock.setEnabled(false);
-						}
-						catch (Exception exc) {
-							exc.printStackTrace();
-						}
+						MyLogger.getLogger().info("Relocking device");
+						WriteTAJob tj = new WriteTAJob("Write TA");
+						tj.addJobChangeListener(new IJobChangeListener() {
+							public void aboutToRun(IJobChangeEvent event) {}
+							public void awake(IJobChangeEvent event) {}
+							public void running(IJobChangeEvent event) {}
+							public void scheduled(IJobChangeEvent event) {}
+							public void sleeping(IJobChangeEvent event) {}
+							public void done(IJobChangeEvent event) {
+								MyLogger.getLogger().info("Relock finished");
+								WriteTAJob res = (WriteTAJob) event.getJob();
+								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
+							}
+						});
+						tj.setFlash(_flash);
+						tj.setTA(ta);
+						tj.schedule();
 					}
 					else {
 						TaEntry ta = new TaEntry();
 						ta.setPartition(2226);
 						ta.setData(textULCODE.getText().getBytes());
-						try {
-							MyLogger.getLogger().info("Unlocking device");
-							_flash.openTA(2);
-							_flash.sendTAUnit(ta);
-							_flash.closeTA();
-							MyLogger.getLogger().info("Unlock finished");
-							btnUnlock.setEnabled(false);
-						}
-						catch (Exception exc) {
-							exc.printStackTrace();
-						}
+						MyLogger.getLogger().info("Unlocking device");
+						WriteTAJob tj = new WriteTAJob("Write TA");
+						tj.addJobChangeListener(new IJobChangeListener() {
+							public void aboutToRun(IJobChangeEvent event) {}
+							public void awake(IJobChangeEvent event) {}
+							public void running(IJobChangeEvent event) {}
+							public void scheduled(IJobChangeEvent event) {}
+							public void sleeping(IJobChangeEvent event) {}
+							public void done(IJobChangeEvent event) {
+								MyLogger.getLogger().info("Unlock finished");
+								WriteTAJob res = (WriteTAJob) event.getJob();
+								WidgetTask.setEnabled(btnUnlock,!res.writeSuccess());
+							}
+						});
+						tj.setFlash(_flash);
+						tj.setTA(ta);
+						tj.schedule();
 					}
 				}
 			}

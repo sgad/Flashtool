@@ -14,7 +14,6 @@ public class DecryptJob extends Job {
 
 	boolean canceled = false;
 	Vector files;
-	Shell _parent;
 
 	public DecryptJob(String name) {
 		super(name);
@@ -24,9 +23,6 @@ public class DecryptJob extends Job {
 		files=f;
 	}
 	
-	public void setParent(Shell parent) {
-		_parent = parent;
-	}
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
@@ -38,9 +34,6 @@ public class DecryptJob extends Job {
         		folder = f.getParent();
 			}
 			MyLogger.getLogger().info("Decryption finished");
-			String result = WidgetTask.openBundleCreator(_parent,folder);
-			if (result.equals("Cancel"))
-				MyLogger.getLogger().info("Bundle creation canceled");
 			return Status.OK_STATUS;
     	}
     	catch (Exception e) {

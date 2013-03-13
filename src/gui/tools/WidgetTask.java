@@ -3,6 +3,7 @@ package gui.tools;
 import java.util.Properties;
 
 import flashsystem.X10flash;
+import gui.BLUWizard;
 import gui.BootModeSelector;
 import gui.BundleCreator;
 import gui.DeviceSelector;
@@ -10,6 +11,7 @@ import gui.LoaderSelect;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
@@ -17,6 +19,16 @@ import org.eclipse.swt.widgets.ToolItem;
 public class WidgetTask {
 	
 	public static void setEnabled(final ToolItem item, final boolean status) {
+		Display.getDefault().asyncExec(
+				new Runnable() {
+					public void run() {
+						item.setEnabled(status);
+					}
+				}
+		);
+	}
+
+	public static void setEnabled(final Button item, final boolean status) {
 		Display.getDefault().asyncExec(
 				new Runnable() {
 					public void run() {
@@ -88,6 +100,22 @@ public class WidgetTask {
 		return (String)res.getResult();
 	}
 
+	public static String openBLWizard(final Shell parent, final String imei, final String ulcode, final X10flash flash, final String mode) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+						BLUWizard wiz = new BLUWizard(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = wiz.open(imei,ulcode,flash,mode);
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	
 	public static String openBootModeSelector(final Shell parent) {
 		final Result res = new Result();
 		Display.getDefault().syncExec(

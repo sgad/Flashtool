@@ -18,6 +18,8 @@ import org.adb.AdbUtility;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -59,6 +61,7 @@ import gui.tools.BackupTAJob;
 import gui.tools.DecryptJob;
 import gui.tools.FTDExplodeJob;
 import gui.tools.FlashJob;
+import gui.tools.GetULCodeJob;
 import gui.tools.MsgBox;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
@@ -132,7 +135,7 @@ public class MainSWT {
 				display.sleep();
 			}
 		}
-		System.exit(0);
+		//System.exit(0);
 	}
 
 	public void doDisableIdent() {
@@ -230,9 +233,35 @@ public class MainSWT {
 				Decrypt decrypt = new Decrypt(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
 				Vector result = decrypt.open();
 				if (result!=null) {
+					File f = (File)result.get(0);
+					final String folder = f.getParent();
 					DecryptJob dec = new DecryptJob("Decrypt");
+					dec.addJobChangeListener(new IJobChangeListener() {
+						public void aboutToRun(IJobChangeEvent event) {
+						}
+
+						public void awake(IJobChangeEvent event) {
+						}
+
+						public void done(IJobChangeEvent event) {
+				    		//BundleCreator cre = new BundleCreator(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				    		//String result = (String)cre.open(folder);
+							String result = WidgetTask.openBundleCreator(shlSonyericsson,folder);
+							if (result.equals("Cancel"))
+								MyLogger.getLogger().info("Bundle creation canceled");
+						}
+
+						public void running(IJobChangeEvent event) {
+						}
+
+						public void scheduled(IJobChangeEvent event) {
+						}
+
+						public void sleeping(IJobChangeEvent event) {
+						}
+					});
+
 					dec.setFiles(result);
-					dec.setParent(shlSonyericsson);
 					dec.schedule();
 				}
 				else {
@@ -835,79 +864,63 @@ public class MainSWT {
 	}
 
 	public void doBLUnlock() {
-		String ulcode="";
-		String imei = "";
-		String blstatus = "";
 		try {
-			Bundle bundle = new Bundle();
-			bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-			X10flash flash = new X10flash(bundle);
+			final X10flash flash = new X10flash(new Bundle());
 			MyLogger.getLogger().info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
 			try {
-				flash.openDevice();
-				flash.sendLoader();
-				blstatus = flash.getPhoneProperty("ROOTING_STATUS");
-				imei=flash.getPhoneProperty("IMEI");
-				if (blstatus.equals("ROOTED")) {
-					flash.openTA(2);
-					ulcode=flash.dumpProperty(2226,"string");
-					flash.closeTA();
-					if (ulcode.length()>0) {
-						File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+flash.getSerial());
-						if (!f.exists()) f.mkdir();
-						File serial = new File(f.getAbsolutePath()+File.separator+"ulcode.txt");
-						FileWriter out = new FileWriter(serial);
-						out.write(ulcode);
-						out.flush();
-						out.close();
-						MyLogger.getLogger().info("Unlock code saved to "+serial.getAbsolutePath());
-					}
-					BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-					wiz.open(imei,ulcode,flash,"R");
-					bundle.close();
-					flash.closeDevice();
-					MyLogger.initProgress(0);
-					MyLogger.getLogger().info("You can now unplug and restart your device");
-					DeviceChangedListener.pause(false);
-				}
-				else {
-					if (blstatus.equals("ROOTABLE")) {
-						File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+flash.getSerial()+File.separator+"ulcode.txt");
-						if (f.exists()) {
-							TextFile t = new TextFile(f.getAbsolutePath(),"ISO-8859-1");
-							ulcode = t.getLines().iterator().next();
-							BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-							wiz.open(imei,ulcode,flash,"U");
-							bundle.close();
+				GetULCodeJob ulj = new GetULCodeJob("Unlock code");
+				ulj.setFlash(flash);
+				ulj.addJobChangeListener(new IJobChangeListener() {
+					public void aboutToRun(IJobChangeEvent event) {}
+					public void awake(IJobChangeEvent event) {}
+					public void running(IJobChangeEvent event) {}
+					public void scheduled(IJobChangeEvent event) {}
+					public void sleeping(IJobChangeEvent event) {}
+					
+					public void done(IJobChangeEvent event) {
+						GetULCodeJob j = (GetULCodeJob)event.getJob();
+						String ulcode=j.getULCode();
+						String imei = j.getIMEI();
+						String blstatus = j.getBLStatus();
+						if (blstatus.equals("ROOTED")) {
+							WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, flash, "R");
 							flash.closeDevice();
 							MyLogger.initProgress(0);
+							MyLogger.getLogger().info("You can now unplug and restart your device");
 							DeviceChangedListener.pause(false);
 						}
 						else {
-							bundle.close();
-							flash.closeDevice();
-							MyLogger.initProgress(0);
-							DeviceChangedListener.pause(false);
-							MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
-							result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
-							if (result.equals("OK")) {
-								BLUWizard wiz = new BLUWizard(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
-								wiz.open(imei,ulcode,null,"U");
+							if (!blstatus.equals("ROOTABLE")) {
+								MyLogger.getLogger().info("Your phone bootloader cannot be officially unlocked");
+								MyLogger.getLogger().info("You can now unplug and restart your phone");
 							}
 							else {
-								MyLogger.getLogger().info("Bootloader unlock canceled");
-							}
+								if (j.alreadyUnlocked()) {
+									WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, flash, "U");
+									flash.closeDevice();
+									MyLogger.initProgress(0);
+									MyLogger.getLogger().info("You can now unplug and restart your device");
+									DeviceChangedListener.pause(false);
+								}
+								else {
+									MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+									String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
+									if (result.equals("OK")) {
+										WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, null, "U");
+									}
+									else {
+										MyLogger.getLogger().info("Bootloader unlock canceled");
+									}			
+								}
+							}							
 						}
 					}
-					else {
-						MyLogger.getLogger().info("Boot loader cannot be unlocked on your phone");
-					}
-				}
+				});
+				ulj.schedule();
 			}
 			catch (Exception e) {
-				bundle.close();
 				flash.closeDevice();
 				DeviceChangedListener.pause(false);
 				MyLogger.getLogger().info("Bootloader unlock canceled");
@@ -915,11 +928,11 @@ public class MainSWT {
 			}
 		}
 		else {
-			blstatus="CANCELED";
 			MyLogger.getLogger().info("Bootloader unlock canceled");
 		}
 		}
 		catch (Exception e) {
+			MyLogger.getLogger().error(e.getMessage());
 			e.printStackTrace();
 		}
 	}

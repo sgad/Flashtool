@@ -12,7 +12,12 @@ public class BLUnlockJob extends Job {
 
 	String ulcode;
 	boolean canceled = false;
+	boolean unlocksuccess = true;
 
+	public boolean unlockSuccess() {
+		return unlocksuccess;
+	}
+	
 	public BLUnlockJob(String name) {
 		super(name);
 	}
@@ -25,8 +30,12 @@ public class BLUnlockJob extends Job {
 		try {
 			if (FastbootUtility.getDevices().hasMoreElements()) {
 				RunOutputs out = FastbootUtility.unlock(ulcode);
-				MyLogger.getLogger().info("Device will reboot into system now");
-				FastbootUtility.rebootDevice();								
+				if (out.getStdErr().contains("FAIL") || out.getStdOut().contains("FAIL"))
+						unlocksuccess = false;
+				if (unlocksuccess) {
+					MyLogger.getLogger().info("Device will reboot into system now");
+					FastbootUtility.rebootDevice();
+				}
 			}
 			else {
 				MyLogger.getLogger().error("Your device must be in fastboot mode");

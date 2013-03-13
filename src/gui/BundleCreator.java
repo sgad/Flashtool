@@ -89,14 +89,6 @@ public class BundleCreator extends Dialog {
 		createContents();
 		WidgetsTool.setSize(shlBundler);
 		
-		Label lblFirmwareContent = new Label(shlBundler, SWT.NONE);
-		fd_lblNewLabel.right = new FormAttachment(lblFirmwareContent, -67);
-		FormData fd_lblFirmwareContent = new FormData();
-		fd_lblFirmwareContent.right = new FormAttachment(composite_5, 0, SWT.RIGHT);
-		fd_lblFirmwareContent.bottom = new FormAttachment(composite_5, -6);
-		fd_lblFirmwareContent.left = new FormAttachment(composite_5, 0, SWT.LEFT);
-		lblFirmwareContent.setLayoutData(fd_lblFirmwareContent);
-		lblFirmwareContent.setText("Firmware content :");
 		shlBundler.open();
 		shlBundler.layout();
 		Display display = getParent().getDisplay();
@@ -140,7 +132,7 @@ public class BundleCreator extends Dialog {
 	 */
 	private void createContents() {
 		shlBundler = new Shell(getParent(), getStyle());
-		shlBundler.setSize(632, 437);
+		shlBundler.setSize(626, 447);
 		shlBundler.setText("Bundler");
 		shlBundler.setLayout(new FormLayout());
 		
@@ -491,6 +483,15 @@ public class BundleCreator extends Dialog {
 		gd_btnNoFinalVerification.heightHint = 24;
 		btnNoFinalVerification.setLayoutData(gd_btnNoFinalVerification);
 		btnNoFinalVerification.setText("No final verification");
+		Label lblFirmwareContent = new Label(shlBundler, SWT.NONE);
+		fd_lblNewLabel.right = new FormAttachment(lblFirmwareContent, -67);
+		FormData fd_lblFirmwareContent = new FormData();
+		fd_lblFirmwareContent.right = new FormAttachment(composite_5, 0, SWT.RIGHT);
+		fd_lblFirmwareContent.bottom = new FormAttachment(composite_5, -6);
+		fd_lblFirmwareContent.left = new FormAttachment(composite_5, 0, SWT.LEFT);
+		lblFirmwareContent.setLayoutData(fd_lblFirmwareContent);
+		lblFirmwareContent.setText("Firmware content :");
+
 	}
 	
 	public void showErrorMessageBox(String message) {

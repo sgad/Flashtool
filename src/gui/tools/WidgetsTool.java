@@ -16,6 +16,8 @@ public class WidgetsTool {
 			FontData[] fD = ctl[i].getFont().getFontData();
 			if (OS.getName().equals("mac"))
 				fD[0].setHeight(11);
+			if (OS.getName().equals("linux"))
+				fD[0].setHeight(9);
 			ctl[i].setFont( new Font(Display.getCurrent(),fD[0]));
 		}
 	}

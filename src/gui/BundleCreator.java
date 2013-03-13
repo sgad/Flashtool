@@ -87,7 +87,6 @@ public class BundleCreator extends Dialog {
 	public Object open() {
 		createContents();
 		WidgetsTool.setSize(shlBundler);
-		
 		shlBundler.open();
 		shlBundler.layout();
 		Display display = getParent().getDisplay();
@@ -181,8 +180,6 @@ public class BundleCreator extends Dialog {
 		composite_5 = new Composite(shlBundler, SWT.NONE);
 		composite_5.setLayout(new TreeColumnLayout());
 		FormData fd_composite_5 = new FormData();
-		fd_composite_5.right = new FormAttachment(100, -10);
-		fd_composite_5.top = new FormAttachment(list, 0, SWT.TOP);
 		composite_5.setLayoutData(fd_composite_5);
 		
 		treeViewerCategories = new TreeViewer(composite_5, SWT.BORDER | SWT.MULTI);
@@ -209,6 +206,8 @@ public class BundleCreator extends Dialog {
 	    treeViewerCategories.refresh();
 		
 		Button btnCancel = new Button(shlBundler, SWT.NONE);
+		fd_composite_5.bottom = new FormAttachment(btnCancel, -5);
+		fd_composite_5.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
 		fd_composite_5.bottom = new FormAttachment(btnCancel, -5);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -278,8 +277,8 @@ public class BundleCreator extends Dialog {
 		btnCreate.setText("Create");
 		
 		btnNewButton_1 = new Button(shlBundler, SWT.NONE);
-		fd_composite_5.left = new FormAttachment(btnNewButton_1, 6);
-		fd_list.right = new FormAttachment(100, -270);
+		fd_list.right = new FormAttachment(btnNewButton_1, -6);
+		fd_composite_5.left = new FormAttachment(list, 100);
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -300,13 +299,12 @@ public class BundleCreator extends Dialog {
 			}
 		});
 		fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.left = new FormAttachment(list, 6);
-		fd_btnNewButton_1.right = new FormAttachment(100, -235);
+		fd_btnNewButton_1.right = new FormAttachment(composite_5, -6);
+		fd_btnNewButton_1.left = new FormAttachment(0, 353);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
 		btnNewButton_1.setText("->");
 		
 		Button btnNewButton_2 = new Button(shlBundler, SWT.NONE);
-		fd_btnNewButton_1.bottom = new FormAttachment(btnNewButton_2, -30);
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -340,13 +338,16 @@ public class BundleCreator extends Dialog {
 			}
 		});
 		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.top = new FormAttachment(0, 292);
+		fd_btnNewButton_2.top = new FormAttachment(btnNewButton_1, 23);
 		fd_btnNewButton_2.right = new FormAttachment(composite_5, -6);
-		fd_btnNewButton_2.left = new FormAttachment(list, 6);
+		fd_btnNewButton_2.left = new FormAttachment(0, 353);
 		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
 		btnNewButton_2.setText("<-");
 		
 		lblNewLabel_4 = new Label(shlBundler, SWT.NONE);
+		fd_composite_5.top = new FormAttachment(lblNewLabel_4, 6);
+		fd_btnNewButton_1.top = new FormAttachment(lblNewLabel_4, 65);
+		fd_composite_5.left = new FormAttachment(lblNewLabel_4, 10, SWT.LEFT);
 		fd_lblNewLabel_3.right = new FormAttachment(lblNewLabel_4, -299);
 		FormData fd_lblNewLabel_4 = new FormData();
 		fd_lblNewLabel_4.left = new FormAttachment(0, 397);

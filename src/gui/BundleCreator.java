@@ -45,6 +45,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.system.DeviceEntry;
 import org.system.OS;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.RowData;
 
 public class BundleCreator extends Dialog {
 
@@ -411,78 +414,47 @@ public class BundleCreator extends Dialog {
 		btnNewButton.setText("...");
 		
 		Composite composite_1 = new Composite(shlBundler, SWT.NONE);
-		composite_1.setLayout(new GridLayout(2, false));
+		fd_lblNewLabel.top = new FormAttachment(composite_1, 19);
+		composite_1.setLayout(new GridLayout(3, false));
 		FormData fd_composite_1 = new FormData();
+		fd_composite_1.right = new FormAttachment(composite_5, 0, SWT.RIGHT);
+		fd_composite_1.bottom = new FormAttachment(composite, 86, SWT.BOTTOM);
 		fd_composite_1.top = new FormAttachment(composite, 2);
 		fd_composite_1.left = new FormAttachment(0, 10);
 		composite_1.setLayoutData(fd_composite_1);
 		
 		lblNewLabel = new Label(composite_1, SWT.NONE);
 		GridData gd_lblNewLabel = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.widthHint = 121;
+		gd_lblNewLabel.widthHint = 68;
 		lblNewLabel.setLayoutData(gd_lblNewLabel);
 		lblNewLabel.setText("Device :");
 		
 		device = new Text(composite_1, SWT.BORDER);
-		GridData gd_device = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_device.widthHint = 270;
+		GridData gd_device = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_device.widthHint = 355;
 		device.setLayoutData(gd_device);
+		new Label(composite_1, SWT.NONE);
 		
-		Composite composite_2 = new Composite(shlBundler, SWT.NONE);
-		composite_2.setLayout(new GridLayout(2, false));
-		FormData fd_composite_2 = new FormData();
-		fd_composite_2.right = new FormAttachment(composite_1, 0, SWT.RIGHT);
-		fd_composite_2.top = new FormAttachment(composite_1, 6);
-		fd_composite_2.left = new FormAttachment(0, 10);
-		composite_2.setLayoutData(fd_composite_2);
-		
-		Label lblNewLabel_1 = new Label(composite_2, SWT.NONE);
-		GridData gd_lblNewLabel_1 = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel_1.widthHint = 121;
-		lblNewLabel_1.setLayoutData(gd_lblNewLabel_1);
-		lblNewLabel_1.setText("Version :");
-		
-		version = new Text(composite_2, SWT.BORDER);
-		GridData gd_version = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_version.widthHint = 270;
-		version.setLayoutData(gd_version);
-		
-		Composite composite_3 = new Composite(shlBundler, SWT.NONE);
-		fd_lblNewLabel.top = new FormAttachment(composite_3, 6);
-		fd_composite_1.right = new FormAttachment(100, -298);
-		composite_3.setLayout(new GridLayout(2, false));
-		FormData fd_composite_3 = new FormData();
-		fd_composite_3.right = new FormAttachment(100, -298);
-		fd_composite_3.left = new FormAttachment(0, 10);
-		fd_composite_3.top = new FormAttachment(composite_2, 6);
-		composite_3.setLayoutData(fd_composite_3);
-		
-		lblNewLabel_2 = new Label(composite_3, SWT.NONE);
-		GridData gd_lblNewLabel_2 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel_2.widthHint = 121;
-		lblNewLabel_2.setLayoutData(gd_lblNewLabel_2);
+		lblNewLabel_2 = new Label(composite_1, SWT.NONE);
 		lblNewLabel_2.setText("Branding :");
 		
-		branding = new Text(composite_3, SWT.BORDER);
-		GridData gd_branding = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_branding.widthHint = 219;
+		branding = new Text(composite_1, SWT.BORDER);
+		GridData gd_branding = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_branding.widthHint = 355;
 		branding.setLayoutData(gd_branding);
 		
-		Composite composite_4 = new Composite(shlBundler, SWT.NONE);
-		fd_composite_3.bottom = new FormAttachment(100, -256);
-		composite_4.setLayout(new GridLayout(1, false));
-		FormData fd_composite_4 = new FormData();
-		fd_composite_4.bottom = new FormAttachment(composite_5, -63);
-		fd_composite_4.top = new FormAttachment(composite, 39);
-		fd_composite_4.left = new FormAttachment(composite_2, 54);
-		fd_composite_4.right = new FormAttachment(100, -10);
-		composite_4.setLayoutData(fd_composite_4);
-		
-		btnNoFinalVerification = new Button(composite_4, SWT.CHECK);
-		GridData gd_btnNoFinalVerification = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
-		gd_btnNoFinalVerification.heightHint = 24;
-		btnNoFinalVerification.setLayoutData(gd_btnNoFinalVerification);
+		btnNoFinalVerification = new Button(composite_1, SWT.CHECK);
+		btnNoFinalVerification.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
 		btnNoFinalVerification.setText("No final verification");
+		
+		Label lblNewLabel_1 = new Label(composite_1, SWT.NONE);
+		lblNewLabel_1.setText("Version :");
+		
+		version = new Text(composite_1, SWT.BORDER);
+		GridData gd_version = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_version.widthHint = 355;
+		version.setLayoutData(gd_version);
+		new Label(composite_1, SWT.NONE);
 		Label lblFirmwareContent = new Label(shlBundler, SWT.NONE);
 		fd_lblNewLabel.right = new FormAttachment(lblFirmwareContent, -67);
 		FormData fd_lblFirmwareContent = new FormData();

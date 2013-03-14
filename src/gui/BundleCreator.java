@@ -414,11 +414,11 @@ public class BundleCreator extends Dialog {
 		btnNewButton.setText("...");
 		
 		Composite composite_1 = new Composite(shlBundler, SWT.NONE);
-		fd_lblNewLabel.top = new FormAttachment(composite_1, 19);
+		fd_lblNewLabel.top = new FormAttachment(0, 154);
 		composite_1.setLayout(new GridLayout(3, false));
 		FormData fd_composite_1 = new FormData();
+		fd_composite_1.bottom = new FormAttachment(lblNewLabel_3, -6);
 		fd_composite_1.right = new FormAttachment(composite_5, 0, SWT.RIGHT);
-		fd_composite_1.bottom = new FormAttachment(composite, 86, SWT.BOTTOM);
 		fd_composite_1.top = new FormAttachment(composite, 2);
 		fd_composite_1.left = new FormAttachment(0, 10);
 		composite_1.setLayoutData(fd_composite_1);

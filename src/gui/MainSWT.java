@@ -802,14 +802,10 @@ public class MainSWT {
 				final X10flash flash = new X10flash(bundle);
 				try {
 					MyLogger.getLogger().info("Please connect your device into flashmode.");
-					String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
-					if (result.equals("OK")) {
 						FlashJob fjob = new FlashJob("Flash");
 						fjob.setFlash(flash);
+						fjob.setShell(shlSonyericsson);
 						fjob.schedule();
-					}
-					else
-						MyLogger.getLogger().info("Flash canceled");
 				}
 				catch (Exception e){
 					MyLogger.getLogger().error(e.getMessage());

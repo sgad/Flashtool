@@ -4,14 +4,11 @@
 	<target name="all" depends="loadprops, binaries, dotar"/>
 
 	<target name="main_lib">
-        <tstamp>
-             <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
-        </tstamp>
         <jar destfile="../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>
                 <attribute name="Class-Path" value=". x10flasher.jar x10flasher_lib/x10flasher-res.jar x10flasher_lib/AXMLPrinter2.jar x10flasher_lib/sony.jar x10flasher_lib/commons-io-2.4.jar x10flasher_lib/jdom-1.1.1.jar x10flasher_lib/jna-3.5.1.jar x10flasher_lib/jopt-simple-4.3.jar x10flasher_lib/log4j-1.2.17.jar x10flasher_lib/platform-3.5.1.jar x10flasher_lib/swtmac/commands.jar x10flasher_lib/swtmac/equinox.jar x10flasher_lib/swtmac/jface.jar x10flasher_lib/swtmac/jobs.jar x10flasher_lib/swtmac/osgi.jar x10flasher_lib/swtmac/runtime.jar x10flasher_lib/swtmac/swt.jar"/>
-                <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${TODAY}"/>
+                <attribute name="Implementation-Version" value="Version ${Internal-Version} built on ${Internal-Date}"/>
             	<attribute name="Internal-Version" value="${Internal-Version}"/>
             </manifest>
         	<fileset dir="./bin" excludes="/gui/ressources/icons/**"/>

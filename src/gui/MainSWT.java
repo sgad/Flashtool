@@ -801,7 +801,6 @@ public class MainSWT {
 				bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
 				final X10flash flash = new X10flash(bundle);
 				try {
-					MyLogger.getLogger().info("Please connect your device into flashmode.");
 						FlashJob fjob = new FlashJob("Flash");
 						fjob.setFlash(flash);
 						fjob.setShell(shlSonyericsson);

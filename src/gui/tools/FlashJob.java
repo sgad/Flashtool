@@ -30,6 +30,7 @@ public class FlashJob extends Job {
     protected IStatus run(IProgressMonitor monitor) {
     	try {
     		if (flash.getBundle().open()) {
+    			MyLogger.getLogger().info("Please connect your device into flashmode.");
     			String result = (String)WidgetTask.openWaitDeviceForFlashmode(_shell,flash);
     			if (result.equals("OK")) {
     				flash.openDevice();

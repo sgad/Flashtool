@@ -15,6 +15,7 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
+import org.adb.FastbootUtility;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -56,6 +57,7 @@ import org.system.StatusListener;
 import org.system.TextFile;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
+import flashsystem.TaEntry;
 import flashsystem.X10flash;
 import gui.tools.BackupTAJob;
 import gui.tools.DecryptJob;
@@ -328,14 +330,14 @@ public class MainSWT {
 		Menu menu_7 = new Menu(mntmEditor);
 		mntmEditor.setMenu(menu_7);
 		
-		MenuItem mntmEdit = new MenuItem(menu_7, SWT.NONE);
-		mntmEdit.setText("Edit");
+		//MenuItem mntmEdit = new MenuItem(menu_7, SWT.NONE);
+		//mntmEdit.setText("Edit");
 		
-		MenuItem mntmAdd = new MenuItem(menu_7, SWT.NONE);
-		mntmAdd.setText("Add");
+		//MenuItem mntmAdd = new MenuItem(menu_7, SWT.NONE);
+		//mntmAdd.setText("Add");
 		
-		MenuItem mntmRemove = new MenuItem(menu_7, SWT.NONE);
-		mntmRemove.setText("Remove");
+		//MenuItem mntmRemove = new MenuItem(menu_7, SWT.NONE);
+		//mntmRemove.setText("Remove");
 		
 		MenuItem mntmExport = new MenuItem(menu_7, SWT.NONE);
 		mntmExport.addSelectionListener(new SelectionAdapter() {
@@ -343,10 +345,12 @@ public class MainSWT {
 			public void widgetSelected(SelectionEvent e) {
 				Devices.listDevices(true);
 				String devid = WidgetTask.openDeviceSelector(shlSonyericsson);
+				DeviceEntry ent = Devices.getDevice(devid);
         		if (devid.length()>0) {
         			try {
+        				MyLogger.getLogger().info("Beginning export of "+ent.getName());
         				doExportDevice(devid);
-        				MyLogger.getLogger().info("Device "+devid+" Exported successfully");
+        				MyLogger.getLogger().info(ent.getName()+" exported successfully");
         			}
         			catch (Exception ex) {
         				MyLogger.getLogger().error(ex.getMessage());
@@ -366,11 +370,11 @@ public class MainSWT {
         		for (int i=0;i<lfiles.length;i++) {
         			if (lfiles[i].getName().endsWith(".ftd")) {
         				String name = lfiles[i].getName();
-        				name = name.substring(0,name.length()-4);
+        				name = name.substring(0,name.length()-4);        				
         				try {
-        				FTDEntry entry = new FTDEntry(name);
-        				list.setProperty(entry.getId(), entry.getName());
-        				} catch (Exception ex) {}
+        					FTDEntry entry = new FTDEntry(name);
+        					list.setProperty(entry.getId(), entry.getName());
+        				} catch (Exception ex) {ex.printStackTrace();}
         			}
         		}
         		if (list.size()>0) {
@@ -637,7 +641,7 @@ public class MainSWT {
     			found = true;
     			Devices.setCurrent((String)founditems.keys().nextElement());
     			if (!Devices.isWaitingForReboot())
-    				MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getId());
+    				MyLogger.getLogger().info("Connected device : " + Devices.getCurrent().getName());
     		}
     		else {
     			MyLogger.getLogger().error("Cannot identify your device.");
@@ -880,37 +884,29 @@ public class MainSWT {
 						String ulcode=j.getULCode();
 						String imei = j.getIMEI();
 						String blstatus = j.getBLStatus();
-						if (blstatus.equals("ROOTED")) {
-							WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, flash, "R");
-							flash.closeDevice();
-							MyLogger.initProgress(0);
-							MyLogger.getLogger().info("You can now unplug and restart your device");
-							DeviceChangedListener.pause(false);
-						}
-						else {
+						String serial = j.getSerial();
+						if (!j.alreadyUnlocked()) {
 							if (!blstatus.equals("ROOTABLE")) {
 								MyLogger.getLogger().info("Your phone bootloader cannot be officially unlocked");
 								MyLogger.getLogger().info("You can now unplug and restart your phone");
 							}
 							else {
-								if (j.alreadyUnlocked()) {
-									WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, flash, "U");
-									flash.closeDevice();
-									MyLogger.initProgress(0);
-									MyLogger.getLogger().info("You can now unplug and restart your device");
-									DeviceChangedListener.pause(false);
+								MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+								String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
+								if (result.equals("OK")) {
+									WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
 								}
 								else {
-									MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
-									String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
-									if (result.equals("OK")) {
-										WidgetTask.openBLWizard(shlSonyericsson, imei, ulcode, null, "U");
-									}
-									else {
-										MyLogger.getLogger().info("Bootloader unlock canceled");
-									}			
+									MyLogger.getLogger().info("Bootloader unlock canceled");
 								}
-							}							
+							}
+						}
+						else {
+							WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, j.isRelocked()?"U":"R");
+							flash.closeDevice();
+							MyLogger.initProgress(0);
+							MyLogger.getLogger().info("You can now unplug and restart your device");
+							DeviceChangedListener.pause(false);								
 						}
 					}
 				});

@@ -74,14 +74,21 @@ public class TaEntry {
 	
 	public String getComputedSize() {
 		String lsize="";
-		if (_data.length()==2)
-			lsize=HexDump.toHex((int)1);
+		if (_data.length()==0)
+			lsize=HexDump.toHex((int)0);
 		else
-			lsize= HexDump.toHex(_data.split(" ").length);
+			if (_data.length()==2)
+				lsize=HexDump.toHex((int)1);
+			else
+				lsize= HexDump.toHex(_data.split(" ").length);
 		lsize="0000" + lsize.substring(lsize.length()-4);
 		return lsize;
 	}
 
+	public int getDataSize() {
+		return Integer.parseInt(getComputedSize());
+	}
+	
 	public Byte[] getSizeBytes() {
 		return BytesUtil.getBytes(getComputedSize());
 	}
@@ -104,16 +111,23 @@ public class TaEntry {
 	}
 	
 	public Byte[] getDataBytes() {
-		String[] datas = _data.split(" ");
-		Byte[] data = new Byte[datas.length];
-		for (int j=0;j<datas.length;j++) {
-			data[j]=BytesUtil.getBytes(datas[j])[0];
+		if (_data.length()>0) {
+			String[] datas = _data.split(" ");
+			Byte[] data = new Byte[datas.length];
+			for (int j=0;j<datas.length;j++) {
+				data[j]=BytesUtil.getBytes(datas[j])[0];
+			}
+			return data;
 		}
-		return data;
+		else
+			return null;
 	}
 	
 	public Byte[] getWordByte() {
-		return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes(), getDataBytes());
+		if (getDataBytes()!=null)
+			return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes(), getDataBytes());
+		else
+			return BytesUtil.concatAll(getPartitionBytes(), getSizeBytes());
 	}
 
 	public byte[] getWordbyte() {

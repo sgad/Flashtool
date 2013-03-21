@@ -78,22 +78,34 @@ public class X10flash {
 		} 	
     }
 
-    public String dumpProperty(int prnumber, String format) throws IOException, X10FlashException
+    public TaEntry dumpProperty(int unit) throws IOException, X10FlashException
     {
-    		MyLogger.getLogger().info("Start Reading property");
-	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(prnumber).toString());
-	        cmd.send(Command.CMD12, BytesUtil.getBytesWord(prnumber, 4),false);
-	        MyLogger.updateProgress();
-	        String reply = "";
-	        if (format.equals("hex"))
-	        	reply = cmd.getLastReplyHex();
-	        if (format.equals("string"))
-	        	reply = cmd.getLastReplyString();
-	        reply = reply.replace("[", "");
-	        reply = reply.replace("]", "");
-	        reply = reply.replace(",", "");
-			MyLogger.getLogger().info("Reading TA finished.");
-			return reply;
+    		String sunit = HexDump.toHex(BytesUtil.getBytesWord(unit, 4));
+    		sunit = sunit.replace("[", "");
+    		sunit = sunit.replace("]", "");
+    		sunit = sunit.replace(",", "");
+    		sunit = sunit.replace(" ", "");
+    		MyLogger.getLogger().info("Start Reading unit "+sunit);
+	        MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(unit).toString());
+	        try {
+	        	cmd.send(Command.CMD12, BytesUtil.getBytesWord(unit, 4),false);
+	        	MyLogger.getLogger().info("Reading TA finished.");
+	        }
+	        catch (X10FlashException e) {
+	        	MyLogger.getLogger().info("Reading TA finished.");
+	        	return null;
+	        }
+	        if (cmd.getLastReplyLength()>0) {
+        		TaEntry ta = new TaEntry();
+        		ta.setPartition(HexDump.toHex(unit));
+	        	String reply = cmd.getLastReplyHex();
+	        	reply = reply.replace("[", "");
+	        	reply = reply.replace("]", "");
+	        	reply = reply.replace(",", "");
+        		ta.addData(reply.trim());
+        		return ta;
+    		}
+			return null;
     }
 
     public Vector<TaEntry> dumpProperties()

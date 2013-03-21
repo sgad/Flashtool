@@ -79,11 +79,13 @@ public class Devices  {
 				PropertiesFile p = new PropertiesFile();
 				String device = list[i].getPath().substring(list[i].getPath().lastIndexOf(OS.getFileSeparator())+1);
 				try {
-					p.open("",new File(list[i].getPath()+OS.getFileSeparator()+device+".properties").getAbsolutePath());
-					DeviceEntry entry = new DeviceEntry(p);
-					if (device.equals(entry.getId()))
-						props.put(device, entry);
-					else MyLogger.getLogger().error(device + " : this bundle is not valid");
+					if (!device.toLowerCase().equals("busybox")) {
+						p.open("",new File(list[i].getPath()+OS.getFileSeparator()+device+".properties").getAbsolutePath());
+						DeviceEntry entry = new DeviceEntry(p);
+						if (device.equals(entry.getId()))
+							props.put(device, entry);
+						else MyLogger.getLogger().error(device + " : this bundle is not valid");
+					}
 				}
 				catch (Exception fne) {
 					MyLogger.getLogger().error(device + " : this bundle is not valid");

@@ -211,7 +211,7 @@ public class DeviceEntry {
 			//version = sel.getVersion();
 		}
 		if (version.length()==0) return "";
-		else return "."+fsep+"devices"+fsep+_entry.getProperty("internalname")+fsep+"busybox"+fsep+version+fsep+"busybox";
+		else return "."+fsep+"devices"+fsep+"busybox"+fsep+version+fsep+"busybox";
 	}
 	
 	public String getOptimize() {

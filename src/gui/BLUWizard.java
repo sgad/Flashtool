@@ -94,7 +94,10 @@ public class BLUWizard extends Dialog {
 		      }
 		    });
 		shlBootloaderUnlockWizard.setSize(286, 183);
-		shlBootloaderUnlockWizard.setText("BootLoader Unlock Wizard");
+		if (_action.equals("R"))
+			shlBootloaderUnlockWizard.setText("BootLoader Relock Wizard");
+		else
+			shlBootloaderUnlockWizard.setText("BootLoader Unlock Wizard");
 		
 		Label lblImei = new Label(shlBootloaderUnlockWizard, SWT.NONE);
 		lblImei.setBounds(10, 10, 55, 15);

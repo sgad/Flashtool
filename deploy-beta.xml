@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool Beta">
 	
-	<property name="version" value="0.9.10.2beta2"/>
+	<property name="version" value="0.9.10.2beta4"/>
 	
 	<target name="all" depends="core release,devices"/>
 
-	<target name="devices" depends="E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,MT25 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,ST23 Device,WT19 Device,X10 Device,LT26 Device, LT22 Device, LT28 Device, MT27 Device, ST25 Device, ST27 Device, LT26w Device, ST21 Device, ST26 Device, MT28 Device, LT25 Device, LT29 Device, LT30 Device, C660x Device, C650x Device, C150x Device, C160x Device"/>
+	<target name="devices" depends="busybox, E10 Device,E15 Device,U20 Device,LT15 Device,LT18 Device,MK16 Device,MT11 Device,MT15 Device,MT25 Device,R800 Device,SK17 Device,ST15 Device,ST17 Device,ST18 Device,ST23 Device,WT19 Device,X10 Device,LT26 Device, LT22 Device, LT28 Device, MT27 Device, ST25 Device, ST27 Device, LT26w Device, ST21 Device, ST26 Device, MT28 Device, LT25 Device, LT29 Device, LT30 Device, C660X Device, C650X Device, C150X Device, C160X Device"/>
 	
 	<target name="clean">
     	<mkdir dir="../Deploy"/>
@@ -78,11 +78,15 @@
 			  <fileset dir="./devicesConfig/E15"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/E15">
-              <fileset dir="./devicesConfig/generic/"
+    </target>
+
+	<target name="busybox">
+        <delete dir="../Deploy/FlashTool/devices/busybox"/>
+        <copy todir="../Deploy/FlashTool/devices">
+              <fileset dir="./devicesConfig/generic"
                        excludes="**/.svn"/>
         </copy>
-    </target>
+	</target>
 
 	<target name="E10 Device">
         <delete dir="../Deploy/FlashTool/devices/E10"/>
@@ -91,10 +95,6 @@
 		<mkdir dir="../Deploy/FlashTool/devices/E10/features"/>
         <copy todir="../Deploy/FlashTool/devices/E10">
               <fileset dir="./devicesConfig/E10"
-                       excludes="**/.svn"/>
-        </copy>
-        <copy todir="../Deploy/FlashTool/devices/E10">
-              <fileset dir="./devicesConfig/generic/"
                        excludes="**/.svn"/>
         </copy>
 	</target>
@@ -108,10 +108,6 @@
               <fileset dir="./devicesConfig/U20"
                        excludes="**/.svn"/>
         </copy>
-        <copy todir="../Deploy/FlashTool/devices/U20">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
 	</target>
 
     <target name="LT15 Device">
@@ -121,10 +117,6 @@
     	<mkdir dir="../Deploy/FlashTool/devices/LT15/features"/>
 		<copy todir="../Deploy/FlashTool/devices/LT15">
 			  <fileset dir="./devicesConfig/LT15"
-			           excludes="**/.svn"/>
-		</copy>
-		<copy todir="../Deploy/FlashTool/devices/LT15">
-			  <fileset dir="./devicesConfig/generic/"
 			           excludes="**/.svn"/>
 		</copy>
     </target>
@@ -138,10 +130,6 @@
 			  <fileset dir="./devicesConfig/LT18"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/LT18">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="MK16 Device">
@@ -153,10 +141,6 @@
 			  <fileset dir="./devicesConfig/MK16"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/MK16">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
     <target name="MT11 Device">
@@ -168,10 +152,6 @@
 			  <fileset dir="./devicesConfig/MT11"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/MT11">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="MT15 Device">
@@ -183,10 +163,6 @@
 			  <fileset dir="./devicesConfig/MT15"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/MT15">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="MT25 Device">
@@ -198,10 +174,6 @@
 			  <fileset dir="./devicesConfig/MT25"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/MT25">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 	
 	<target name="R800 Device">
@@ -213,10 +185,6 @@
 			  <fileset dir="./devicesConfig/R800"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/R800">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	   <target name="LT26 Device">
@@ -228,68 +196,48 @@
 	              <fileset dir="./devicesConfig/LT26"
 	                       excludes="**/.svn"/>
 	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/LT26">
-	              <fileset dir="./devicesConfig/generic/"
+	    </target>
+
+	<target name="C660X Device">
+	        <delete dir="../Deploy/FlashTool/devices/C660X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C660X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C660X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C660X">
+	              <fileset dir="./devicesConfig/C660X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 
-	<target name="C660x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C660x"/>
+	<target name="C650X Device">
+	        <delete dir="../Deploy/FlashTool/devices/C650X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C660x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C660x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C660x">
-	              <fileset dir="./devicesConfig/C660x"
-	                       excludes="**/.svn"/>
-	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/C660x">
-	              <fileset dir="./devicesConfig/generic/"
-	                       excludes="**/.svn"/>
-	        </copy>
-	    </target>
-
-	<target name="C650x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C650x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C650x"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C650X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices/C650x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C650x">
-	              <fileset dir="./devicesConfig/C650x"
-	                       excludes="**/.svn"/>
-	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/C650x">
-	              <fileset dir="./devicesConfig/generic/"
+	        <copy todir="../Deploy/FlashTool/devices/C650X">
+	              <fileset dir="./devicesConfig/C650X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 
-	<target name="C150x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C150x"/>
+	<target name="C150X Device">
+	        <delete dir="../Deploy/FlashTool/devices/C150X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C150x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C150x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C150x">
-	              <fileset dir="./devicesConfig/C150x"
-	                       excludes="**/.svn"/>
-	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/C150x">
-	              <fileset dir="./devicesConfig/generic/"
+	        <mkdir dir="../Deploy/FlashTool/devices/C150X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C150X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C150X">
+	              <fileset dir="./devicesConfig/C150X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 		
-	<target name="C160x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C160x"/>
+	<target name="C160X Device">
+	        <delete dir="../Deploy/FlashTool/devices/C160X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C160x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C160x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C160x">
-	              <fileset dir="./devicesConfig/C160x"
-	                       excludes="**/.svn"/>
-	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/C160x">
-	              <fileset dir="./devicesConfig/generic/"
+	        <mkdir dir="../Deploy/FlashTool/devices/C160X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C160X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C160X">
+	              <fileset dir="./devicesConfig/C160X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
@@ -303,10 +251,6 @@
                <fileset dir="./devicesConfig/LT26W"
                         excludes="**/.svn"/>
          </copy>
-         <copy todir="../Deploy/FlashTool/devices/LT26W">
-               <fileset dir="./devicesConfig/generic/"
-                        excludes="**/.svn"/>
-         </copy>
      </target>
 
 	   <target name="LT22 Device">
@@ -316,10 +260,6 @@
 	        <mkdir dir="../Deploy/FlashTool/devices/LT22/features"/>
 	        <copy todir="../Deploy/FlashTool/devices/LT22">
 	              <fileset dir="./devicesConfig/LT22"
-	                       excludes="**/.svn"/>
-	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/LT22">
-	              <fileset dir="./devicesConfig/generic/"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
@@ -333,10 +273,6 @@
 	              <fileset dir="./devicesConfig/LT28"
 	                       excludes="**/.svn"/>
 	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/LT28">
-	              <fileset dir="./devicesConfig/generic/"
-	                       excludes="**/.svn"/>
-	        </copy>
 	    </target>
 
 	<target name="LT30 Device">
@@ -346,10 +282,6 @@
             <mkdir dir="../Deploy/FlashTool/devices/LT30/features"/>
             <copy todir="../Deploy/FlashTool/devices/LT30">
                   <fileset dir="./devicesConfig/LT30"
-                           excludes="**/.svn"/>
-            </copy>
-            <copy todir="../Deploy/FlashTool/devices/LT30">
-                  <fileset dir="./devicesConfig/generic/"
                            excludes="**/.svn"/>
             </copy>
         </target>
@@ -363,10 +295,6 @@
                   <fileset dir="./devicesConfig/LT25"
                            excludes="**/.svn"/>
             </copy>
-            <copy todir="../Deploy/FlashTool/devices/LT25">
-                  <fileset dir="./devicesConfig/generic/"
-                           excludes="**/.svn"/>
-            </copy>
         </target>
         
 	<target name="LT29 Device">
@@ -376,10 +304,6 @@
             <mkdir dir="../Deploy/FlashTool/devices/LT29/features"/>
             <copy todir="../Deploy/FlashTool/devices/LT29">
                   <fileset dir="./devicesConfig/LT29"
-                           excludes="**/.svn"/>
-            </copy>
-            <copy todir="../Deploy/FlashTool/devices/LT29">
-                  <fileset dir="./devicesConfig/generic/"
                            excludes="**/.svn"/>
             </copy>
         </target>
@@ -393,10 +317,6 @@
 	              <fileset dir="./devicesConfig/MT27"
 	                       excludes="**/.svn"/>
 	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/MT27">
-	              <fileset dir="./devicesConfig/generic/"
-	                       excludes="**/.svn"/>
-	        </copy>
 	    </target>
 
 	   <target name="MT28 Device">
@@ -406,10 +326,6 @@
             <mkdir dir="../Deploy/FlashTool/devices/MT28/features"/>
             <copy todir="../Deploy/FlashTool/devices/MT28">
                   <fileset dir="./devicesConfig/MT28"
-                           excludes="**/.svn"/>
-            </copy>
-            <copy todir="../Deploy/FlashTool/devices/MT28">
-                  <fileset dir="./devicesConfig/generic/"
                            excludes="**/.svn"/>
             </copy>
         </target>
@@ -423,10 +339,6 @@
 	                  <fileset dir="./devicesConfig/ST21"
 	                           excludes="**/.svn"/>
 	            </copy>
-	            <copy todir="../Deploy/FlashTool/devices/ST21">
-	                  <fileset dir="./devicesConfig/generic/"
-	                           excludes="**/.svn"/>
-	            </copy>
 	        </target>
 			
 	   <target name="ST26 Device">
@@ -436,10 +348,6 @@
 	            <mkdir dir="../Deploy/FlashTool/devices/ST26/features"/>
 	            <copy todir="../Deploy/FlashTool/devices/ST26">
 	                  <fileset dir="./devicesConfig/ST26"
-	                           excludes="**/.svn"/>
-	            </copy>
-	            <copy todir="../Deploy/FlashTool/devices/ST26">
-	                  <fileset dir="./devicesConfig/generic/"
 	                           excludes="**/.svn"/>
 	            </copy>
 	        </target>
@@ -453,10 +361,6 @@
 	              <fileset dir="./devicesConfig/ST25"
 	                       excludes="**/.svn"/>
 	        </copy>
-	        <copy todir="../Deploy/FlashTool/devices/ST25">
-	              <fileset dir="./devicesConfig/generic/"
-	                       excludes="**/.svn"/>
-	        </copy>
 	    </target>
 
 	   <target name="ST27 Device">
@@ -466,10 +370,6 @@
 	            <mkdir dir="../Deploy/FlashTool/devices/ST27/features"/>
 	            <copy todir="../Deploy/FlashTool/devices/ST27">
 	                  <fileset dir="./devicesConfig/ST27"
-	                           excludes="**/.svn"/>
-	            </copy>
-	            <copy todir="../Deploy/FlashTool/devices/ST27">
-	                  <fileset dir="./devicesConfig/generic/"
 	                           excludes="**/.svn"/>
 	            </copy>
 	        </target>
@@ -483,10 +383,6 @@
 			  <fileset dir="./devicesConfig/SK17"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/SK17">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="ST15 Device">
@@ -498,10 +394,6 @@
 			  <fileset dir="./devicesConfig/ST15"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/ST15">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="ST17 Device">
@@ -513,10 +405,6 @@
 			  <fileset dir="./devicesConfig/ST17"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/ST17">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="ST18 Device">
@@ -528,10 +416,6 @@
 			  <fileset dir="./devicesConfig/ST18"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/ST18">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="ST23 Device">
@@ -543,10 +427,6 @@
 			  <fileset dir="./devicesConfig/ST23"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/ST23">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 	
 	<target name="WT19 Device">
@@ -558,10 +438,6 @@
 			  <fileset dir="./devicesConfig/WT19"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/WT19">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
     </target>
 
 	<target name="X10 Device">
@@ -573,10 +449,6 @@
 			  <fileset dir="./devicesConfig/X10"
 			           excludes="**/.svn"/>
 		</copy>
-        <copy todir="../Deploy/FlashTool/devices/X10">
-              <fileset dir="./devicesConfig/generic/"
-                       excludes="**/.svn"/>
-        </copy>
 	</target>
 
 	<target name="Shells only">

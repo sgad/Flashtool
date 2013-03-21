@@ -100,13 +100,13 @@ public class WidgetTask {
 		return (String)res.getResult();
 	}
 
-	public static String openBLWizard(final Shell parent, final String imei, final String ulcode, final X10flash flash, final String mode) {
+	public static String openBLWizard(final Shell parent, final String serial, final String imei, final String ulcode, final X10flash flash, final String mode) {
 		final Result res = new Result();
 		Display.getDefault().syncExec(
 				new Runnable() {
 					public void run() {
 						BLUWizard wiz = new BLUWizard(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
-			    		Object obj = wiz.open(imei,ulcode,flash,mode);
+			    		Object obj = wiz.open(serial,imei,ulcode,flash,mode);
 						res.setResult(obj);
 						
 					}

@@ -1,5 +1,8 @@
 package gui;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
@@ -24,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.logger.MyLogger;
+import org.system.OS;
 import org.system.RunOutputs;
 
 public class BLUWizard extends Dialog {
@@ -36,6 +40,7 @@ public class BLUWizard extends Dialog {
 	private Button btnUnlock;
 	private X10flash _flash;
 	private String _action;
+	private String _serial;
 
 	/**
 	 * Create the dialog.
@@ -50,9 +55,10 @@ public class BLUWizard extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	public Object open(String imei, String ulcode,X10flash flash, String action) {
+	public Object open(String serial, String imei, String ulcode,X10flash flash, String action) {
 		_action = action;
 		_flash = flash;
+		_serial = serial;
 		createContents();
 		textIMEI.setText(imei);
 		textULCODE.setText(ulcode);
@@ -88,7 +94,10 @@ public class BLUWizard extends Dialog {
 		      }
 		    });
 		shlBootloaderUnlockWizard.setSize(286, 183);
-		shlBootloaderUnlockWizard.setText("BootLoader Unlock Wizard");
+		if (_action.equals("R"))
+			shlBootloaderUnlockWizard.setText("BootLoader Relock Wizard");
+		else
+			shlBootloaderUnlockWizard.setText("BootLoader Unlock Wizard");
 		
 		Label lblImei = new Label(shlBootloaderUnlockWizard, SWT.NONE);
 		lblImei.setBounds(10, 10, 55, 15);
@@ -125,7 +134,8 @@ public class BLUWizard extends Dialog {
 				}
 				if (_flash==null) {
 					BLUnlockJob bj = new BLUnlockJob("Unlock Job");
-					bj.setULCode(textULCODE.getText());
+					final String ulcode = textULCODE.getText();
+					bj.setULCode(ulcode);
 					bj.addJobChangeListener(new IJobChangeListener() {
 						public void aboutToRun(IJobChangeEvent event) {}
 						public void awake(IJobChangeEvent event) {}
@@ -136,6 +146,23 @@ public class BLUWizard extends Dialog {
 						public void done(IJobChangeEvent event) {
 							BLUnlockJob res = (BLUnlockJob) event.getJob();
 							WidgetTask.setEnabled(btnUnlock,!res.unlockSuccess());
+							if (res.unlockSuccess()) {
+								try {
+									File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+_serial);
+									if (!f.exists()) f.mkdir();
+									File serial = new File(f.getAbsolutePath()+File.separator+"ulcode.txt");
+									if (!serial.exists()) {
+										FileWriter out = new FileWriter(_serial);
+										out.write(ulcode);
+										out.flush();
+										out.close();
+										MyLogger.getLogger().info("Unlock code saved to "+serial.getAbsolutePath());
+									}
+								}
+								catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
 						}
 
 					});
@@ -146,8 +173,8 @@ public class BLUWizard extends Dialog {
 					if (_action.equals("R")) {
 						TaEntry ta = new TaEntry();
 						ta.setPartition(2226);
-						byte[] data = new byte[2];data[0]=0;data[1]=0;
-						ta.setData(data);
+						//byte[] data = new byte[2];data[0]=0;data[1]=0;
+						//ta.setData(data);
 						MyLogger.getLogger().info("Relocking device");
 						WriteTAJob tj = new WriteTAJob("Write TA");
 						tj.addJobChangeListener(new IJobChangeListener() {

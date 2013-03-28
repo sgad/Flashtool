@@ -1,8 +1,14 @@
 package gui;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import libusb.LibUsbException;
 import linuxlib.JUsb;
+
+import org.system.AWTKillerThread;
 import org.system.OS;
 import flashsystem.FlasherConsole;
 
@@ -10,10 +16,12 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
+		AWTKillerThread k = new AWTKillerThread();
+		k.start();
 		try {
-			initLinuxUsb();
 			OptionSet options = parseCmdLine(args);
 			if (options.has("console")) {
+				Main.initLinuxUsb();
 				processConsole(options);
 			}
 			else {
@@ -24,19 +32,12 @@ public class Main {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		k.done();
 	}
 
 	
-	private static void initLinuxUsb() {
-		try {
+	public static void initLinuxUsb() throws LibUsbException {
 			if (OS.getName()!="windows") JUsb.init();
-		}
-		catch (UnsatisfiedLinkError e) {
-			e.printStackTrace();
-			System.out.println("libusbx 1.0 not installed. 1.0.14 version mandatory");
-			System.out.println("It can be downloaded on http://www.libusbx.org");
-			System.exit(1);
-		}
 	}
 
 	private static OptionSet parseCmdLine(String[] args) {
@@ -80,6 +81,5 @@ public class Main {
 		}*/
 		FlasherConsole.exit();		
 	}
-
 
 }

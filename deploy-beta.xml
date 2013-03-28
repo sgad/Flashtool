@@ -2,7 +2,7 @@
 <project default="all" name="Deploy Flashtool Beta">
 	
 	<property name="version" value="0.9.10.2beta4"/>
-	<property name="progtime" value="2013-03-21 19:00:00"/>
+	<property name="progtime" value="2013-03-26 22:30:00"/>
 	
 	<target name="all" depends="core release,devices"/>
 

@@ -9,12 +9,12 @@ public class UsbSystem {
   byte endpoint_in;
   byte endpoint_out;
 
-  public UsbSystem()
+  public UsbSystem() throws LibUsbException
   {
     initSystem();
   }
 
-  public void initSystem()
+  public void initSystem() throws LibUsbException
   {
     Pointer[] p = new Pointer[1];
     try {
@@ -24,22 +24,16 @@ public class UsbSystem {
 	    //LibUsbLibrary.libUsb.libusb_set_debug(this.context, 4);
     }
     catch (UnsatisfiedLinkError e) {
-		System.out.println("Libusb not found. Minimum libusb version is 1.0.14");
-		System.out.println("It can be downloaded on http://www.libusbx.org");
-		System.exit(1);
+    	throw new LibUsbException("Libusb not found. Minimum libusb version is 1.0.14. It can be downloaded on http://www.libusbx.org");
     }
 	try {
 		libusb_version v = LibUsbLibrary.libUsb.libusb_get_version();
 		if (v.major!=(short)1 || v.minor!=(short)0 || v.micro<(short)14) {
-			System.out.println("Minimum libusb version is 1.0.14. Found "+v.major + "." + v.minor + "." + v.micro);
-			System.out.println("It can be downloaded on http://www.libusbx.org");
-			System.exit(1);
+			throw new LibUsbException("Minimum libusb version is 1.0.14. Found "+v.major + "." + v.minor + "." + v.micro);
 		}
 	}
 	catch (UnsatisfiedLinkError e) {
-		System.out.println("A libusb was found but not with the right version. Minimum libusb version is 1.0.14");
-		System.out.println("It can be downloaded on http://www.libusbx.org");
-		System.exit(1);
+		throw new LibUsbException("A libusb was found but not with the right version. Minimum libusb version is 1.0.14. It can be downloaded on http://www.libusbx.org");
 	}
   }
 

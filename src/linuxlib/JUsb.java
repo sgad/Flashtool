@@ -1,6 +1,8 @@
 package linuxlib;
 
 import java.io.ByteArrayInputStream;
+
+import libusb.LibUsbException;
 import libusb.UsbDevList;
 import libusb.UsbDevice;
 import libusb.UsbSystem;
@@ -16,7 +18,7 @@ public class JUsb {
 	private static String Serial = "";
 	public static String version = "";
 	
-	public static void init() {
+	public static void init() throws LibUsbException {
 		us = new UsbSystem();
 	}
 	

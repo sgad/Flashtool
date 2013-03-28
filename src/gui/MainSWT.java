@@ -9,10 +9,13 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
+
+import libusb.LibUsbException;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
 import org.adb.FastbootUtility;
@@ -132,13 +135,17 @@ public class MainSWT {
 		vcheck.start();
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
+		try {
+			Main.initLinuxUsb();
+		}
+		catch (LibUsbException e) {
+			shlSonyericsson.dispose();
+		}
 		while (!shlSonyericsson.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		if (OS.getName().equals("mac"))
-			System.exit(0);
 	}
 
 	public void doDisableIdent() {
@@ -291,7 +298,7 @@ public class MainSWT {
 		
 		
 		Menu AdvancedMenu = new Menu(mntmAdvanced);
-		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
+		
 		mntmAdvanced.setMenu(AdvancedMenu);
 		
 		MenuItem mntmTrimArea = new MenuItem(AdvancedMenu, SWT.CASCADE);
@@ -308,7 +315,7 @@ public class MainSWT {
 			}
 		});
 		mntmBackup.setText("Backup");
-		
+		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
 		mntmDevices.setText("Devices");
 		

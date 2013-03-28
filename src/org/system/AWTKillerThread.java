@@ -19,7 +19,6 @@ public class AWTKillerThread extends Thread {
 				Iterator<Thread> i =  threadSet.iterator();
 				while (i.hasNext()) {
 					Thread t = i.next();
-					System.out.println(t.getName());
 					if (t.getName().startsWith("AWT")) {
 						t.interrupt();
 					}

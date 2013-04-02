@@ -78,9 +78,9 @@ public class FastbootToolbox extends Dialog {
 		btnNewButton_4.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnNewButton_4.setText("Check Current Device Status");
 		
-		Label lblByDoomlord = new Label(shlFastbootToolbox, SWT.NONE);
-		lblByDoomlord.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblByDoomlord.setText("By DoomLord");
+		Label lblByDooMLoRD = new Label(shlFastbootToolbox, SWT.NONE);
+		lblByDooMLoRD.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblByDooMLoRD.setText("By DooMLoRD");
 		
 		Button btnNewButton = new Button(shlFastbootToolbox, SWT.NONE);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {

@@ -799,8 +799,8 @@ public class MainSWT {
 	}
 	
 	public void doFastBoot() throws Exception {
-		/*FastBootToolboxGUI box = new FastBootToolboxGUI();
-		box.setVisible(true);*/
+		FastbootToolbox fbbox = new FastbootToolbox(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+		fbbox.open();
 	}
 	
 	public void doFlashmode(final String pftfpath, final String pftfname) throws Exception {

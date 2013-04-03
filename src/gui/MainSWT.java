@@ -15,6 +15,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Deflater;
 
+import javax.swing.JOptionPane;
+
 import libusb.LibUsbException;
 import linuxlib.JUsb;
 import org.adb.AdbUtility;
@@ -53,6 +55,7 @@ import org.system.DeviceEntry;
 import org.system.DeviceProperties;
 import org.system.Devices;
 import org.system.FTDEntry;
+import org.system.FTShell;
 import org.system.GlobalConfig;
 import org.system.OS;
 import org.system.StatusEvent;
@@ -68,6 +71,7 @@ import gui.tools.FTDExplodeJob;
 import gui.tools.FlashJob;
 import gui.tools.GetULCodeJob;
 import gui.tools.MsgBox;
+import gui.tools.RootJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -150,7 +154,7 @@ public class MainSWT {
 
 	public void doDisableIdent() {
 		WidgetTask.setEnabled(tltmFlash,true);
-		//WidgetTask.setEnabled(tltmRoot,false);
+		WidgetTask.setEnabled(tltmRoot,false);
 		WidgetTask.setEnabled(tltmAskRoot,false);
 	}
 	
@@ -509,10 +513,16 @@ public class MainSWT {
 		tltmBLU.setToolTipText("Bootloader Unlock");
 		tltmBLU.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/blu_32.png"));
 		
-		/*tltmRoot = new ToolItem(toolBar, SWT.NONE);
+		tltmRoot = new ToolItem(toolBar, SWT.NONE);
+		tltmRoot.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot();
+			}
+		});
 		tltmRoot.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/root_32.png"));
 		tltmRoot.setEnabled(false);
-		tltmRoot.setToolTipText("Root device");*/
+		tltmRoot.setToolTipText("Root device");
 		
 		Button btnSaveLog = new Button(shlSonyericsson, SWT.NONE);
 		FormData fd_btnSaveLog = new FormData();
@@ -685,13 +695,13 @@ public class MainSWT {
     			}
     			if (Devices.getCurrent().isRecovery()) {
     				MyLogger.getLogger().info("Phone in recovery mode");
-    				//WidgetTask.setEnabled(tltmRoot,false);
+    				WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
     				doGiveRoot();
     			}
     			else {
     				boolean hasSU = Devices.getCurrent().hasSU();
-    				//WidgetTask.setEnabled(tltmRoot, !hasSU);
+    				WidgetTask.setEnabled(tltmRoot, !hasSU);
     				if (hasSU) {
     					boolean hasRoot = Devices.getCurrent().hasRoot();
     					if (hasRoot) {
@@ -778,7 +788,7 @@ public class MainSWT {
 				Devices.getCurrent().doBusyboxHelper();
 				MyLogger.getLogger().info("Installing toolbox to device...");
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ftkit.tar",GlobalConfig.getProperty("deviceworkdir"));
-				org.system.Shell ftshell = new org.system.Shell("installftkit");
+				FTShell ftshell = new FTShell("installftkit");
 				ftshell.runRoot();
 			}
 		}
@@ -989,5 +999,28 @@ public class MainSWT {
 				flash.getBundle().close();
 		}
 	}
+
+	public void doRoot() {
+		String pck = WidgetTask.openRootPackageSelector(shlSonyericsson);
+		RootJob rj = new RootJob("Root device");
+		rj.setRootPackage(pck);
+		if (Devices.getCurrent().getVersion().contains("2.3")) {
+			rj.setAction("doRootzergRush");
+		}
+		else
+			if (!Devices.getCurrent().getVersion().contains("4.0") && !Devices.getCurrent().getVersion().contains("4.1"))
+				rj.setAction("doRootpsneuter");
+			else {
+				if (Devices.getCurrent().getVersion().contains("4.0.3"))
+					rj.setAction("doRootEmulator");
+				else
+					if (Devices.getCurrent().getVersion().contains("4.0"))
+						rj.setAction("doRootAdbRestore");
+					else
+						JOptionPane.showMessageDialog(null, "No root exploit for this version");
+			}
+		rj.schedule();
+	}
+
 
 }

@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import org.adb.AdbUtility;
 import org.apache.commons.io.IOUtils;
 
-public class Shell {
+public class FTShell {
 
 	File _file;
 	File _runfile=null;
@@ -15,7 +15,7 @@ public class Shell {
 	String content;
 	String fsep = OS.getFileSeparator();
 	
-	public Shell(File file) throws Exception {
+	public FTShell(File file) throws Exception {
 		init(file);
 	}
 
@@ -29,7 +29,7 @@ public class Shell {
 		setProperty("SHELLPATH",AdbUtility.getShPath(false));
 	}
 	
-	public Shell(String shell) throws Exception {
+	public FTShell(String shell) throws Exception {
 		init(new File(AdbUtility.getShellPath()+fsep+shell));
 	}
 	

@@ -235,14 +235,14 @@ public class DeviceEntry {
     public void doBusyboxHelper() throws Exception {
     	if (!isBusyboxInstalled(false)) {
     		AdbUtility.push(getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-    		Shell shell = new Shell("busyhelper");
+    		FTShell shell = new FTShell("busyhelper");
     		shell.run(true);
 		}
     }
 
     public void reboot() throws Exception {
     	if (hasRoot()) {
-	    	Shell s = new Shell("reboot");
+	    	FTShell s = new FTShell("reboot");
 	    	s.runRoot(false);
     	}
     	else {

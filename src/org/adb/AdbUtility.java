@@ -12,7 +12,7 @@ import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;
 import org.system.ProcessBuilderWrapper;
-import org.system.Shell;
+import org.system.FTShell;
 
 public class AdbUtility  {
 
@@ -195,7 +195,7 @@ public class AdbUtility  {
 		if (hasRootNative(false)) return true;
 		if (rootperms) return true;
 		try {
-			Shell shell = new Shell("checkperms");
+			FTShell shell = new FTShell("checkperms");
 			String result=shell.runRoot(false);
 			while (result.toLowerCase().contains("segmentation fault")) {
 				Thread.sleep(10000);
@@ -333,7 +333,7 @@ public class AdbUtility  {
 		}
 	}
 	
-	public static String run(Shell shell, boolean debug) throws Exception {
+	public static String run(FTShell shell, boolean debug) throws Exception {
 		push(shell.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/"+shell.getName(),false);
 		if (debug)
 			MyLogger.getLogger().debug("Running "+shell.getName());
@@ -357,12 +357,12 @@ public class AdbUtility  {
 		return run(com,true);
 	}
 
-	public static String runRoot(Shell shell) throws Exception {
+	public static String runRoot(FTShell shell) throws Exception {
 		return runRoot(shell,true);
 	}
 	
-	public static String runRoot(Shell shell,boolean log) throws Exception {
-		Shell s=new Shell("sysrun");
+	public static String runRoot(FTShell shell,boolean log) throws Exception {
+		FTShell s=new FTShell("sysrun");
 		s.save();
 		push(s.getPath(),GlobalConfig.getProperty("deviceworkdir")+"/sysrun",false);
 		s.clean();
@@ -381,13 +381,13 @@ public class AdbUtility  {
 
 	public static boolean Sysremountrw() throws Exception {
 		MyLogger.getLogger().info("Remounting system read-write");
-		Shell shell = new Shell("remount");
+		FTShell shell = new FTShell("remount");
 		return !shell.runRoot(false).contains("FTError");
 	}
 
 	public static void clearcache() throws Exception {
 		MyLogger.getLogger().info("Clearing dalvik cache and rebooting");
-		Shell shell = new Shell("clearcache");
+		FTShell shell = new FTShell("clearcache");
 		shell.runRoot(false);
 	}
 

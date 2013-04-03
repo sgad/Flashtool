@@ -19,7 +19,7 @@ import org.system.DeviceProperties;
 import org.system.Devices;
 import org.system.GlobalConfig;
 import org.system.OS;
-import org.system.Shell;
+import org.system.FTShell;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 
@@ -101,15 +101,15 @@ public class FlasherConsole {
 	public static void doRootzergRush() {
 				try {
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-					Shell shell = new Shell("busyhelper");
+					FTShell shell = new FTShell("busyhelper");
 					shell.run(true);
 					AdbUtility.push(new File("."+fsep+"custom"+fsep+"root"+fsep+"zergrush.tar.uue").getAbsolutePath(),GlobalConfig.getProperty("deviceworkdir"));
-					shell = new Shell("rootit");
+					shell = new FTShell("rootit");
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(true);
 					Devices.waitForReboot(true);
 					MyLogger.getLogger().info("Running part2 of Root Exploit");
-					shell = new Shell("rootit2");
+					shell = new FTShell("rootit2");
 					shell.run(false);
 					MyLogger.getLogger().info("Finished!.");
 					MyLogger.getLogger().info("Root should be available after reboot!");		
@@ -122,15 +122,15 @@ public class FlasherConsole {
 	public static void doRootpsneuter() {
 				try {
 					AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-					Shell shell = new Shell("busyhelper");
+					FTShell shell = new FTShell("busyhelper");
 					shell.run(true);
 					AdbUtility.push("."+fsep+"custom"+fsep+"root"+fsep+"psneuter.tar.uue",GlobalConfig.getProperty("deviceworkdir"));
-					shell = new Shell("rootit");
+					shell = new FTShell("rootit");
 					MyLogger.getLogger().info("Running part1 of Root Exploit, please wait");
 					shell.run(false);
 					Devices.waitForReboot(true);
 					MyLogger.getLogger().info("Running part2 of Root Exploit");
-					shell = new Shell("rootit2");
+					shell = new FTShell("rootit2");
 					shell.run(false);
 					MyLogger.getLogger().info("Finished!.");
 					MyLogger.getLogger().info("Root should be available after reboot!");		

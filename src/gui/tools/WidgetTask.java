@@ -8,6 +8,7 @@ import gui.BootModeSelector;
 import gui.BundleCreator;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
+import gui.RootPackageSelector;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
@@ -122,6 +123,21 @@ public class WidgetTask {
 				new Runnable() {
 					public void run() {
 			    		BootModeSelector dial = new BootModeSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open();
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openRootPackageSelector(final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		RootPackageSelector dial = new RootPackageSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
 						res.setResult(obj);
 						

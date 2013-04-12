@@ -80,6 +80,7 @@ public class SinFile {
 		chunksize = size;
 		if (datasize%size>0) nbchunks++;
 		readarray = new byte[(int)size];
+		sinheader.setChunkSize((int)size);
 	}
 	
 	public long getChunkSize() {

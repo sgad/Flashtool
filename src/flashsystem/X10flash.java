@@ -189,20 +189,14 @@ public class X10flash {
     private void processHeader(SinFile sin) throws X10FlashException {
     	try {
     		MyLogger.getLogger().info("    Checking header");
-    		int nbparts = sin.getSinHeader().getHeaderSize() / (int)sin.getChunkSize();
-    		int remain = sin.getSinHeader().getHeaderSize() % (int)sin.getChunkSize();
-    		byte[] looppart = new byte[(int)sin.getChunkSize()];
-    		for (int i=0;i<nbparts;i++) {
-    			System.arraycopy(sin.getHeaderBytes(), (int)(i*sin.getChunkSize()), looppart, 0, (int)sin.getChunkSize());
-    			cmd.send(Command.CMD05,looppart,true);
-        		if (USBFlash.getLastFlags() == 0)
-        			getLastError();
-    		}
-    		byte[] remaining = new byte[remain];
-			System.arraycopy(sin.getHeaderBytes(), sin.getSinHeader().getHeaderSize()-remain, remaining, 0, remain);
-    		cmd.send(Command.CMD05,remaining,false);
-    		if (USBFlash.getLastFlags() == 0)
-    			getLastError();
+    		SinFileHeader header = sin.getSinHeader();
+			for (int j=0;j<header.getNbChunks();j++) {
+				int cur = j+1;
+				MyLogger.getLogger().debug("Sending part "+cur+" of "+header.getNbChunks());
+				cmd.send(Command.CMD05, header.getChunckBytes(j), !((j+1)==header.getNbChunks()));
+				if (USBFlash.getLastFlags() == 0)
+					getLastError();
+			}
 	    }
     	catch (IOException ioe) {
     		throw new X10FlashException("Error in processHeader : "+ioe.getMessage());
@@ -222,9 +216,9 @@ public class X10flash {
 				int cur = j+1;
 				MyLogger.getLogger().debug("Sending part "+cur+" of "+sin.getNbChunks());
 				cmd.send(Command.CMD06, sin.getChunckBytes(j), !((j+1)==sin.getNbChunks()));
+				if (USBFlash.getLastFlags() == 0)
+					getLastError();
 			}
-			if (USBFlash.getLastFlags() == 0)
-				getLastError();
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -283,7 +277,7 @@ public class X10flash {
 		else
 			sin.setChunkSize(0x1000);
 		uploadImage(sin);
-		USBFlash.readS1Reply(true);
+		USBFlash.readS1Reply();
 		hookDevice(true);
     }
 
@@ -368,6 +362,7 @@ public class X10flash {
 		    MyLogger.getLogger().info("Start Flashing");
 		    sendLoader();
 		    maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+		    MyLogger.initProgress(_bundle.getMaxProgress(maxpacketsize));
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
 		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);
@@ -458,13 +453,13 @@ public class X10flash {
 
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
-    	MyLogger.initProgress(_bundle.getMaxProgress());
+    	MyLogger.initProgress(_bundle.getMaxLoaderProgress());
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");
     		try {
 				MyLogger.getLogger().info("Reading device information");
-				USBFlash.readS1Reply(true);
+				USBFlash.readS1Reply();
 				firstRead = new String (USBFlash.getLastReply());
 				phoneprops = new LoaderInfo(firstRead);
 				if (phoneprops.getProperty("VER").startsWith("r"))

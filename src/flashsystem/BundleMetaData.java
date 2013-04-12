@@ -35,11 +35,11 @@ public class BundleMetaData {
 		_catorders.setProperty("1", "KERNEL");
 		_catorders.setProperty("2", "FOTA");
 		_catorders.setProperty("3", "BASEBAND");
-		_catorders.setProperty("4", "UNKNWONW");
+		_catorders.setProperty("4", "UNKNOWN");
 		_catorders.setProperty("5", "APPSLOG");
-		_catorders.setProperty("6", "SYSTEM");
-		_catorders.setProperty("7", "DATA");
-		_catorders.setProperty("8", "CACHE");
+		_catorders.setProperty("6", "CACHE");
+		_catorders.setProperty("7", "SYSTEM");
+		_catorders.setProperty("8", "DATA");
 	}
 	
 	public int getNbCategs() {

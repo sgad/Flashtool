@@ -199,56 +199,56 @@
 	    </target>
 
 	<target name="C690x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C690x"/>
+	        <delete dir="../Deploy/FlashTool/devices/C690X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C690x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C690x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C690x">
-	              <fileset dir="./devicesConfig/C690x"
+	        <mkdir dir="../Deploy/FlashTool/devices/C690X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C690X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C690X">
+	              <fileset dir="./devicesConfig/C690X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 
 	<target name="C660x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C660x"/>
+	        <delete dir="../Deploy/FlashTool/devices/C660X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C660x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C660x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C660x">
-	              <fileset dir="./devicesConfig/C660x"
+	        <mkdir dir="../Deploy/FlashTool/devices/C660X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C660X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C660X">
+	              <fileset dir="./devicesConfig/C660X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 
 	<target name="C650x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C650x"/>
+	        <delete dir="../Deploy/FlashTool/devices/C650X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C650x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C650x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C650x">
-	              <fileset dir="./devicesConfig/C650x"
+	        <mkdir dir="../Deploy/FlashTool/devices/C650X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C650X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C650X">
+	              <fileset dir="./devicesConfig/C650X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 
 	<target name="C150x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C150x"/>
+	        <delete dir="../Deploy/FlashTool/devices/C150X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C150x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C150x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C150x">
-	              <fileset dir="./devicesConfig/C150x"
+	        <mkdir dir="../Deploy/FlashTool/devices/C150X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C150X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C150X">
+	              <fileset dir="./devicesConfig/C150X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>
 		
 	<target name="C160x Device">
-	        <delete dir="../Deploy/FlashTool/devices/C160x"/>
+	        <delete dir="../Deploy/FlashTool/devices/C160X"/>
 	        <mkdir dir="../Deploy/FlashTool/devices"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C160x"/>
-	        <mkdir dir="../Deploy/FlashTool/devices/C160x/features"/>
-	        <copy todir="../Deploy/FlashTool/devices/C160x">
-	              <fileset dir="./devicesConfig/C160x"
+	        <mkdir dir="../Deploy/FlashTool/devices/C160X"/>
+	        <mkdir dir="../Deploy/FlashTool/devices/C160X/features"/>
+	        <copy todir="../Deploy/FlashTool/devices/C160X">
+	              <fileset dir="./devicesConfig/C160X"
 	                       excludes="**/.svn"/>
 	        </copy>
 	    </target>

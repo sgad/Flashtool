@@ -14,6 +14,7 @@ import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -171,6 +172,22 @@ public class WidgetTask {
 			    		Object obj = dial.open();
 						res.setResult(obj);
 						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openOKBox(final Shell parent,final String message) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+						MessageBox mb = new MessageBox(parent,SWT.ICON_INFORMATION|SWT.OK);
+						mb.setText("Information");
+						mb.setMessage(message);
+						int result = mb.open();
+						res.setResult(String.valueOf(result));						
 					}
 				}
 		);

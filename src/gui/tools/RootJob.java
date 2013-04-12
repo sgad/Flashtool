@@ -20,11 +20,17 @@ public class RootJob extends Job {
 	boolean canceled = false;
 	String _action = "";
 	String pck = "";
+	Shell _parent;
 
 	public RootJob(String name) {
 		super(name);
 	}
 
+
+	public void setParentShell(Shell s) {
+		_parent = s;
+	}
+	
 	public void setAction(String action) {
 		_action = action;
 	}
@@ -46,7 +52,8 @@ public class RootJob extends Job {
     			doRootEmulator();
     		if (_action.equals("doRootAdbRestore"))
     			doRootAdbRestore();
-
+    		if (_action.equals("doRootServiceMenu"))
+    			doRootServiceMenu();
     		return Status.OK_STATUS;
     	}
     	catch (Exception e) {
@@ -225,11 +232,49 @@ public class RootJob extends Job {
 		}
 	}
 
+	public void doRootServiceMenu() {
+		try {
+			if (pck.length()>0) {
+				doPushRootFiles(pck,false);
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"onload.sh", "/data/local/tmp/");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"getroot.sh", "/data/local/tmp/");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"install-recovery.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/onload.sh");
+				AdbUtility.run("chmod 755 /data/local/tmp/getroot.sh");
+				AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"usbux.ab");
+				WidgetTask.openOKBox(_parent, "Please look at your device and click RESTORE!");
+				AdbUtility.run("am start -a android.intent.action.MAIN -n com.sonyericsson.android.servicemenu/.ServiceMainMenu");
+				MyLogger.getLogger().info("Waiting for uevent_helper rw");
+				AdbUtility.run("while : ; do [ -w /sys/kernel/uevent_helper ] && exit; done");
+				MyLogger.getLogger().info("Waiting for rooted shell");
+				AdbUtility.run("echo /data/local/tmp/getroot.sh > /sys/kernel/uevent_helper");
+				AdbUtility.run("while : ; do [ -f /dev/sh ] && exit; done");
+				MyLogger.getLogger().info("Root achieved. Installing root files. Device will reboot. Please wait.");
+				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"installsu.sh", "/data/local/tmp/");
+				AdbUtility.run("chmod 755 /data/local/tmp/installsu.sh");
+				AdbUtility.run("/dev/sh /data/local/tmp/installsu.sh");
+				if (AdbUtility.hasRootPerms()) {
+					MyLogger.getLogger().info("Device rooted. Now cleaning and rebooting. Please wait");
+					FTShell shell = new FTShell("rebootservicemenu");
+					shell.runRoot();
+					shell.clean();
+				}
+			}
+			else {
+				MyLogger.getLogger().info("Canceled");
+			}
+		}
+		catch (Exception e) {
+			MyLogger.getLogger().error(e.getMessage());
+		}
+	}
+
 	public void doPushRootFiles(String rootpackage, boolean direct) throws Exception {
 		if (!direct) {
 			AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
+			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 		}
 		else {
@@ -245,6 +290,10 @@ public class RootJob extends Job {
 
 	public void doInstallRootFiles() throws Exception {
 		AdbUtility.run(GlobalConfig.getProperty("deviceworkdir")+"/busybox mount -o remount,rw /system && /data/local/tmp/busybox mv /data/local/tmp/su /system/xbin/su && /data/local/tmp/busybox mv /data/local/tmp/Superuser.apk /system/app/Superuser.apk && /data/local/tmp/busybox cp /data/local/tmp/busybox /system/xbin/busybox && chown root.root /system/xbin/su && chmod 06755 /system/xbin/su && chmod 655 /system/app/Superuser.apk && chmod 755 /system/xbin/busybox && rm /data/local.prop && reboot");
+	}
+
+	public void doInstallRootFilesServiceMenu() throws Exception {
+		AdbUtility.run("/dev/sh /system/bin/mount -o remount,rw -t ext4 /dev/block/platform/msm_sdcc.1/by-name/system /system && /dev/sh /data/local/tmp/busybox mv /data/local/tmp/su /system/xbin/su && /dev/sh /data/local/tmp/busybox mv /data/local/tmp/Superuser.apk /system/app/Superuser.apk && /dev/sh /data/local/tmp/busybox cp /data/local/tmp/busybox /system/xbin/busybox && /dev/sh chown root.root /system/xbin/su && chmod 06755 /system/xbin/su && /dev/sh chmod 655 /system/app/Superuser.apk && /dev/sh chmod 755 /system/xbin/busybox");
 	}
 
 }

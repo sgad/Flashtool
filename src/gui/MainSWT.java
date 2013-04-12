@@ -1004,6 +1004,7 @@ public class MainSWT {
 		String pck = WidgetTask.openRootPackageSelector(shlSonyericsson);
 		RootJob rj = new RootJob("Root device");
 		rj.setRootPackage(pck);
+		rj.setParentShell(shlSonyericsson);
 		if (Devices.getCurrent().getVersion().contains("2.3")) {
 			rj.setAction("doRootzergRush");
 		}
@@ -1016,8 +1017,17 @@ public class MainSWT {
 				else
 					if (Devices.getCurrent().getVersion().contains("4.0"))
 						rj.setAction("doRootAdbRestore");
-					else
-						JOptionPane.showMessageDialog(null, "No root exploit for this version");
+					else {
+						if (Devices.getCurrent().getVersion().contains("4.1")) {
+							rj.setAction("doRootServiceMenu");							
+						}
+						else {
+							MessageBox mb = new MessageBox(shlSonyericsson,SWT.ICON_ERROR|SWT.OK);
+							mb.setText("Errorr");
+							mb.setMessage("No root exploit for your device");
+							int result = mb.open();
+						}
+					}
 			}
 		rj.schedule();
 	}

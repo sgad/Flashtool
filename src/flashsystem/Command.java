@@ -117,6 +117,7 @@ public class Command {
     		writeCommand(Command.CMD07, Command.VALNULL, false);
     		throw new X10FlashException(getLastReplyString());
     	}
+		MyLogger.updateProgress();
     }
 
 }

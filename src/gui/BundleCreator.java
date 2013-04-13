@@ -112,7 +112,7 @@ public class BundleCreator extends Dialog {
 		File srcdir = new File(sourceFolder.getText());
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
-			if (chld[i].getName().toUpperCase().endsWith("SIN")) {
+			if (chld[i].getName().toUpperCase().endsWith("SIN") || chld[i].getName().toUpperCase().endsWith("TA")) {
 				files.add(chld[i]);
 			}
 		}
@@ -400,7 +400,7 @@ public class BundleCreator extends Dialog {
 		    			File srcdir = new File(sourceFolder.getText());
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
-		    				if (chld[i].getName().toUpperCase().endsWith("SIN")) {
+		    				if (chld[i].getName().toUpperCase().endsWith("SIN") || chld[i].getName().toUpperCase().endsWith("TA")) {
 		    					files.add(chld[i]);
 		    				}
 		    			}

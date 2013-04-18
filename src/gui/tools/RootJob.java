@@ -241,9 +241,28 @@ public class RootJob extends Job {
 				AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"install-recovery.sh", "/data/local/tmp/");
 				AdbUtility.run("chmod 755 /data/local/tmp/onload.sh");
 				AdbUtility.run("chmod 755 /data/local/tmp/getroot.sh");
-				AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"usbux.ab");
-				WidgetTask.openOKBox(_parent, "Please look at your device and click RESTORE!");
+				String semcpath = "";
+				if (AdbUtility.exists("/mnt/ext_card/default-capability.xml")) 
+					semcpath = "/mnt/ext_card/.semc-fullbackup";
+				else 
+					semcpath = "/mnt/ext_card/.semc-fullbackup";
+				String backuppackage = AdbUtility.run("pm list package -f com.sonyericsson.backuprestore");
+				if (backuppackage.contains("backuprestore")) {
+					AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"RootMe.tar", GlobalConfig.getProperty("deviceworkdir")+"/RootMe.tar");
+					AdbUtility.run("mkdir "+semcpath+" > /dev/null 2>&1");
+					AdbUtility.run("rm -r "+semcpath+"/RootMe* > /dev/null 2>&1");
+					AdbUtility.run("cd "+semcpath+" && /data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
+					AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.BackupActivity");
+					AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.phone.PhoneMainActivity");
+					WidgetTask.openOKBox(_parent, "Please look at your device and goto restore tab.\nChoose RootMe backup.\nRestore and Press OK when done!");
+					AdbUtility.run("rm -r "+semcpath+"/RootMe* > /dev/null 2>&1");
+				}
+				else {
+					AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"ServiceMenu"+File.separator+"usbux.ab");
+					WidgetTask.openOKBox(_parent, "Please look at your device and click RESTORE. Press OK when done!");
+				}				
 				AdbUtility.run("am start -a android.intent.action.MAIN -n com.sonyericsson.android.servicemenu/.ServiceMainMenu");
+				MyLogger.getLogger().info("Look at your phone. Choose Service Test, then Display.");
 				MyLogger.getLogger().info("Waiting for uevent_helper rw");
 				AdbUtility.run("while : ; do [ -w /sys/kernel/uevent_helper ] && exit; done");
 				MyLogger.getLogger().info("Waiting for rooted shell");
@@ -274,7 +293,6 @@ public class RootJob extends Job {
 			AdbUtility.push(Devices.getCurrent().getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"su", GlobalConfig.getProperty("deviceworkdir")+"/su");
 			AdbUtility.push(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"subin"+File.separator+rootpackage+File.separator+"Superuser.apk", GlobalConfig.getProperty("deviceworkdir")+"/Superuser.apk");
-			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 			AdbUtility.run("chown shell.shell "+GlobalConfig.getProperty("deviceworkdir")+"/busybox && chmod 755 " + GlobalConfig.getProperty("deviceworkdir")+"/busybox",true);
 		}
 		else {

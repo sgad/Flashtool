@@ -61,16 +61,21 @@ import org.system.OS;
 import org.system.StatusEvent;
 import org.system.StatusListener;
 import org.system.TextFile;
+import org.system.ULCodeFile;
 import org.system.VersionChecker;
 import flashsystem.Bundle;
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
+import gui.tools.APKInstallJob;
+import gui.tools.BackupSystemJob;
 import gui.tools.BackupTAJob;
+import gui.tools.BusyboxInstallJob;
 import gui.tools.DecryptJob;
 import gui.tools.FTDExplodeJob;
 import gui.tools.FlashJob;
 import gui.tools.GetULCodeJob;
 import gui.tools.MsgBox;
+import gui.tools.RawTAJob;
 import gui.tools.RootJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
@@ -85,8 +90,13 @@ public class MainSWT {
 	protected ToolItem tltmRoot;
 	protected ToolItem tltmAskRoot;
 	protected ToolItem tltmBLU;
+	protected ToolItem tltmApkInstall;
 	protected MenuItem mntmSwitchPro;
 	protected MenuItem mntmAdvanced;
+	protected MenuItem mntmNoDevice;
+	protected MenuItem mntmInstallBusybox;
+	protected MenuItem mntmRawBackup;
+	protected MenuItem mntmRawRestore;
 	protected VersionChecker vcheck=null;
 	
 	/**
@@ -156,6 +166,11 @@ public class MainSWT {
 		WidgetTask.setEnabled(tltmFlash,true);
 		WidgetTask.setEnabled(tltmRoot,false);
 		WidgetTask.setEnabled(tltmAskRoot,false);
+		WidgetTask.setEnabled(tltmApkInstall,false);
+		WidgetTask.setMenuName(mntmNoDevice, "No Device");
+		WidgetTask.setEnabled(mntmNoDevice,false);
+		WidgetTask.setEnabled(mntmRawRestore,false);
+		WidgetTask.setEnabled(mntmRawBackup,false);
 	}
 	
 	/**
@@ -207,6 +222,101 @@ public class MainSWT {
 			}
 		});
 		mntmExit.setText("Exit");
+		
+		mntmNoDevice = new MenuItem(menu, SWT.CASCADE);
+		mntmNoDevice.setText("No Device");
+		mntmNoDevice.setEnabled(false);
+		
+		Menu menu_8 = new Menu(mntmNoDevice);
+		mntmNoDevice.setMenu(menu_8);
+		
+		MenuItem mntmRoot = new MenuItem(menu_8, SWT.CASCADE);
+		mntmRoot.setText("Root");
+		
+		Menu menu_10 = new Menu(mntmRoot);
+		mntmRoot.setMenu(menu_10);
+		
+		MenuItem mntmForcePsneuter = new MenuItem(menu_10, SWT.NONE);
+		mntmForcePsneuter.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootpsneuter");
+			}
+		});
+		mntmForcePsneuter.setText("Force PsNeuter");
+		
+		MenuItem mntmForceZergrush = new MenuItem(menu_10, SWT.NONE);
+		mntmForceZergrush.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootzergRush");
+			}
+		});
+		mntmForceZergrush.setText("Force zergRush");
+		
+		MenuItem mntmForceEmulator = new MenuItem(menu_10, SWT.NONE);
+		mntmForceEmulator.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootEmulator");
+			}
+		});
+		mntmForceEmulator.setText("Force Emulator");
+		
+		MenuItem mntmForceAdbrestore = new MenuItem(menu_10, SWT.NONE);
+		mntmForceAdbrestore.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootAdbRestore");
+			}
+		});
+		mntmForceAdbrestore.setText("Force AdbRestore");
+		
+		MenuItem mntmForceServicemenu = new MenuItem(menu_10, SWT.NONE);
+		mntmForceServicemenu.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doRoot("doRootServiceMenu");
+			}
+		});
+		mntmForceServicemenu.setText("Force ServiceMenu");
+		
+		MenuItem mntmBackupSystemApps = new MenuItem(menu_8, SWT.NONE);
+		mntmBackupSystemApps.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				BackupSystemJob bsj = new BackupSystemJob("Backup System apps");
+				bsj.schedule();
+			}
+		});
+		mntmBackupSystemApps.setText("Backup system apps");
+		
+		mntmInstallBusybox = new MenuItem(menu_8, SWT.NONE);
+		mntmInstallBusybox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+        		String busybox = Devices.getCurrent().getBusybox(true);
+        		if (busybox.length()>0) {
+        			BusyboxInstallJob bij = new BusyboxInstallJob("Busybox Install");
+        			bij.setBusybox(busybox);
+        			bij.schedule();
+        		}
+			}
+		});
+		mntmInstallBusybox.setText("Install busybox");
+		
+		MenuItem mntmReboot = new MenuItem(menu_8, SWT.NONE);
+		mntmReboot.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					Devices.getCurrent().reboot();
+				}
+				catch (Exception ex) {
+				}
+			}
+		});
+		mntmReboot.setText("Reboot");
 		
 		MenuItem mntmNewSubmenu = new MenuItem(menu, SWT.CASCADE);
 		mntmNewSubmenu.setText("Tools");
@@ -319,6 +429,32 @@ public class MainSWT {
 			}
 		});
 		mntmBackup.setText("Backup");
+		
+		mntmRawBackup = new MenuItem(menu_9, SWT.NONE);
+		mntmRawBackup.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				RawTAJob rj = new RawTAJob("Raw TA");
+				rj.setAction("doBackup");
+				rj.setShell(shlSonyericsson);
+				rj.schedule();
+			}
+		});
+		mntmRawBackup.setText("Raw backup");
+		mntmRawBackup.setEnabled(false);
+		
+		mntmRawRestore = new MenuItem(menu_9, SWT.NONE);
+		mntmRawRestore.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				RawTAJob rj = new RawTAJob("Raw TA");
+				rj.setAction("doRestore");
+				rj.setShell(shlSonyericsson);
+				rj.schedule();
+			}
+		});
+		mntmRawRestore.setText("Raw Restore");
+		mntmRawRestore.setEnabled(false);
 		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
 		mntmDevices.setText("Devices");
@@ -486,7 +622,7 @@ public class MainSWT {
 
 		ToolBar toolBar = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
 		FormData fd_toolBar = new FormData();
-		fd_toolBar.right = new FormAttachment(0, 179);
+		fd_toolBar.right = new FormAttachment(0, 205);
 		fd_toolBar.top = new FormAttachment(0, 10);
 		fd_toolBar.left = new FormAttachment(0, 10);
 		toolBar.setLayoutData(fd_toolBar);
@@ -542,19 +678,37 @@ public class MainSWT {
 		tltmAskRoot.setEnabled(false);
 		tltmAskRoot.setToolTipText("Ask for root permissions");
 		
+		tltmApkInstall = new ToolItem(toolBar, SWT.NONE);
+		tltmApkInstall.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ApkInstaller inst = new ApkInstaller(shlSonyericsson,SWT.PRIMARY_MODAL | SWT.SHEET);
+				String folder = inst.open();
+				if (folder.length()>0) {
+					APKInstallJob aij = new APKInstallJob("APK Install");
+					aij.setFolder(folder);
+					aij.schedule();
+				}
+				else {
+					MyLogger.getLogger().info("Install APK canceled");
+				}
+			}
+		});
+		tltmApkInstall.setEnabled(false);
+		tltmApkInstall.setImage(SWTResourceManager.getImage(MainSWT.class, "/gui/ressources/icons/customize_32.png"));
+		
 		ProgressBar progressBar = new ProgressBar(shlSonyericsson, SWT.NONE);
 		fd_btnSaveLog.bottom = new FormAttachment(100, -43);
 		progressBar.setState(SWT.NORMAL);
 		MyLogger.registerProgressBar(progressBar);
 		FormData fd_progressBar = new FormData();
+		fd_progressBar.left = new FormAttachment(0, 10);
+		fd_progressBar.right = new FormAttachment(100, -10);
 		fd_progressBar.top = new FormAttachment(btnSaveLog, 6);
-		fd_progressBar.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
-		fd_progressBar.left = new FormAttachment(toolBar, 0, SWT.LEFT);
 		progressBar.setLayoutData(fd_progressBar);
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shlSonyericsson, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		FormData fd_scrolledComposite = new FormData();
-		fd_scrolledComposite.top = new FormAttachment(toolBar, 6);
 		fd_scrolledComposite.bottom = new FormAttachment(btnSaveLog, -6);
 		fd_scrolledComposite.left = new FormAttachment(0, 10);
 		fd_scrolledComposite.right = new FormAttachment(100, -10);
@@ -569,6 +723,7 @@ public class MainSWT {
 		scrolledComposite.setMinSize(logWindow.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
 		ToolBar toolBar_1 = new ToolBar(shlSonyericsson, SWT.FLAT | SWT.RIGHT);
+		fd_scrolledComposite.top = new FormAttachment(toolBar_1, 2);
 		FormData fd_toolBar_1 = new FormData();
 		fd_toolBar_1.top = new FormAttachment(0, 10);
 		fd_toolBar_1.right = new FormAttachment(btnSaveLog, 0, SWT.RIGHT);
@@ -686,9 +841,9 @@ public class MainSWT {
         		}
     		}
     		if (found) {
-    			try {
-    				// show device menu here
-    			}catch (Exception e1) {}
+    			WidgetTask.setEnabled(mntmNoDevice, true);
+    			WidgetTask.setMenuName(mntmNoDevice, "My "+Devices.getCurrent().getId());
+    			WidgetTask.setEnabled(mntmInstallBusybox,false);
     			if (!Devices.isWaitingForReboot()) {
     				MyLogger.getLogger().info("Installed version of busybox : " + Devices.getCurrent().getInstalledBusyboxVersion(false));
     				MyLogger.getLogger().info("Android version : "+Devices.getCurrent().getVersion()+" / kernel version : "+Devices.getCurrent().getKernelVersion()+" / Build number : "+Devices.getCurrent().getBuildId());
@@ -697,11 +852,13 @@ public class MainSWT {
     				MyLogger.getLogger().info("Phone in recovery mode");
     				WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
+    				WidgetTask.setEnabled(tltmApkInstall,false);
     				doGiveRoot();
     			}
     			else {
     				boolean hasSU = Devices.getCurrent().hasSU();
     				WidgetTask.setEnabled(tltmRoot, !hasSU);
+    				WidgetTask.setEnabled(tltmApkInstall, true);
     				if (hasSU) {
     					boolean hasRoot = Devices.getCurrent().hasRoot();
     					if (hasRoot) {
@@ -709,6 +866,9 @@ public class MainSWT {
     						doGiveRoot();
     					}
     					WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
+    					WidgetTask.setEnabled(mntmInstallBusybox,hasRoot);
+    					WidgetTask.setEnabled(mntmRawRestore,hasRoot);
+    					WidgetTask.setEnabled(mntmRawBackup,hasRoot);
     				}
     			}
     			MyLogger.getLogger().debug("Now setting buttons availability - btnRoot");
@@ -820,7 +980,7 @@ public class MainSWT {
 			MyLogger.getLogger().info("Selected "+bundle);
 			if (bundle !=null) {
 				bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-				final X10flash flash = new X10flash(bundle);
+				final X10flash flash = new X10flash(bundle,shlSonyericsson);
 				try {
 						FlashJob fjob = new FlashJob("Flash");
 						fjob.setFlash(flash);
@@ -882,7 +1042,7 @@ public class MainSWT {
 
 	public void doBLUnlock() {
 		try {
-			final X10flash flash = new X10flash(new Bundle());
+			final X10flash flash = new X10flash(new Bundle(),shlSonyericsson);
 			MyLogger.getLogger().info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
@@ -980,7 +1140,7 @@ public class MainSWT {
 	public void doBackupTA() {
 		Bundle bundle = new Bundle();
 		bundle.setSimulate(GlobalConfig.getProperty("simulate").toLowerCase().equals("yes"));
-		final X10flash flash = new X10flash(bundle);
+		final X10flash flash = new X10flash(bundle,shlSonyericsson);
 		try {
 			MyLogger.getLogger().info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
@@ -1031,6 +1191,13 @@ public class MainSWT {
 			}
 		rj.schedule();
 	}
-
-
+	
+	public void doRoot(String rootmethod) {
+		String pck = WidgetTask.openRootPackageSelector(shlSonyericsson);
+		RootJob rj = new RootJob("Root device");
+		rj.setRootPackage(pck);
+		rj.setParentShell(shlSonyericsson);
+		rj.setAction(rootmethod);							
+		rj.schedule();		
+	}
 }

@@ -1,16 +1,11 @@
 package gui;
 
-import java.io.File;
-import java.io.FileWriter;
-
 import flashsystem.TaEntry;
 import flashsystem.X10flash;
 import gui.tools.BLUnlockJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
 import gui.tools.WriteTAJob;
-
-import org.adb.FastbootUtility;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.program.Program;
@@ -27,8 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.logger.MyLogger;
-import org.system.OS;
-import org.system.RunOutputs;
+import org.system.ULCodeFile;
 
 public class BLUWizard extends Dialog {
 
@@ -148,16 +142,8 @@ public class BLUWizard extends Dialog {
 							WidgetTask.setEnabled(btnUnlock,!res.unlockSuccess());
 							if (res.unlockSuccess()) {
 								try {
-									File f = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+_serial);
-									if (!f.exists()) f.mkdir();
-									File serial = new File(f.getAbsolutePath()+File.separator+"ulcode.txt");
-									if (!serial.exists()) {
-										FileWriter out = new FileWriter(_serial);
-										out.write(ulcode);
-										out.flush();
-										out.close();
-										MyLogger.getLogger().info("Unlock code saved to "+serial.getAbsolutePath());
-									}
+									ULCodeFile uc = new ULCodeFile(_serial);
+									uc.setCode(ulcode);
 								}
 								catch (Exception e) {
 									e.printStackTrace();

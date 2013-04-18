@@ -2,12 +2,16 @@ package flashsystem;
 
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
+import gui.tools.WidgetTask;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
@@ -30,9 +34,11 @@ public class X10flash {
     private String currentdevice = "";
     private int maxpacketsize = 0;
     private String serial = "";
+    private Shell _curshell;
 
-    public X10flash(Bundle bundle) {
+    public X10flash(Bundle bundle, Shell shell) {
     	_bundle=bundle;
+    	_curshell = shell;
     }
 
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
@@ -269,8 +275,15 @@ public class X10flash {
 					loader = _bundle.getLoader().getAbsolutePath();
 				}
 		}
-		
-		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
+		if (loader.length()==0) {
+			String device = WidgetTask.openDeviceSelector(_curshell);
+			if (device.length()==0)
+				throw new X10FlashException("No loader found for this device");
+			else {
+				DeviceEntry ent = new DeviceEntry(device);
+				loader = ent.getLoader();				
+			}
+		}
 		SinFile sin = new SinFile(loader);
 		if (sin.getSinHeader().getVersion()>=2)
 			sin.setChunkSize(0x10000);

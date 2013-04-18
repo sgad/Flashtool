@@ -153,7 +153,7 @@ public class FastBootToolBoxJob extends Job {
 			MyLogger.getLogger().error("This action can only be done in fastboot mode");
 			return;
 		}
-		if(_image.length()>0) {
+		if (_image.length()==0) {
 			MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 		} 
 		else {						
@@ -178,7 +178,7 @@ public class FastBootToolBoxJob extends Job {
 			MyLogger.getLogger().error("This action can only be done in fastboot mode");
 			return;
 		}
-		if (_image.length()>0) {
+		if (_image.length()==0) {
 			MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 		}
 		else {						
@@ -201,7 +201,7 @@ public class FastBootToolBoxJob extends Job {
 			MyLogger.getLogger().error("This action can only be done in fastboot mode");
 			return;
 		}
-		if (_image.length()>0) {
+		if (_image.length()==0) {
 			MyLogger.getLogger().error("no kernel (boot.img or kernel.sin) selected!");
 		}
 		else {						

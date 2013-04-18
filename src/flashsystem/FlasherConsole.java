@@ -145,7 +145,7 @@ public class FlasherConsole {
 		try {
 			Bundle b = new Bundle();
 			b.setSimulate(false);
-			f = new X10flash(b);
+			f = new X10flash(b,null);
 			MyLogger.getLogger().info("Please connect your phone in flash mode");
 			while (!f.deviceFound());
 			f.openDevice(false);
@@ -177,7 +177,7 @@ public class FlasherConsole {
 			b.getMeta().setCategEnabled("KERNEL", excludekrnl);
 			MyLogger.getLogger().info("Preparing files for flashing");
 			b.open();
-			f = new X10flash(b);
+			f = new X10flash(b,null);
 			MyLogger.getLogger().info("Please connect your phone in flash mode");
 			while (!f.deviceFound());
 			f.openDevice(false);

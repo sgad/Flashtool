@@ -2,9 +2,6 @@ package gui;
 
 import gui.tools.FastBootToolBoxJob;
 import gui.tools.WidgetsTool;
-
-import org.adb.AdbUtility;
-import org.adb.FastbootUtility;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -16,8 +13,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.logger.MyLogger;
-import org.system.Devices;
 
 public class FastbootToolbox extends Dialog {
 
@@ -68,43 +63,43 @@ public class FastbootToolbox extends Dialog {
 		lblVersion.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblVersion.setText("Version 1.0");
 		
-		Button btnNewButton_4 = new Button(shlFastbootToolbox, SWT.NONE);
-		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
+		Button btnCheckStatus = new Button(shlFastbootToolbox, SWT.NONE);
+		btnCheckStatus.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doCheckDeviceStatus();
 			}
 		});
-		btnNewButton_4.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnNewButton_4.setText("Check Current Device Status");
+		btnCheckStatus.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnCheckStatus.setText("Check Current Device Status");
 		
 		Label lblByDooMLoRD = new Label(shlFastbootToolbox, SWT.NONE);
 		lblByDooMLoRD.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblByDooMLoRD.setText("By DooMLoRD");
 		
-		Button btnNewButton = new Button(shlFastbootToolbox, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		Button btnrRebootFBAdb = new Button(shlFastbootToolbox, SWT.NONE);
+		btnrRebootFBAdb.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doRebootFastbootViaAdb();
 			}
 		});
-		btnNewButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnNewButton.setText("Reboot into fastboot mode (via ADB)");
+		btnrRebootFBAdb.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnrRebootFBAdb.setText("Reboot into fastboot mode (via ADB)");
 		new Label(shlFastbootToolbox, SWT.NONE);
 		
-		Button btnRebootIntoFastboot = new Button(shlFastbootToolbox, SWT.NONE);
-		btnRebootIntoFastboot.addSelectionListener(new SelectionAdapter() {
+		Button btnRebootFBFB = new Button(shlFastbootToolbox, SWT.NONE);
+		btnRebootFBFB.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doRebootBackIntoFastbootMode();
 			}
 		});
-		btnRebootIntoFastboot.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnRebootIntoFastboot.setText("Reboot into fastboot mode (via Fastboot)");
+		btnRebootFBFB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnRebootFBFB.setText("Reboot into fastboot mode (via Fastboot)");
 		
-		Button btnNewButton_1 = new Button(shlFastbootToolbox, SWT.NONE);
-		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+		Button btnHotboot = new Button(shlFastbootToolbox, SWT.NONE);
+		btnHotboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -115,11 +110,11 @@ public class FastbootToolbox extends Dialog {
 		        	doHotBoot(dir);
 			}
 		});
-		btnNewButton_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnNewButton_1.setText("Select kernel to HotBoot");
+		btnHotboot.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnHotboot.setText("Select kernel to HotBoot");
 		
-		Button btnNewButton_3 = new Button(shlFastbootToolbox, SWT.NONE);
-		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
+		Button btnFlashSystem = new Button(shlFastbootToolbox, SWT.NONE);
+		btnFlashSystem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -127,14 +122,14 @@ public class FastbootToolbox extends Dialog {
 		        dlg.setText("System Chooser");
 		        String dir = dlg.open();
 		        if (dir!=null)
-		        	doHotBoot(dir);
+		        	doFlashSystem(dir);
 			}
 		});
-		btnNewButton_3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnNewButton_3.setText("Select system to Flash");
+		btnFlashSystem.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnFlashSystem.setText("Select system to Flash");
 		
-		Button btnSelectKernelTo = new Button(shlFastbootToolbox, SWT.NONE);
-		btnSelectKernelTo.addSelectionListener(new SelectionAdapter() {
+		Button btnFlashKernel = new Button(shlFastbootToolbox, SWT.NONE);
+		btnFlashKernel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(shlFastbootToolbox);
@@ -145,18 +140,18 @@ public class FastbootToolbox extends Dialog {
 		        	doFlashKernel(dir);
 			}
 		});
-		btnSelectKernelTo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnSelectKernelTo.setText("Select kernel to Flash");
+		btnFlashKernel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnFlashKernel.setText("Select kernel to Flash");
 		
-		Button btnNewButton_2 = new Button(shlFastbootToolbox, SWT.NONE);
-		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
+		Button btnGetVerInfo = new Button(shlFastbootToolbox, SWT.NONE);
+		btnGetVerInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doGetFastbootVerInfo();
 			}
 		});
-		btnNewButton_2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnNewButton_2.setText("Get Ver Info");
+		btnGetVerInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnGetVerInfo.setText("Get Ver Info");
 		new Label(shlFastbootToolbox, SWT.NONE);
 		
 		Button btnGetDeviceInfo = new Button(shlFastbootToolbox, SWT.NONE);
@@ -170,15 +165,15 @@ public class FastbootToolbox extends Dialog {
 		btnGetDeviceInfo.setText("Get Device Info");
 		new Label(shlFastbootToolbox, SWT.NONE);
 		
-		Button btnRebootDeviceInto = new Button(shlFastbootToolbox, SWT.NONE);
-		btnRebootDeviceInto.addSelectionListener(new SelectionAdapter() {
+		Button btnReboot = new Button(shlFastbootToolbox, SWT.NONE);
+		btnReboot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doFastbootReboot();
 			}
 		});
-		btnRebootDeviceInto.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		btnRebootDeviceInto.setText("Reboot device into system");
+		btnReboot.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnReboot.setText("Reboot device into system");
 		new Label(shlFastbootToolbox, SWT.NONE);
 		new Label(shlFastbootToolbox, SWT.NONE);
 		new Label(shlFastbootToolbox, SWT.NONE);

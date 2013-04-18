@@ -268,6 +268,13 @@ public class BundleCreator extends Dialog {
 								}
 
 						}
+						else {
+							b.setLoader(new File(ent.getLoader()));
+						}
+					}
+					else {
+						showErrorMessageBox("This bundle must contain a loader");
+						return;						
 					}
 				}
 				createFTFJob j = new createFTFJob("Create FTF");

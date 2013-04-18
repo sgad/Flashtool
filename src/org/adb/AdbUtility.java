@@ -40,8 +40,9 @@ public class AdbUtility  {
 	
 	public static boolean exists(String path) {
 		try {
-		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "ls -l "+path},false);
-		return !command.getStdOut().toLowerCase().contains("no such file or directory");
+			ProcessBuilderWrapper command;
+			command = new ProcessBuilderWrapper(new String[] {adbpath,"shell", "ls -l "+path},false);
+			return !command.getStdOut().toLowerCase().contains("no such file or directory") && !command.getStdOut().toLowerCase().contains("permission denied");
 		}
 		catch (Exception e) {
 			return false;

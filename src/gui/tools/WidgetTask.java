@@ -6,6 +6,7 @@ import flashsystem.X10flash;
 import gui.BLUWizard;
 import gui.BootModeSelector;
 import gui.BundleCreator;
+import gui.BusyboxSelector;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.RootPackageSelector;
@@ -14,6 +15,7 @@ import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
@@ -21,6 +23,26 @@ import org.eclipse.swt.widgets.ToolItem;
 public class WidgetTask {
 	
 	public static void setEnabled(final ToolItem item, final boolean status) {
+		Display.getDefault().asyncExec(
+				new Runnable() {
+					public void run() {
+						item.setEnabled(status);
+					}
+				}
+		);
+	}
+
+	public static void setMenuName(final MenuItem item, final String text) {
+		Display.getDefault().asyncExec(
+				new Runnable() {
+					public void run() {
+						item.setText(text);
+					}
+				}
+		);
+	}
+
+	public static void setEnabled(final MenuItem item, final boolean status) {
 		Display.getDefault().asyncExec(
 				new Runnable() {
 					public void run() {
@@ -46,6 +68,22 @@ public class WidgetTask {
 				new Runnable() {
 					public void run() {
 			    		DeviceSelector dial = new DeviceSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open();
+			    		if (obj==null) obj = new String("");
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openBusyboxSelector(final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		BusyboxSelector dial = new BusyboxSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
 			    		if (obj==null) obj = new String("");
 						res.setResult(obj);
@@ -185,6 +223,22 @@ public class WidgetTask {
 					public void run() {
 						MessageBox mb = new MessageBox(parent,SWT.ICON_INFORMATION|SWT.OK);
 						mb.setText("Information");
+						mb.setMessage(message);
+						int result = mb.open();
+						res.setResult(String.valueOf(result));						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openYESNOBox(final Shell parent,final String message) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+						MessageBox mb = new MessageBox(parent,SWT.ICON_INFORMATION|SWT.YES|SWT.NO);
+						mb.setText("Question");
 						mb.setMessage(message);
 						int result = mb.open();
 						res.setResult(String.valueOf(result));						

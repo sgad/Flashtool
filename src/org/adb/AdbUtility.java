@@ -457,7 +457,9 @@ public class AdbUtility  {
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				if (!line.startsWith("List")) {
-					v.add(line.trim().substring(0,line.indexOf(9)));
+					String[] content=line.split("\t");
+					if (content[content.length-1].contains("device"))
+						v.add(content[0]);
 				}
 			}
 		}

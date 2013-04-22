@@ -187,7 +187,7 @@ public class RootJob extends Job {
 					AdbUtility.run("rm -r /mnt/sdcard/.semc-fullbackup/RootMe* > /dev/null 2>&1");
 					AdbUtility.run("cd /mnt/sdcard/.semc-fullbackup;/data/local/tmp/busybox tar xf /data/local/tmp/RootMe.tar");
 					AdbUtility.run("am start com.sonyericsson.vendor.backuprestore/.ui.BackupActivity");
-					MyLogger.getLogger().info("Now open your device and restore \"RootMe\" backup. Waiting ...");						
+					MyLogger.getLogger().info("Now open your device and restore \"RootMe\" backup. Waiting ...");
 				}
 				else {
 					AdbUtility.restore(OS.getWorkDir()+File.separator+"custom"+File.separator+"root"+File.separator+"AdbRestore"+File.separator+"fakebackup.ab");

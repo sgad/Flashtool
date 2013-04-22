@@ -21,17 +21,7 @@ public class TextAreaAppender extends WriterAppender {
 	
 	static private StyledText styledText = null;
 	static private StringBuilder builder = new StringBuilder();
-	public static String timestamp=getTimeStamp();
-
-    public static String getTimeStamp() {
-    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
-    	df.setTimeZone( TimeZone.getTimeZone("PST"));  
-    	String date = ( df.format(new Date()));    
-    	DateFormat df1 = new SimpleDateFormat("hh-mm-ss") ;    
-    	df1.setTimeZone( TimeZone.getDefault()) ;  
-    	String time = ( df1.format(new Date()));
-    	return date+"_"+time;
-    }
+	public static String timestamp=OS.getTimeStamp();
 
 	public static void writeFile() {
 		String logname=OS.getWorkDir()+OS.getFileSeparator()+"flashtool_"+timestamp+".log";

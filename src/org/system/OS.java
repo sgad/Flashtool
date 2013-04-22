@@ -17,9 +17,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.crypto.Cipher;
 
@@ -40,11 +44,21 @@ public class OS {
 		  }
 		  return os;
 	}
-	
+
+	public static String getTimeStamp() {
+    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+    	df.setTimeZone( TimeZone.getTimeZone("PST"));  
+    	String date = ( df.format(new Date()));    
+    	DateFormat df1 = new SimpleDateFormat("hh-mm-ss") ;    
+    	df1.setTimeZone( TimeZone.getDefault()) ;  
+    	String time = ( df1.format(new Date()));
+    	return date+"_"+time;
+    }
+
 	public static void unyaffs(String yaffsfile, String folder) {
 		try {
 			File f = new File(folder);
-			if (!f.exists()) f.mkdir();
+			if (!f.exists()) f.mkdirs();
 			else if (f.isFile()) throw new IOException("destination must be a folder");
 			ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {getWorkDir()+File.separator+"x10flasher_lib"+File.separator+"unyaffs."+getName(),yaffsfile,folder},false);
 		}

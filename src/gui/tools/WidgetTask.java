@@ -10,6 +10,8 @@ import gui.BusyboxSelector;
 import gui.DeviceSelector;
 import gui.LoaderSelect;
 import gui.RootPackageSelector;
+import gui.TABackupSelector;
+import gui.TABackupSet;
 import gui.WaitDeviceForFastboot;
 import gui.WaitDeviceForFlashmode;
 import org.eclipse.swt.SWT;
@@ -177,6 +179,36 @@ public class WidgetTask {
 				new Runnable() {
 					public void run() {
 			    		RootPackageSelector dial = new RootPackageSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open();
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openTABackupSet(final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		TABackupSet dial = new TABackupSet(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
+			    		Object obj = dial.open();
+						res.setResult(obj);
+						
+					}
+				}
+		);
+		return (String)res.getResult();
+	}
+
+	public static String openTABackupSelector(final Shell parent) {
+		final Result res = new Result();
+		Display.getDefault().syncExec(
+				new Runnable() {
+					public void run() {
+			    		TABackupSelector dial = new TABackupSelector(parent,SWT.PRIMARY_MODAL | SWT.SHEET);
 			    		Object obj = dial.open();
 						res.setResult(obj);
 						

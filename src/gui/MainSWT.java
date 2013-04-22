@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -79,6 +80,8 @@ import gui.tools.RawTAJob;
 import gui.tools.RootJob;
 import gui.tools.WidgetTask;
 import gui.tools.WidgetsTool;
+import gui.tools.Yaffs2Job;
+
 import org.eclipse.swt.custom.ScrolledComposite;
 
 public class MainSWT {
@@ -340,6 +343,15 @@ public class MainSWT {
 		Menu menu_5 = new Menu(mntmExtractors);
 		mntmExtractors.setMenu(menu_5);
 		
+		MenuItem mntmYaffs = new MenuItem(menu_5, SWT.NONE);
+		mntmYaffs.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doYaffs2Unpack();
+			}
+		});
+		mntmYaffs.setText("Yaffs2");
+		
 		MenuItem mntmElf = new MenuItem(menu_5, SWT.NONE);
 		mntmElf.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -348,7 +360,7 @@ public class MainSWT {
 				elfedit.open();
 			}
 		});
-		mntmElf.setText("ELF");
+		mntmElf.setText("Elf");
 		
 		MenuItem mntmNewItem_1 = new MenuItem(menu_4, SWT.NONE);
 		mntmNewItem_1.addSelectionListener(new SelectionAdapter() {
@@ -421,7 +433,13 @@ public class MainSWT {
 		Menu menu_9 = new Menu(mntmTrimArea);
 		mntmTrimArea.setMenu(menu_9);
 		
-		MenuItem mntmBackup = new MenuItem(menu_9, SWT.NONE);
+		MenuItem mntmS = new MenuItem(menu_9, SWT.CASCADE);
+		mntmS.setText("S1");
+		
+		Menu menu_11 = new Menu(mntmS);
+		mntmS.setMenu(menu_11);
+		
+		MenuItem mntmBackup = new MenuItem(menu_11, SWT.NONE);
 		mntmBackup.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -430,7 +448,13 @@ public class MainSWT {
 		});
 		mntmBackup.setText("Backup");
 		
-		mntmRawBackup = new MenuItem(menu_9, SWT.NONE);
+		MenuItem mntmRawDevices = new MenuItem(menu_9, SWT.CASCADE);
+		mntmRawDevices.setText("Raw devices");
+		
+		Menu menu_12 = new Menu(mntmRawDevices);
+		mntmRawDevices.setMenu(menu_12);
+		
+		mntmRawBackup = new MenuItem(menu_12, SWT.NONE);
 		mntmRawBackup.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -440,10 +464,10 @@ public class MainSWT {
 				rj.schedule();
 			}
 		});
-		mntmRawBackup.setText("Raw backup");
+		mntmRawBackup.setText("Backup");
 		mntmRawBackup.setEnabled(false);
 		
-		mntmRawRestore = new MenuItem(menu_9, SWT.NONE);
+		mntmRawRestore = new MenuItem(menu_12, SWT.NONE);
 		mntmRawRestore.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -453,7 +477,7 @@ public class MainSWT {
 				rj.schedule();
 			}
 		});
-		mntmRawRestore.setText("Raw Restore");
+		mntmRawRestore.setText("Restore");
 		mntmRawRestore.setEnabled(false);
 		mntmAdvanced.setEnabled(GlobalConfig.getProperty("devfeatures").equals("yes"));
 		MenuItem mntmDevices = new MenuItem(menu, SWT.CASCADE);
@@ -1199,5 +1223,19 @@ public class MainSWT {
 		rj.setParentShell(shlSonyericsson);
 		rj.setAction(rootmethod);							
 		rj.schedule();		
+	}
+
+	public void doYaffs2Unpack() {
+		FileDialog dlg = new FileDialog(shlSonyericsson);
+        dlg.setFilterExtensions(new String[]{"*.yaffs2"});
+        dlg.setText("YAFFS2 File Chooser");
+        String dir = dlg.open();
+        if (dir != null) {
+        	Yaffs2Job yj = new Yaffs2Job("YAFFS2 Extractor");
+        	yj.setFilename(dir);
+        	yj.schedule();
+        }
+        else
+        	MyLogger.getLogger().info("Canceled");
 	}
 }

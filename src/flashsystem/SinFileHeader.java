@@ -1,5 +1,8 @@
 package flashsystem;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Vector;
 import org.logger.MyLogger;
 
@@ -18,7 +21,14 @@ public class SinFileHeader {
 	private int blocksize;
 	private String unit="";
 	private long partitionsize;
+	private int chunksize;
+	private byte[] readarray;
 	
+	public void setChunkSize(int size) {
+		chunksize = size;
+		readarray=new byte[chunksize];
+	}
+
 	public SinFileHeader(byte[] header) {
 		this.header = header;
 		// Sin version
@@ -132,6 +142,24 @@ public class SinFileHeader {
 
 	public int getHeaderSize() {
 		return BytesUtil.getInt(headersize);
+	}
+
+	public int getNbChunks() {
+		int nbparts = getHeaderSize() / (int)chunksize;
+		if (getHeaderSize() % (int)chunksize>0) nbparts++;
+		return nbparts;
+
+	}
+	public byte[] getChunckBytes(int chunkId) throws IOException {
+		ByteArrayInputStream is = new ByteArrayInputStream(header);
+		int offset = chunkId*chunksize;
+		is.skip(offset);
+		int readcount = is.read(readarray);
+		is.close();
+		if (readcount<chunksize)
+			return BytesUtil.getReply(readarray,readcount);
+		else
+			return readarray;
 	}
 
 }

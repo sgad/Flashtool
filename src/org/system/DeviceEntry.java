@@ -1,8 +1,11 @@
 package org.system;
 
+import gui.tools.WidgetTask;
+
 import java.io.File;
 import java.util.HashSet;
 import org.adb.AdbUtility;
+import org.eclipse.swt.widgets.Display;
 
 public class DeviceEntry {
 
@@ -207,6 +210,7 @@ public class DeviceEntry {
 		String version="";
 		if (!select) version = _entry.getProperty("busyboxhelper");
 		else {
+			version = WidgetTask.openBusyboxSelector(Display.getCurrent().getActiveShell());
 			//BusyBoxSelectGUI sel = new BusyBoxSelectGUI(getId());
 			//version = sel.getVersion();
 		}
@@ -235,14 +239,14 @@ public class DeviceEntry {
     public void doBusyboxHelper() throws Exception {
     	if (!isBusyboxInstalled(false)) {
     		AdbUtility.push(getBusybox(false), GlobalConfig.getProperty("deviceworkdir")+"/busybox");
-    		Shell shell = new Shell("busyhelper");
+    		FTShell shell = new FTShell("busyhelper");
     		shell.run(true);
 		}
     }
 
     public void reboot() throws Exception {
     	if (hasRoot()) {
-	    	Shell s = new Shell("reboot");
+	    	FTShell s = new FTShell("reboot");
 	    	s.runRoot(false);
     	}
     	else {

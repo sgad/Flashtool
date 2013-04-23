@@ -15,6 +15,7 @@ public class PhoneThread extends Thread {
 	StatusListener listener;
 
 	public void run() {
+		this.setName("Phonne-connect-watchdog");
 		int count = 0;
 		int nbnull = 0;
 		DeviceIdent id=null;

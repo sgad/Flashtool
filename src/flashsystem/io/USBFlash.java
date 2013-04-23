@@ -26,7 +26,7 @@ public class USBFlash {
 		else {
 			USBFlashLinux.linuxWriteS1(p);
 		}
-		readS1Reply(withprogressupdate);
+		readS1Reply();
 	}
 
 	public static void write(byte[] array) throws IOException,X10FlashException {
@@ -38,15 +38,13 @@ public class USBFlash {
 		}		
 	}
 
-	public static void readS1Reply(boolean withprogressupdate)  throws IOException,X10FlashException {
+	public static void readS1Reply()  throws IOException,X10FlashException {
 		if (OS.getName().equals("windows")) {
 			USBFlashWin32.windowsReadS1Reply();
 		}
 		else {
 			USBFlashLinux.linuxReadS1Reply();
 		}
-		if (withprogressupdate)
-			MyLogger.updateProgress();
 	}
 
 	public static void readReply()  throws IOException,X10FlashException {

@@ -57,7 +57,6 @@ public class Decrypt extends Dialog {
 	 */
 	public Decrypt(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
 	}
 
 	/**

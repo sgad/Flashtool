@@ -2,12 +2,16 @@ package flashsystem;
 
 import flashsystem.HexDump;
 import flashsystem.io.USBFlash;
+import gui.tools.WidgetTask;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.logger.MyLogger;
 import org.system.Device;
 import org.system.DeviceChangedListener;
@@ -30,9 +34,11 @@ public class X10flash {
     private String currentdevice = "";
     private int maxpacketsize = 0;
     private String serial = "";
+    private Shell _curshell;
 
-    public X10flash(Bundle bundle) {
+    public X10flash(Bundle bundle, Shell shell) {
     	_bundle=bundle;
+    	_curshell = shell;
     }
 
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
@@ -145,12 +151,16 @@ public class X10flash {
     }
 
     public void BackupTA() throws IOException, X10FlashException {
-    	openTA(2);
-    	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + "-" + org.logger.TextAreaAppender.timestamp +  ".ta","ISO8859-1");
+    	int partition = 2;
+    	openTA(partition);
+    	String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+OS.getTimeStamp();
+    	new File(folder).mkdirs();
+    	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
+    	MyLogger.getLogger().info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
         tazone.open(false);
     	try {
 		    MyLogger.getLogger().info("Start Dumping TA");
-		    MyLogger.initProgress(9789);
+		    MyLogger.initProgress(4920);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
 		        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());
@@ -189,20 +199,14 @@ public class X10flash {
     private void processHeader(SinFile sin) throws X10FlashException {
     	try {
     		MyLogger.getLogger().info("    Checking header");
-    		int nbparts = sin.getSinHeader().getHeaderSize() / (int)sin.getChunkSize();
-    		int remain = sin.getSinHeader().getHeaderSize() % (int)sin.getChunkSize();
-    		byte[] looppart = new byte[(int)sin.getChunkSize()];
-    		for (int i=0;i<nbparts;i++) {
-    			System.arraycopy(sin.getHeaderBytes(), (int)(i*sin.getChunkSize()), looppart, 0, (int)sin.getChunkSize());
-    			cmd.send(Command.CMD05,looppart,true);
-        		if (USBFlash.getLastFlags() == 0)
-        			getLastError();
-    		}
-    		byte[] remaining = new byte[remain];
-			System.arraycopy(sin.getHeaderBytes(), sin.getSinHeader().getHeaderSize()-remain, remaining, 0, remain);
-    		cmd.send(Command.CMD05,remaining,false);
-    		if (USBFlash.getLastFlags() == 0)
-    			getLastError();
+    		SinFileHeader header = sin.getSinHeader();
+			for (int j=0;j<header.getNbChunks();j++) {
+				int cur = j+1;
+				MyLogger.getLogger().debug("Sending part "+cur+" of "+header.getNbChunks());
+				cmd.send(Command.CMD05, header.getChunckBytes(j), !((j+1)==header.getNbChunks()));
+				if (USBFlash.getLastFlags() == 0)
+					getLastError();
+			}
 	    }
     	catch (IOException ioe) {
     		throw new X10FlashException("Error in processHeader : "+ioe.getMessage());
@@ -222,9 +226,9 @@ public class X10flash {
 				int cur = j+1;
 				MyLogger.getLogger().debug("Sending part "+cur+" of "+sin.getNbChunks());
 				cmd.send(Command.CMD06, sin.getChunckBytes(j), !((j+1)==sin.getNbChunks()));
+				if (USBFlash.getLastFlags() == 0)
+					getLastError();
 			}
-			if (USBFlash.getLastFlags() == 0)
-				getLastError();
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -275,15 +279,22 @@ public class X10flash {
 					loader = _bundle.getLoader().getAbsolutePath();
 				}
 		}
-		
-		if (loader.length()==0) throw new X10FlashException("No loader found for this device");
+		if (loader.length()==0) {
+			String device = WidgetTask.openDeviceSelector(_curshell);
+			if (device.length()==0)
+				throw new X10FlashException("No loader found for this device");
+			else {
+				DeviceEntry ent = new DeviceEntry(device);
+				loader = ent.getLoader();				
+			}
+		}
 		SinFile sin = new SinFile(loader);
 		if (sin.getSinHeader().getVersion()>=2)
 			sin.setChunkSize(0x10000);
 		else
 			sin.setChunkSize(0x1000);
 		uploadImage(sin);
-		USBFlash.readS1Reply(true);
+		USBFlash.readS1Reply();
 		hookDevice(true);
     }
 
@@ -368,6 +379,7 @@ public class X10flash {
 		    MyLogger.getLogger().info("Start Flashing");
 		    sendLoader();
 		    maxpacketsize=Integer.parseInt(phoneprops.getProperty("MAX_PKT_SZ"),16);
+		    MyLogger.initProgress(_bundle.getMaxProgress(maxpacketsize));
 		    if (_bundle.hasCmd25()) {
 		    	MyLogger.getLogger().info("Disabling final data verification check");
 		    	cmd.send(Command.CMD25, Command.DISABLEFINALVERIF, false);
@@ -458,13 +470,13 @@ public class X10flash {
 
     public boolean openDevice(boolean simulate) {
     	if (simulate) return true;
-    	MyLogger.initProgress(_bundle.getMaxProgress());
+    	MyLogger.initProgress(_bundle.getMaxLoaderProgress());
     	boolean found=false;
     	try {
     		USBFlash.open("ADDE");
     		try {
 				MyLogger.getLogger().info("Reading device information");
-				USBFlash.readS1Reply(true);
+				USBFlash.readS1Reply();
 				firstRead = new String (USBFlash.getLastReply());
 				phoneprops = new LoaderInfo(firstRead);
 				if (phoneprops.getProperty("VER").startsWith("r"))

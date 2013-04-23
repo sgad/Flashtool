@@ -250,26 +250,59 @@ public final class Bundle {
 		}
 	}
 	
-	public long getMaxProgress() {
+	public long getMaxLoaderProgress() {
+		int maxdatasize=0;
+		int maxloadersize=0;
+		try {
+			SinFile loader = new SinFile(getLoader().getAbsolutePath());
+			if (loader.sinheader.getVersion()>=2) {
+				maxloadersize=0x10000;
+			}
+			else {
+				maxloadersize=0x1000;
+			}
+		}
+		catch (Exception e) {
+			maxloadersize=0x1000;
+		}	
+	    Enumeration<String> e = getMeta().getAllEntries(true);
+	    long totalsize = 8;
+	    while (e.hasMoreElements()) {
+	    	BundleEntry entry = getEntry(e.nextElement());
+	    	try {
+	    		long filecount = 0;
+	    		SinFile s = new SinFile(entry.getAbsolutePath());
+			    if (entry.getName().contains("loader")) {
+	    			s.setChunkSize(maxloadersize);
+	    			s.getSinHeader().setChunkSize(maxloadersize);
+	    			filecount++;
+			    }
+	    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+	    		totalsize += filecount;
+	    	} catch (Exception ex) {}
+	    }
+	    return totalsize;
+	}
+
+	public long getMaxProgress(int chunksize) {
 		    Enumeration<String> e = getMeta().getAllEntries(true);
-		    long totalsize = 0;
+		    long totalsize = 15;
 		    while (e.hasMoreElements()) {
 		    	BundleEntry entry = getEntry(e.nextElement());
-		    	if (entry.getName().contains("loader")) {
-		    		totalsize = totalsize + (entry.getSize()/0x1000);
-		    		if (entry.getSize()%0x1000>0)
-		    			totalsize = totalsize+1;
-		    		totalsize = totalsize + 1;
-		    	}
-		    	else if (entry.getName().toUpperCase().endsWith("SIN")) 
-		    		totalsize = totalsize + (entry.getSize()/0x10000);
-		    		if (entry.getSize()%0x10000>0)
-		    			totalsize = totalsize+1;
-		    		totalsize = totalsize + 1;
+		    	try {
+		    		if (!entry.getName().contains("loader")) {
+			    		long filecount = 0;
+			    		SinFile s = new SinFile(entry.getAbsolutePath());
+			    		s.setChunkSize(chunksize);
+			    		s.getSinHeader().setChunkSize(chunksize);
+			    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+			    		totalsize += filecount;
+		    		}
+		    	} catch (Exception ex) {}
 		    }
 		    if (hasCmd25()) totalsize = totalsize + 1;
 		    if (hasPartition()) totalsize = totalsize + 2;
-		    return totalsize+13;
+		    return totalsize;
 	}
 
 	public boolean open() {

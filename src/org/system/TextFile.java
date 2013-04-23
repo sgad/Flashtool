@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
 
-public final class TextFile {
+public class TextFile {
 
 	/** Constructor. */
 	public TextFile(String aFileName, String aEncoding){
@@ -17,6 +17,8 @@ public final class TextFile {
 	}
 	
 	public void open(boolean append) throws IOException {
+		File f = new File(fFileName);
+		f.getParentFile().mkdirs();
 		pwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fFileName), fEncoding));
 	}
 	
@@ -82,7 +84,7 @@ public final class TextFile {
 	}
 	
 	// PRIVATE 
-	private final String fFileName;
+	protected String fFileName;
 	private final String fEncoding;
 	private PrintWriter pwriter;
 	private Map<Integer,String> lines=null;

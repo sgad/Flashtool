@@ -37,8 +37,10 @@ public class FlashJob extends Job {
     				flash.flashDevice();
     				flash.getBundle().close();
     			}
-    			else
+    			else {
+    				flash.getBundle().close();
     				MyLogger.getLogger().info("Flash canceled");
+    			}
     		}
     		else {
     			MyLogger.getLogger().info("Cannot open bundle. Flash operation canceled");

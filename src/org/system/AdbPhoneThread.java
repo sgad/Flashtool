@@ -27,6 +27,7 @@ public class AdbPhoneThread extends Thread {
 			final Process adb = builder.start();
 		    Thread t = new Thread() {
 		    	  public void run() {
+		    		  this.setName("AdbProcessReader");
 				      processInput = adb.getInputStream();
 				      boolean adbok = false;
 				      sc = new Scanner(processInput);

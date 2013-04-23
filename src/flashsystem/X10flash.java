@@ -151,12 +151,16 @@ public class X10flash {
     }
 
     public void BackupTA() throws IOException, X10FlashException {
-    	openTA(2);
-    	TextFile tazone = new TextFile(OS.getWorkDir()+"/custom/ta/"+ getPhoneProperty("MSN") + "-" + org.logger.TextAreaAppender.timestamp +  ".ta","ISO8859-1");
+    	int partition = 2;
+    	openTA(partition);
+    	String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+getPhoneProperty("MSN")+File.separator+"s1ta"+File.separator+OS.getTimeStamp();
+    	new File(folder).mkdirs();
+    	TextFile tazone = new TextFile(folder+File.separator+partition+".ta","ISO8859-1");
+    	MyLogger.getLogger().info("TA partition "+partition+" saved to "+folder+File.separator+partition+".ta");
         tazone.open(false);
     	try {
 		    MyLogger.getLogger().info("Start Dumping TA");
-		    MyLogger.initProgress(9789);
+		    MyLogger.initProgress(4920);
 	        for(int i = 0; i < 4920; i++) {
 	        	try {
 		        	MyLogger.getLogger().debug((new StringBuilder("%%% read TA property id=")).append(i).toString());

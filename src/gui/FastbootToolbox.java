@@ -52,7 +52,7 @@ public class FastbootToolbox extends Dialog {
 	 */
 	private void createContents() {
 		shlFastbootToolbox = new Shell(getParent(), getStyle());
-		shlFastbootToolbox.setSize(629, 241);
+		shlFastbootToolbox.setSize(646, 244);
 		shlFastbootToolbox.setText("Fastboot Toolbox");
 		shlFastbootToolbox.setLayout(new GridLayout(3, false));
 		new Label(shlFastbootToolbox, SWT.NONE);

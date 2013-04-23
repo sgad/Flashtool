@@ -26,7 +26,6 @@ public class FastbootToolbox extends Dialog {
 	 */
 	public FastbootToolbox(Shell parent, int style) {
 		super(parent, style);
-		setText("SWT Dialog");
 	}
 
 	/**
@@ -52,7 +51,7 @@ public class FastbootToolbox extends Dialog {
 	 */
 	private void createContents() {
 		shlFastbootToolbox = new Shell(getParent(), getStyle());
-		shlFastbootToolbox.setSize(646, 244);
+		shlFastbootToolbox.setSize(673, 244);
 		shlFastbootToolbox.setText("Fastboot Toolbox");
 		shlFastbootToolbox.setLayout(new GridLayout(3, false));
 		new Label(shlFastbootToolbox, SWT.NONE);
@@ -74,7 +73,7 @@ public class FastbootToolbox extends Dialog {
 		btnCheckStatus.setText("Check Current Device Status");
 		
 		Label lblByDooMLoRD = new Label(shlFastbootToolbox, SWT.NONE);
-		lblByDooMLoRD.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblByDooMLoRD.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblByDooMLoRD.setText("By DooMLoRD");
 		
 		Button btnrRebootFBAdb = new Button(shlFastbootToolbox, SWT.NONE);
@@ -95,7 +94,7 @@ public class FastbootToolbox extends Dialog {
 				doRebootBackIntoFastbootMode();
 			}
 		});
-		btnRebootFBFB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnRebootFBFB.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnRebootFBFB.setText("Reboot into fastboot mode (via Fastboot)");
 		
 		Button btnHotboot = new Button(shlFastbootToolbox, SWT.NONE);
@@ -140,7 +139,7 @@ public class FastbootToolbox extends Dialog {
 		        	doFlashKernel(dir);
 			}
 		});
-		btnFlashKernel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnFlashKernel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnFlashKernel.setText("Select kernel to Flash");
 		
 		Button btnGetVerInfo = new Button(shlFastbootToolbox, SWT.NONE);
@@ -161,7 +160,7 @@ public class FastbootToolbox extends Dialog {
 				doGetConnectedDeviceInfo();
 			}
 		});
-		btnGetDeviceInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		btnGetDeviceInfo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		btnGetDeviceInfo.setText("Get Device Info");
 		new Label(shlFastbootToolbox, SWT.NONE);
 		
@@ -185,7 +184,7 @@ public class FastbootToolbox extends Dialog {
 				shlFastbootToolbox.dispose();
 			}
 		});
-		btnClose.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		btnClose.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
 		btnClose.setText("Close");
 
 	}

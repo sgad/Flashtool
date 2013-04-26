@@ -3,7 +3,7 @@
 
 	<target name="all" depends="loadprops, binaries, dotar"/>
 
-	<target name="main_lib">
+	<target name="main_lib" depends="loadprops">
         <jar destfile="../Deploy/FlashTool/x10flasher.jar">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>

@@ -152,12 +152,6 @@ public class MainSWT {
 		vcheck.start();
 		shlSonyericsson.open();
 		shlSonyericsson.layout();
-		try {
-			Main.initLinuxUsb();
-		}
-		catch (LibUsbException e) {
-			shlSonyericsson.dispose();
-		}
 		while (!shlSonyericsson.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -768,8 +762,8 @@ public class MainSWT {
 			MyLogger.getLogger().info("Language files not installed");
 		}*/
 		MyLogger.getLogger().info("Flashtool "+About.getVersion());
-		if (JUsb.version.length()>0)
-			MyLogger.getLogger().info(JUsb.version);
+		if (JUsb.getVersion().length()>0)
+			MyLogger.getLogger().info(JUsb.getVersion());
 	}
 
 	public static void stopPhoneWatchdog() {

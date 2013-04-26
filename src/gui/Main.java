@@ -25,6 +25,7 @@ public class Main {
 				processConsole(options);
 			}
 			else {
+				Main.initLinuxUsb();
 				MainSWT window = new MainSWT();
 				window.open();
 			}

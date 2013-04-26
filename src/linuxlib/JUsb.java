@@ -16,10 +16,14 @@ public class JUsb {
 	private static String VendorId = "";
 	private static String DeviceId = "";
 	private static String Serial = "";
-	public static String version = "";
 	
 	public static void init() throws LibUsbException {
 		us = new UsbSystem();
+	}
+	
+	public static String getVersion() {
+		if (us==null) return "null";
+		return "libusb version " + us.getVersion();
 	}
 	
 	public static void fillDevice(boolean destroy) {

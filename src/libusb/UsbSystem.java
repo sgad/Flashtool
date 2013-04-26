@@ -3,11 +3,13 @@ package libusb;
 import com.sun.jna.Pointer;
 import libusb.jna.LibUsbLibrary;
 import libusb.jna.libusb_version;
+import linuxlib.JUsb;
 
 public class UsbSystem {
   Pointer context = null;
   byte endpoint_in;
   byte endpoint_out;
+  String version;
 
   public UsbSystem() throws LibUsbException
   {
@@ -24,19 +26,24 @@ public class UsbSystem {
 	    //LibUsbLibrary.libUsb.libusb_set_debug(this.context, 4);
     }
     catch (UnsatisfiedLinkError e) {
-    	throw new LibUsbException("Libusb not found. Minimum libusb version is 1.0.14. It can be downloaded on http://www.libusbx.org");
+    	throw new LibUsbException("Libusb not found. Minimum libusb version is 1.0.15. It can be downloaded on http://www.libusbx.org");
     }
 	try {
 		libusb_version v = LibUsbLibrary.libUsb.libusb_get_version();
-		if (v.major!=(short)1 || v.minor!=(short)0 || v.micro<(short)14) {
-			throw new LibUsbException("Minimum libusb version is 1.0.14. Found "+v.major + "." + v.minor + "." + v.micro);
+		if (v.major!=(short)1 || v.minor!=(short)0 || v.micro<(short)15) {
+			throw new LibUsbException("Minimum libusb version is 1.0.15. Found "+v.major + "." + v.minor + "." + v.micro);
 		}
+		version=v.major+"."+v.minor+"."+v.micro;
 	}
 	catch (UnsatisfiedLinkError e) {
-		throw new LibUsbException("A libusb was found but not with the right version. Minimum libusb version is 1.0.14. It can be downloaded on http://www.libusbx.org");
+		throw new LibUsbException("A libusb was found but not with the right version. Minimum libusb version is 1.0.15. It can be downloaded on http://www.libusbx.org");
 	}
   }
 
+  public String getVersion() {
+	  return version;
+  }
+  
   public UsbDevList getDevices(String vendorid) {
 	  UsbDevList list = new UsbDevList();
     Pointer[] devs = new Pointer[1];

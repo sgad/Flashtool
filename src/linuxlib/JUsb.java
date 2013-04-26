@@ -22,7 +22,7 @@ public class JUsb {
 	}
 	
 	public static String getVersion() {
-		if (us==null) return "null";
+		if (us==null) return "";
 		return "libusb version " + us.getVersion();
 	}
 	

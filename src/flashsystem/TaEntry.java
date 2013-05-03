@@ -109,6 +109,15 @@ public class TaEntry {
 		}
 		return new String(b);
 	}
+
+	public String getDataHex() {
+		String[] result = _data.split(" ");
+		byte[] b = new byte[result.length];
+		for (int i=0;i<result.length;i++) {
+			b[i]=BytesUtil.getBytes(result[i])[0];
+		}
+		return HexDump.toHex(b);
+	}
 	
 	public Byte[] getDataBytes() {
 		if (_data.length()>0) {

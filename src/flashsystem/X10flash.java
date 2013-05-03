@@ -41,6 +41,10 @@ public class X10flash {
     	_curshell = shell;
     }
 
+    public String getCurrentDevice() {
+    	return currentdevice;
+    }
+
     public void setFlashState(boolean ongoing) throws IOException,X10FlashException
     {
 	    	if (ongoing) {

@@ -76,6 +76,7 @@ import gui.tools.FTDExplodeJob;
 import gui.tools.FlashJob;
 import gui.tools.GetULCodeJob;
 import gui.tools.MsgBox;
+import gui.tools.OldUnlockJob;
 import gui.tools.RawTAJob;
 import gui.tools.RootJob;
 import gui.tools.WidgetTask;
@@ -871,22 +872,19 @@ public class MainSWT {
     				WidgetTask.setEnabled(tltmRoot,false);
     				WidgetTask.setEnabled(tltmAskRoot,false);
     				WidgetTask.setEnabled(tltmApkInstall,false);
-    				doGiveRoot();
+    				doGiveRoot(true);
     			}
     			else {
     				boolean hasSU = Devices.getCurrent().hasSU();
     				WidgetTask.setEnabled(tltmRoot, !hasSU);
     				WidgetTask.setEnabled(tltmApkInstall, true);
     				if (hasSU) {
+        				MyLogger.getLogger().info("Checking root access");
     					boolean hasRoot = Devices.getCurrent().hasRoot();
+						doGiveRoot(hasRoot);
     					if (hasRoot) {
     						doInstFlashtool();
-    						doGiveRoot();
-    					}
-    					WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
-    					WidgetTask.setEnabled(mntmInstallBusybox,hasRoot);
-    					WidgetTask.setEnabled(mntmRawRestore,hasRoot);
-    					WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+    					}	
     				}
     			}
     			MyLogger.getLogger().debug("Now setting buttons availability - btnRoot");
@@ -922,7 +920,7 @@ public class MainSWT {
     	f.mkdir();
 	}
 
-	public void doGiveRoot() {
+	public void doGiveRoot(boolean hasRoot) {
 		/*btnCleanroot.setEnabled(true);
 		mntmInstallBusybox.setEnabled(true);
 		mntmClearCache.setEnabled(true);
@@ -940,26 +938,30 @@ public class MainSWT {
 		mntmBackupSystemApps.setEnabled(true);
 		btnXrecovery.setEnabled(Devices.getCurrent().canRecovery());
 		btnKernel.setEnabled(Devices.getCurrent().canKernel());*/
+		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
+		WidgetTask.setEnabled(mntmInstallBusybox,hasRoot);
+		WidgetTask.setEnabled(mntmRawRestore,hasRoot);
+		WidgetTask.setEnabled(mntmRawBackup,hasRoot);
+		WidgetTask.setEnabled(tltmAskRoot,!hasRoot);
 		if (!Devices.isWaitingForReboot())
-			MyLogger.getLogger().info("Root Access Allowed");  	
+			if (hasRoot)
+				MyLogger.getLogger().info("Root Access Allowed");
+			else
+				MyLogger.getLogger().info("Root access denied");
     }
 
 	public void doAskRoot() {
 		Job job = new Job("Give Root") {
 			protected IStatus run(IProgressMonitor monitor) {
 				MyLogger.getLogger().warn("Please check your Phone and 'ALLOW' Superuseraccess!");
-        		if (!AdbUtility.hasRootPerms()) {
-        			MyLogger.getLogger().error("Please Accept root permissions on the phone");
-        		}
-        		else {
-        			doGiveRoot();
-        		}
+        		boolean hasRoot = Devices.getCurrent().hasRoot();
+        		doGiveRoot(hasRoot);
         		return Status.OK_STATUS;				
 			}
 		};
 		job.schedule();
 	}
-    
+
 	public void doInstFlashtool() {
 		try {
 			if (!AdbUtility.exists("/system/flashtool")) {
@@ -1064,46 +1066,55 @@ public class MainSWT {
 			MyLogger.getLogger().info("Please connect your device into flashmode.");
 			String result = (String)WidgetTask.openWaitDeviceForFlashmode(shlSonyericsson,flash);
 			if (result.equals("OK")) {
-			try {
-				GetULCodeJob ulj = new GetULCodeJob("Unlock code");
-				ulj.setFlash(flash);
-				ulj.addJobChangeListener(new IJobChangeListener() {
-					public void aboutToRun(IJobChangeEvent event) {}
-					public void awake(IJobChangeEvent event) {}
-					public void running(IJobChangeEvent event) {}
-					public void scheduled(IJobChangeEvent event) {}
-					public void sleeping(IJobChangeEvent event) {}
+				try {
+					GetULCodeJob ulj = new GetULCodeJob("Unlock code");
+					ulj.setFlash(flash);
+					ulj.addJobChangeListener(new IJobChangeListener() {
+						public void aboutToRun(IJobChangeEvent event) {}
+						public void awake(IJobChangeEvent event) {}
+						public void running(IJobChangeEvent event) {}
+						public void scheduled(IJobChangeEvent event) {}
+						public void sleeping(IJobChangeEvent event) {}
 					
-					public void done(IJobChangeEvent event) {
-						GetULCodeJob j = (GetULCodeJob)event.getJob();
-						String ulcode=j.getULCode();
-						String imei = j.getIMEI();
-						String blstatus = j.getBLStatus();
-						String serial = j.getSerial();
-						if (!j.alreadyUnlocked()) {
-							if (!blstatus.equals("ROOTABLE")) {
-								MyLogger.getLogger().info("Your phone bootloader cannot be officially unlocked");
-								MyLogger.getLogger().info("You can now unplug and restart your phone");
+						public void done(IJobChangeEvent event) {
+							GetULCodeJob j = (GetULCodeJob)event.getJob();
+							if (j.getPhoneCert().length()>0) {
+								OldUnlockJob uj = new OldUnlockJob("Unlock 2010");
+								uj.setPhoneCert(j.getPhoneCert());
+								uj.setPlatform(j.getPlatform());
+								uj.setStatus(j.getBLStatus());
+								uj.schedule();
 							}
 							else {
-								MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
-								String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
-								if (result.equals("OK")) {
-									WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
+								String ulcode=j.getULCode();
+								String imei = j.getIMEI();
+								String blstatus = j.getBLStatus();
+								String serial = j.getSerial();
+								if (!j.alreadyUnlocked()) {
+									if (!blstatus.equals("ROOTABLE")) {
+										MyLogger.getLogger().info("Your phone bootloader cannot be officially unlocked");
+										MyLogger.getLogger().info("You can now unplug and restart your phone");
+									}
+									else {
+										MyLogger.getLogger().info("Now unplug your device and restart it into fastbootmode");
+										String result = (String)WidgetTask.openWaitDeviceForFastboot(shlSonyericsson);
+										if (result.equals("OK")) {
+											WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, null, "U");
+										}
+										else {
+											MyLogger.getLogger().info("Bootloader unlock canceled");
+										}
+									}
 								}
 								else {
-									MyLogger.getLogger().info("Bootloader unlock canceled");
+									WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, j.isRelocked()?"U":"R");
+									flash.closeDevice();
+									MyLogger.initProgress(0);
+									MyLogger.getLogger().info("You can now unplug and restart your device");
+									DeviceChangedListener.pause(false);								
 								}
 							}
 						}
-						else {
-							WidgetTask.openBLWizard(shlSonyericsson, serial, imei, ulcode, flash, j.isRelocked()?"U":"R");
-							flash.closeDevice();
-							MyLogger.initProgress(0);
-							MyLogger.getLogger().info("You can now unplug and restart your device");
-							DeviceChangedListener.pause(false);								
-						}
-					}
 				});
 				ulj.schedule();
 			}

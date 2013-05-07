@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.logger.MyLogger;
 
 public class SinEditor extends Dialog {
 
@@ -29,6 +30,7 @@ public class SinEditor extends Dialog {
 	protected Shell shlSinEditor;
 	private Button btnDumpHeader;
 	private Button btnDumpData;
+	private Button btnAdvanced;
 	private Button btnNewButton_1;
 	private Button btnClose;
 	private Composite composite_1;
@@ -54,6 +56,7 @@ public class SinEditor extends Dialog {
 	public Object open() {
 		createContents();
 		WidgetsTool.setSize(shlSinEditor);
+		
 		shlSinEditor.open();
 		shlSinEditor.layout();
 		Display display = getParent().getDisplay();
@@ -161,6 +164,25 @@ public class SinEditor extends Dialog {
 		fd_composite_1.left = new FormAttachment(btnDumpHeader, 0, SWT.LEFT);
 		fd_composite_1.right = new FormAttachment(100, -10);
 		composite_1.setLayoutData(fd_composite_1);
+		btnAdvanced = new Button(shlSinEditor, SWT.NONE);
+		btnAdvanced.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+				SinFile sin =new SinFile(sourceFile.getText());
+				SinAdvanced sadv = new SinAdvanced(shlSinEditor,SWT.PRIMARY_MODAL | SWT.SHEET);
+				sadv.open(sin);
+				} catch (Exception ex) {
+					MyLogger.getLogger().error(ex.getMessage());
+				}
+			}
+		});
+		FormData fd_btnAdvanced = new FormData();
+		fd_btnAdvanced.bottom = new FormAttachment(btnDumpHeader, 0, SWT.BOTTOM);
+		fd_btnAdvanced.left = new FormAttachment(btnDumpData, 6);
+		btnAdvanced.setLayoutData(fd_btnAdvanced);
+		btnAdvanced.setText("Advanced");
+		btnAdvanced.setEnabled(false);
 		
 		lblSinFile = new Label(composite_1, SWT.NONE);
 		GridData gd_lblSinFile = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
@@ -197,6 +219,7 @@ public class SinEditor extends Dialog {
 		        		sourceFile.setText(dir);
 		        		btnDumpHeader.setEnabled(true);
 		        		btnDumpData.setEnabled(true);
+		        		btnAdvanced.setEnabled(true);
 		        		btnNewButton_1.setEnabled(true);
 		        	}
 		        }

@@ -18,7 +18,6 @@ public class Main {
 	public static void main(String[] args) {
 		AWTKillerThread k = new AWTKillerThread();
 		k.start();
-		System.out.println("toto");
 		try {
 			OptionSet options = parseCmdLine(args);
 			if (options.has("console")) {

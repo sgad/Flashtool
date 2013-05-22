@@ -187,7 +187,7 @@ then
          			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
          		;;
       			extract)
-         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=extract --file=$p_file
          		;;
       			imei)
          			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei
@@ -223,7 +223,7 @@ else
      			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
      		;;
   			extract)
-     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=extract --file=$p_file
      		;;
   			imei)
      			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei

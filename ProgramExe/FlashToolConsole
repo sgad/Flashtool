@@ -10,8 +10,9 @@ show_help() {
 	echo Usage : FlashToolConsole [OPTIONS]
         echo
 	echo MANDATORY :
-	echo '     --action=flash|imei'
-        echo '     --file=/path/to/file.ftf (only when action=flash)'
+	echo '     --action=flash|imei|extract'
+    echo '     --file=/path/to/file.ftf (only when action=flash)'
+    echo '            /path/to/file.sin (only when action=extract)'
 	echo
 	echo
 	echo OPTIONAL :
@@ -67,7 +68,7 @@ do
 done
 
 case $p_action in
-   flash | imei)
+   flash | imei | extract)
       ;;
    *)
      show_help;;
@@ -108,6 +109,20 @@ then
     fi
 fi
 
+if [ "$p_action" = "extract" ]
+then
+    if test -z "$p_file"
+    then
+        echo --file is mandatory when --action=flash
+        exit 1
+    fi
+    if [ ! -e $p_file ]
+    then
+       echo $p_file does not exist.
+       exit 1
+    fi
+fi
+
 if test "$OS" = "Linux"
 then
     chmod 755 ./x10flasher_lib/adb.linux
@@ -121,13 +136,6 @@ then
 	if test -d /etc/udev/rules.d
 	then
         	if grep -rl "0fce" /etc/udev/rules.d >/dev/null
-        	then
-			export HASRULES="true"
-		fi
-	fi
-	if test -d /lib/udev/rules.d
-	then
-        	if grep -rl "0fce" /lib/udev/rules.d >/dev/null
         	then
 			export HASRULES="true"
 		fi
@@ -150,33 +158,40 @@ then
         if test "${system64}" = "x86_64"
         then
              export JAVA_HOME=./x10flasher_lib/linjre64
+             
         else
              export JAVA_HOME=./x10flasher_lib/linjre32
+             
         fi
         echo "JAVA_HOME not set. Using default value : ${JAVA_HOME}"
     fi
     if test -e ${JAVA_HOME}/bin/java
     then
-	 export VER64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bits|wc -l)
-         if test "${VER64}" = "1"
-         then
-             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
-             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusb-1.0.so
-         else
-             export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32:$LD_LIBRARY_PATH
-             ln -sf libusb-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusb-1.0.so
-         fi
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
+         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
          ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
+         ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
 	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
 	 then
-     	case $p_action in
-      		flash)
-         		$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
-         	;;
-      		imei)
-         		$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei
-   		esac         	
+         	if test $ISJAVA64 -gt 0
+         	then
+    	     	ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
+         	else
+             	ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
+         	fi
+     		case $p_action in
+      			flash)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+         		;;
+      			extract)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file
+         		;;
+      			imei)
+         			$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei
+   			esac
 	 else
 		echo "Java version must be 1.6 or 1.7"
 	 fi
@@ -190,19 +205,29 @@ else
     chmod 755 ./x10flasher_lib/unyaffs.mac
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib64:$DYLD_LIBRARY_PATH
     export DYLD_LIBRARY_PATH=./x10flasher_lib/mac/lib32:$DYLD_LIBRARY_PATH
-    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusb-1.0.dylib
-    ln -sf libusb-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusb-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib64/libusbx-1.0.dylib
+    ln -sf libusbx-1.0.0.dylib ./x10flasher_lib/mac/lib32/libusbx-1.0.dylib
     ISJAVA6=$(java -version 2>&1|grep version|grep 1.6|wc -l)
     ISJAVA7=$(java -version 2>&1|grep version|grep 1.7|wc -l)
-    if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
+    ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+    if test $ISJAVA64 -gt 0
     then
-     	case $p_action in
-      		flash)
-         		java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
-         	;;
-      		imei)
-         		java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei
-   		esac
+   		ln -sf swt64.jar ./x10flasher_lib/swtmac/swt.jar
+    else
+        ln -sf swt32.jar ./x10flasher_lib/swtmac/swt.jar
+    fi
+    if test $ISJAVA6 -gt 0 -o $ISJAVA7  -gt 0
+    then
+ 		case $p_action in
+  			flash)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file --wipedata=$p_data --wipecache=$p_cache --baseband=$p_baseband --system=$p_system --kernel=$p_kernel
+     		;;
+  			extract)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=flash --file=$p_file
+     		;;
+  			imei)
+     			java -XstartOnFirstThread -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar -console --action=imei
+		esac
     else
 		echo "Java version must be 1.6 or 1.7"
     fi

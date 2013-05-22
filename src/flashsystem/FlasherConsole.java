@@ -159,6 +159,15 @@ public class FlasherConsole {
 		}		
 	}
 	
+	public static void doExtract(String file) {
+		try {
+			SinFile sin = new SinFile(file);
+			sin.dumpImage();
+		}
+		catch (Exception e) {
+		}
+	}
+
 	public static void doFlash(String file,boolean wipedata,boolean wipecache,boolean excludebb,boolean excludekrnl, boolean excludesys) throws Exception {
 		X10flash f=null;
 		try {

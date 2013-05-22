@@ -18,6 +18,7 @@ public class Main {
 	public static void main(String[] args) {
 		AWTKillerThread k = new AWTKillerThread();
 		k.start();
+		System.out.println("toto");
 		try {
 			OptionSet options = parseCmdLine(args);
 			if (options.has("console")) {
@@ -64,6 +65,7 @@ public class Main {
 
 	public static void processConsole(OptionSet options) throws Exception {
 		String action=(String)options.valueOf("action");
+		
 		if (action.toLowerCase().equals("flash")) {
 			FlasherConsole.init(false);
 			FlasherConsole.doFlash((String)options.valueOf("file"), options.valueOf("wipedata").equals("yes"), options.valueOf("wipecache").equals("yes"), options.valueOf("baseband").equals("no"), options.valueOf("kernel").equals("no"), options.valueOf("system").equals("no"));
@@ -76,7 +78,11 @@ public class Main {
 			FlasherConsole.init(true);
 			FlasherConsole.doRoot();
 		}
-/*		if (action.toLowerCase().equals("blunlock")) {
+		if (action.toLowerCase().equals("extract")) {
+			FlasherConsole.init(true);
+			FlasherConsole.doExtract((String)options.valueOf("file"));
+		}
+		/*		if (action.toLowerCase().equals("blunlock")) {
 			FlasherConsole.init(true);
 			FlasherConsole.doBLUnlock();        		
 		}*/

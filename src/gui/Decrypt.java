@@ -248,7 +248,7 @@ public class Decrypt extends Dialog {
 		    			File srcdir = new File(txtSourceFolder.getText());
 		    			File[] chld = srcdir.listFiles();
 		    			for(int i = 0; i < chld.length; i++) {
-		    				if (chld[i].getName().toUpperCase().startsWith("FILE") && chld[i].length()>20000)
+		    				if (chld[i].getName().toUpperCase().startsWith("FILE"))
 		    					files.add(chld[i]);
 		    			}
 		    			listViewerFiles.setInput(files);

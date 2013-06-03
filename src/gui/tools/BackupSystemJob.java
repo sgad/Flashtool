@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.logger.MyLogger;
 import org.system.Devices;
+import org.system.OS;
 
 import flashsystem.X10flash;
 
@@ -20,15 +21,15 @@ public class BackupSystemJob extends Job {
 	
     protected IStatus run(IProgressMonitor monitor) {
     	try {
-    		new File(File.separator+"custom"+File.separator+"apps_saved"+File.separator+Devices.getCurrent().getId()).mkdirs();
-			X10Apps apps = new X10Apps();
+    		new File(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId()).mkdirs();
+			DeviceApps apps = new DeviceApps();
 			MyLogger.initProgress(apps.getCurrent().size());
 			Iterator<String> ic = apps.getCurrent().iterator();
 			while (ic.hasNext()) {
 				String app = ic.next();
 				MyLogger.updateProgress();
 				try {
-					AdbUtility.pull("/system/app/"+app, "."+File.separator+"custom"+File.separator+"apps_saved"+File.separator+Devices.getCurrent().getId());
+					AdbUtility.pull("/system/app/"+app, "."+File.separator+"custom"+File.separator+"mydevices"+File.separator+Devices.getCurrent().getSerial()+File.separator+"apps"+File.separator+Devices.getCurrent().getBuildId());
 				}
 				catch (Exception e) {}
 			}

@@ -270,15 +270,17 @@ public final class Bundle {
 	    while (e.hasMoreElements()) {
 	    	BundleEntry entry = getEntry(e.nextElement());
 	    	try {
-	    		long filecount = 0;
-	    		SinFile s = new SinFile(entry.getAbsolutePath());
-			    if (entry.getName().contains("loader")) {
-	    			s.setChunkSize(maxloadersize);
-	    			s.getSinHeader().setChunkSize(maxloadersize);
-	    			filecount++;
-			    }
-	    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
-	    		totalsize += filecount;
+	    		if (!entry.getName().toUpperCase().endsWith(".TA")) {
+		    		long filecount = 0;
+		    		SinFile s = new SinFile(entry.getAbsolutePath());
+				    if (entry.getName().contains("loader")) {
+		    			s.setChunkSize(maxloadersize);
+		    			s.getSinHeader().setChunkSize(maxloadersize);
+		    			filecount++;
+				    }
+		    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+		    		totalsize += filecount;
+	    		}
 	    	} catch (Exception ex) {}
 	    }
 	    return totalsize;
@@ -290,13 +292,15 @@ public final class Bundle {
 		    while (e.hasMoreElements()) {
 		    	BundleEntry entry = getEntry(e.nextElement());
 		    	try {
-		    		if (!entry.getName().contains("loader")) {
-			    		long filecount = 0;
-			    		SinFile s = new SinFile(entry.getAbsolutePath());
-			    		s.setChunkSize(chunksize);
-			    		s.getSinHeader().setChunkSize(chunksize);
-			    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
-			    		totalsize += filecount;
+		    		if (!entry.getName().toUpperCase().endsWith(".TA")) {
+			    		if (!entry.getName().contains("loader")) {
+				    		long filecount = 0;
+				    		SinFile s = new SinFile(entry.getAbsolutePath());
+				    		s.setChunkSize(chunksize);
+				    		s.getSinHeader().setChunkSize(chunksize);
+				    		filecount = filecount + s.getNbChunks()+s.getSinHeader().getNbChunks();
+				    		totalsize += filecount;
+			    		}
 		    		}
 		    	} catch (Exception ex) {}
 		    }

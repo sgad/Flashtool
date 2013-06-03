@@ -147,12 +147,24 @@ public class RawTAJob extends Job {
 			hash.setProperty("partitionbefore", getMD5(partition));
 			if (hash.getProperty("remote").equals(hash.getProperty("partitionbefore")))
 				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
-			MyLogger.getLogger().info("Restoring backup.");
+			MyLogger.getLogger().info("Making a backup on device before flashing.");
+			AdbUtility.run("su -c 'dd if="+partition+" of=/mnt/sdcard/tabefore.dd'");
+			hash.setProperty("remotebefore", getMD5("/mnt/sdcard/tabefore.dd"));
+			if (!hash.getProperty("remotebefore").equals(hash.getProperty("partitionbefore")))
+				throw new Exception("Failed to take a backup before flashing new TA. Aborting");
+			MyLogger.getLogger().info("Flashing new TA.");
 			AdbUtility.run("su -c 'dd if=/mnt/sdcard/ta.dd of="+partition+" && sync && sync && sync && sync'");
 			hash.setProperty("partitionafter", getMD5(partition));
-			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter")))
-				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
-			MyLogger.getLogger().info("Restore is OK");
+			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter"))) {
+				MyLogger.getLogger().error("Error flashing new TA. Reverting back to the previous TA.");
+				AdbUtility.run("su -c 'dd if=/mnt/sdcard/tabefore.dd of="+partition+" && sync && sync && sync && sync'");
+				hash.setProperty("partitionafter", getMD5(partition));
+				if (!hash.getProperty("remotebefore").equals(hash.getProperty("partitionafter")))
+					throw new Exception("Failed to restore previous TA");
+				MyLogger.getLogger().info("Restore previous TA OK");
+			}
+			else
+				MyLogger.getLogger().info("Restore is OK");
 		} catch (Exception e) {
 			MyLogger.getLogger().error(e.getMessage());
 		}

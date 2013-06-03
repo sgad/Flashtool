@@ -1,11 +1,25 @@
 package gui.tools;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.Deflater;
+
 import org.adb.AdbUtility;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -17,10 +31,14 @@ import org.system.Devices;
 import org.system.OS;
 import org.system.TextFile;
 
+import flashsystem.BundleEntry;
+
 public class RawTAJob extends Job {
 
 	String _action = "";
 	Shell _shell;
+	String folder;
+	String partition;
 	
 	public void setAction(String action) {
 		_action = action;
@@ -53,116 +71,150 @@ public class RawTAJob extends Job {
 		try {
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				throw new Exception("Busybox must be installed");
-			String ident = WidgetTask.openTABackupSet(_shell);
-			if (ident.length()==0)
-				throw new Exception("Operation canceled");
-			String serial = AdbUtility.getDevices().nextElement();
-			String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+serial+File.separator+"rawta"+File.separator+OS.getTimeStamp();;
-			TextFile t = new TextFile(folder+File.separator+"ident","ISO-8859-1");
-			t.open(true);
-			t.write(ident);
-			t.close();
+			String serial = Devices.getCurrent().getSerial();
+			folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"rawta";
 			new File(folder).mkdirs();
-			if (!AdbUtility.exists("su -c 'ls /dev/block/platform/msm_sdcc.1/by-name/TA'"))
-				throw new Exception("Your phone is not compatible");
+			partition = "/dev/block/platform/msm_sdcc.1/by-name/TA";
+			if (!AdbUtility.exists(partition)) {
+				partition = AdbUtility.run("busybox cat /proc/partitions|busybox grep -w 2048|busybox awk '{print $4}'");
+				if (partition.length()==0)
+					throw new Exception("Your phone is not compatible");
+				partition = "/dev/block/"+partition;
+			}
 			MyLogger.getLogger().info("Begin backup");
-			AdbUtility.run("su -c 'dd if=/dev/block/platform/msm_sdcc.1/by-name/TA of=/mnt/sdcard/ta.dd && md5sum /dev/block/platform/msm_sdcc.1/by-name/TA > /mnt/sdcard/ta.md5 && md5sum /mnt/sdcard/ta.dd >> /mnt/sdcard/ta.md5'");
-			MyLogger.getLogger().info("End of backup");
+			AdbUtility.run("su -c 'dd if="+partition+" of=/mnt/sdcard/ta.dd'");
+			Properties hash = new Properties();
+			hash.setProperty("remote", getMD5("/mnt/sdcard/ta.dd"));
+			hash.setProperty("partition", getMD5(partition));
 			AdbUtility.pull("/mnt/sdcard/ta.dd", folder);
-			AdbUtility.pull("/mnt/sdcard/ta.md5", folder);
-			AdbUtility.run("rm /mnt/sdcard/ta.dd && rm /mnt/sdcard/ta.md5");
-			Properties hash = parseMD5(folder,"ta.md5");
 			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+"ta.dd")).toUpperCase());
-			if (hash.size()!=3)
-				throw new Exception("Expecting 3 lines, got "+hash.size()+ " ones");
-			if (!allMatches(hash))
-				throw new Exception("Backupset integrity is not OK");
-			MyLogger.getLogger().info("Backup is OK");
+			MyLogger.getLogger().info("End of backup");
+			if (hash.getProperty("local").equals(hash.getProperty("remote")) && hash.getProperty("remote").equals(hash.getProperty("partition"))) {
+				MyLogger.getLogger().info("Backup is OK");
+				createFTA();
+			}
+			else throw new Exception("Backup is not OK");
 		} catch (Exception ex) {
+			new File(folder+"ta.dd").delete();
 			MyLogger.getLogger().error(ex.getMessage()); 
 		}
     }
     
     public void doRestore() {
 		try {
+			String serial = Devices.getCurrent().getSerial();
+			folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"rawta";
 			if (!Devices.getCurrent().isBusyboxInstalled(false))
 				throw new Exception("Busybox must be installed");
 			String backupset = WidgetTask.openTABackupSelector(_shell);
-			if (backupset.length()==0)
+			if (backupset.length()==0) {
 				throw new Exception("Operation canceled");
+			} 
 			backupset = backupset.split(":")[0].trim();
-			String serial = AdbUtility.getDevices().nextElement();
-			String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+serial+File.separator+"rawta"+File.separator+backupset; 
-			if (!AdbUtility.exists("su -c 'ls /dev/block/platform/msm_sdcc.1/by-name/TA'"))
-				throw new Exception("Your phone is not compatible");
-			Properties hash = parseMD5(folder,"ta.md5");
+			backupset = folder+File.separator+backupset+".fta";
+			File ta = new File(backupset);
+			JarFile jf = new JarFile(ta);
+			Attributes attr = jf.getManifest().getMainAttributes();
+			String partition = attr.getValue("partition");
+			File prepared = new File(folder+File.separator+"prepared");
+			if (prepared.exists()) {
+				FileUtils.deleteDirectory(prepared);
+				if (prepared.exists())
+					throw new Exception("Cannot delete previous folder : "+prepared.getAbsolutePath());
+			}
+			prepared.mkdirs();
+			folder = prepared.getAbsolutePath();
+			Enumeration<JarEntry> ents = jf.entries();
+			while (ents.hasMoreElements()) {
+				JarEntry entry = ents.nextElement();
+				if (!entry.getName().startsWith("META"))
+					saveEntry(jf,entry);
+			}
+			
+			Properties hash = new Properties();
+			hash.setProperty("stored", attr.getValue("md5"));
+			
 			if (!new File(folder+File.separator+"ta.dd").exists())
 				throw new Exception(folder+File.separator+"ta.dd"+" does not exist");
 			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+"ta.dd")).toUpperCase());
-			if (hash.size()!=3)
-				throw new Exception("Expecting 3 lines, got "+hash.size()+ " ones");
-			MyLogger.getLogger().info("Checking TA image integrity");
-			if (!allMatches(hash))
-				throw new Exception("Your TA image does not match backupset MD5");
-			MyLogger.getLogger().info("TA image OK. Continuing.");
+			if (!hash.getProperty("stored").equals(hash.getProperty("local")))
+				throw new Exception("Error during extraction. File is corrupted");
+
 			AdbUtility.push(folder+File.separator+"ta.dd","/mnt/sdcard/");
-			AdbUtility.run("su -c 'md5sum /mnt/sdcard/ta.dd > /mnt/sdcard/tarestore.md5'");
-			AdbUtility.run("su -c 'md5sum /dev/block/platform/msm_sdcc.1/by-name/TA >> /mnt/sdcard/tarestore.md5'");
-			AdbUtility.pull("/mnt/sdcard/tarestore.md5", folder);
-			hash = parseMD5(folder,"tarestore.md5");
-			hash.setProperty("local", OS.getMD5(new File(folder+File.separator+"ta.dd")).toUpperCase());
-			if (hash.size()!=3)
-				throw new Exception("Expecting 3 lines, got "+hash.size()+ " ones");			
-			if (!hash.getProperty("local").equals(hash.getProperty("/mnt/sdcard/ta.dd")))
-				throw new Exception("Local and remote file do not match");
-			MyLogger.getLogger().info("To be Restored file is OK. Now flashing it to device.");
-			if (!hash.getProperty("/dev/block/platform/msm_sdcc.1/by-name/TA").equals(hash.getProperty("/mnt/sdcard/ta.dd"))) {
-				String result = WidgetTask.openYESNOBox(_shell, "Partition and file differ.\nBe sure your backup if from the connected device.\nRestore anyway ?");
-				if (Integer.parseInt(result)==SWT.NO)
-					throw new Exception("Operation canceled");
-			}
+			hash.setProperty("remote", getMD5("/mnt/sdcard/ta.dd"));
+			if (!hash.getProperty("local").equals(hash.getProperty("remote")))
+				throw new Exception("Local file and remote file do not match");
+			hash.setProperty("partitionbefore", getMD5(partition));
+			if (hash.getProperty("remote").equals(hash.getProperty("partitionbefore")))
+				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
 			MyLogger.getLogger().info("Restoring backup.");
-			AdbUtility.run("su -c 'dd if=/mnt/sdcard/ta.dd of=/dev/block/platform/msm_sdcc.1/by-name/TA && sync && sync && sync && sync'");									
-			AdbUtility.run("su -c 'md5sum /mnt/sdcard/ta.dd > /mnt/sdcard/taafterrestore.md5'");
-			AdbUtility.run("su -c 'md5sum /dev/block/platform/msm_sdcc.1/by-name/TA >> /mnt/sdcard/taafterrestore.md5'");
-			AdbUtility.pull("/mnt/sdcard/taafterrestore.md5", folder);
-			hash = parseMD5(folder,"taafterrestore.md5");
-			if (!allMatches(hash)) {
-				throw new Exception("Partition and file differ. Restore is not OK");
-			}
-			else {
-				MyLogger.getLogger().info("TA Restore is OK.");
-			}
+			AdbUtility.run("su -c 'dd if=/mnt/sdcard/ta.dd of="+partition+" && sync && sync && sync && sync'");
+			hash.setProperty("partitionafter", getMD5(partition));
+			if (!hash.getProperty("remote").equals(hash.getProperty("partitionafter")))
+				throw new Exception("Backup and current partition match. Nothing to be done. Aborting");
+			MyLogger.getLogger().info("Restore is OK");
 		} catch (Exception e) {
 			MyLogger.getLogger().error(e.getMessage());
 		}
     }
 
-    public Properties parseMD5(String folder, String file) throws IOException {
-    	Properties p = new Properties();
-			TextFile t=new TextFile(folder+File.separator+file,"ISO-8859-1");
-			Iterator i = t.getLines().iterator();
-			while (i.hasNext()) {
-				String line = (String)i.next();
-				String[] split = line.split(" ");
-				String md5 = split[0];
-				String f = split[split.length-1];
-				p.setProperty(f, md5.toUpperCase());
-			}
-		return p;
+    public void createFTA() {
+    	File tadd = new File(folder+File.separator+"ta.dd");
+    	String timestamp = OS.getTimeStamp();
+		File fta = new File(folder+File.separator+timestamp+".fta");
+		byte buffer[] = new byte[10240];
+		StringBuffer sbuf = new StringBuffer();
+		sbuf.append("Manifest-Version: 1.0\n");
+		sbuf.append("Created-By: FlashTool\n");
+		sbuf.append("serial: "+Devices.getCurrent().getSerial()+"\n");
+		sbuf.append("build: "+Devices.getCurrent().getBuildId()+"\n");
+		sbuf.append("partition: "+partition+"\n");
+		sbuf.append("md5: "+OS.getMD5(tadd).toUpperCase()+"\n");
+		sbuf.append("timestamp: "+timestamp+"\n");
+		try {
+			Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes("UTF-8")));
+		    FileOutputStream stream = new FileOutputStream(fta);
+		    JarOutputStream out = new JarOutputStream(stream, manifest);
+		    out.setLevel(Deflater.BEST_SPEED);
+			MyLogger.getLogger().info("Adding ta.dd to the fta bundle");
+		    JarEntry jarAdd = new JarEntry("ta.dd");
+	        out.putNextEntry(jarAdd);
+	        InputStream in = new FileInputStream(tadd);
+	        while (true) {
+	          int nRead = in.read(buffer, 0, buffer.length);
+	          if (nRead <= 0)
+	            break;
+	          out.write(buffer, 0, nRead);
+	        }
+	        in.close();
+	        out.flush();
+	        out.close();
+	        stream.flush();
+		    stream.close();
+		    tadd.delete();
+		    MyLogger.getLogger().info("Bundle "+fta.getAbsolutePath()+" creation finished");
+		}
+		catch (Exception e) {
+			MyLogger.getLogger().error(e.getMessage());
+		}
     }
 
-    public boolean allMatches(Properties p) {
-    	Enumeration e = p.keys();
-    	while (e.hasMoreElements()) {
-    		String key = (String)e.nextElement();
-    		String value = p.getProperty(key);
-    		Enumeration e1 = p.keys();
-    		while (e1.hasMoreElements()) {
-    			String key1 = (String)e1.nextElement();
-    			if (!p.getProperty(key1).equals(value)) return false;
-    		}
-    	}
-    	return true;
+    public String getMD5(String path) throws Exception {
+		return AdbUtility.run("su -c 'busybox md5sum "+path+"'").split(" ")[0].toUpperCase().trim();
     }
+
+    private void saveEntry(JarFile jar, JarEntry entry) throws IOException {
+			MyLogger.getLogger().debug("Saving entry "+entry.getName()+" to disk");
+			InputStream in = jar.getInputStream(entry);
+			String outname = folder+File.separator+entry.getName();
+			MyLogger.getLogger().debug("Writing Entry to "+outname);
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(outname));
+			byte[] buffer = new byte[10240];
+			int len;
+			while((len = in.read(buffer)) >= 0)
+				out.write(buffer, 0, len);
+			in.close();
+			out.close();
+	}
+
 }

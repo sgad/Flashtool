@@ -253,4 +253,9 @@ public class DeviceEntry {
     		ProcessBuilderWrapper command = new ProcessBuilderWrapper(new String[] {OS.getAdbPath(),"reboot"},false);
     	}
     }
+    
+    public String getSerial() {
+    	return AdbUtility.getDevices().nextElement();
+    }
+
 }

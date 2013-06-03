@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 import org.adb.AdbUtility;
 import org.eclipse.swt.widgets.Dialog;
@@ -37,6 +39,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.logger.MyLogger;
 
 public class TABackupSelector extends Dialog {
 
@@ -136,22 +139,30 @@ public class TABackupSelector extends Dialog {
 	          return ((String)element);
 	        }
 		});
-		Vector<String> folders = new Vector();
-		String serial = AdbUtility.getDevices().nextElement();
-		File srcdir = new File(OS.getWorkDir()+File.separator+"custom"+File.separator+serial+File.separator+"rawta");
+		Vector<String> tabackups = new Vector();
+		String serial = Devices.getCurrent().getSerial();
+		String folder = OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"rawta";
+		File srcdir = new File(folder);
 		File[] chld = srcdir.listFiles();
 		for(int i = 0; i < chld.length; i++) {
-			if (chld[i].isDirectory()) {
-				TextFile t = new TextFile(chld[i].getAbsolutePath()+File.separator+"ident","ISO-8859-1");
-				String ident = "";
+			if (chld[i].getName().endsWith(".fta")) {
 				try {
-					ident = t.getLines().iterator().next();
-				} catch (Exception e) {}
-				folders.add(chld[i].getName()+" : "+ident);
+					JarFile jf = new JarFile(chld[i]);
+					Attributes attr = jf.getManifest().getMainAttributes();
+					if (attr.getValue("serial").equals(Devices.getCurrent().getSerial())) {
+						tabackups.add(attr.getValue("timestamp")+ " : " + attr.getValue("build"));
+					}
+					else {
+						MyLogger.getLogger().info("File skipped : "+chld[i].getName()+". Not for your device");
+					}
+					jf.close();
+				} catch (Exception e) {
+					MyLogger.getLogger().error("This file : " + chld[i].getName()+" is corrupted");
+				}
 				
 			}
 		}
-		listTAViewer.setInput(folders);
+		listTAViewer.setInput(tabackups);
 
 	}
 }

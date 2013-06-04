@@ -40,13 +40,14 @@
 	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.linux"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/bin2elf"/>
 	    <delete file="../Deploy/FlashTool/x10flasher_lib/bin2sin"/>
-		<delete dir="../Deploy/FlashTool/x10flasher_lib/linux"/>
 		<delete file="../Deploy/FlashTool/x10flasher_lib/adb.mac"/>
         <delete file="../Deploy/FlashTool/x10flasher_lib/fastboot.mac"/>
 	    <delete file="../Deploy/FlashTool/x10flasher_lib/unyaffs.mac"/>
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtlin"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtwin"/>
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 		<delete dir="../Deploy/FlashTool/x10flasher_lib/mac"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/linux"/>
         <delete file="../Deploy/FlashTool/config.properties"/>
 	</target>
 
@@ -68,6 +69,11 @@
     	<copy todir="../Deploy/FlashTool/x10flasher_lib">
     		<fileset dir="./win32"/>
     	</copy>
+    	<copy todir="../Deploy/FlashTool/x10flasher_lib">
+    		<fileset dir="./libs"/>
+    	</copy>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtlin"/>
+		<delete dir="../Deploy/FlashTool/x10flasher_lib/swtmac"/>
 	</target>
 
 	<target name="dosetup">

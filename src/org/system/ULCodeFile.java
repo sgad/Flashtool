@@ -8,7 +8,7 @@ public class ULCodeFile extends TextFile {
 
 
 	public ULCodeFile(String serial) {
-		super(OS.getWorkDir()+File.separator+"custom"+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");
+		super(OS.getWorkDir()+File.separator+"custom"+File.separator+"mydevices"+File.separator+serial+File.separator+"ulcode.txt", "ISO-8859-1");
 	}
 
 	public String getULCode() {

@@ -18,7 +18,7 @@ import org.system.Devices;
 import org.system.OS;
 import org.system.PropertiesFile;
 
-public class X10Apps {
+public class DeviceApps {
 
 	private static String fsep = OS.getFileSeparator();
 	private PropertiesFile deviceList=new PropertiesFile("","."+fsep+"custom"+fsep+"clean"+fsep+Devices.getCurrent().getId()+fsep+Devices.getCurrent().getId()+"list.properties");
@@ -33,7 +33,7 @@ public class X10Apps {
 	// Copies src file to dst file.
 	// If the dst file does not exist, it is created
 	private void copyToAppsSaved(File src) throws IOException {
-		File dst = new File("./custom/apps_saved/"+Devices.getCurrent().getId()+fsep+src.getName());
+		File dst = new File("./custom/apps_saved/"+Devices.getCurrent().getId()+fsep+Devices.getCurrent().getBuildId()+fsep+src.getName());
 		if (!dst.exists()) {
 		    InputStream in = new FileInputStream(src);
 		    OutputStream out = new FileOutputStream(dst);
@@ -98,7 +98,7 @@ public class X10Apps {
 		return currentProfile;
 	}
 	
-	public X10Apps() {
+	public DeviceApps() {
 		try {
 			currentList = AdbUtility.listSysApps();
 			Iterator ic = currentList.iterator();

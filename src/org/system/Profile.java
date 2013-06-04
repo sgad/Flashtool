@@ -1,5 +1,7 @@
 package org.system;
 
+import gui.tools.DeviceApps;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,11 +11,10 @@ import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import gui.tools.X10Apps;
 
 public class Profile {
 	
-	public static void save(X10Apps apps) {
+	public static void save(DeviceApps apps) {
 		try {
 			File ftp = new File("./custom/clean/"+Devices.getCurrent().getId()+File.separator+apps.getCurrentProfile()+".ftp");
 			byte buffer[] = new byte[10240];
@@ -51,7 +52,7 @@ public class Profile {
 	        	if (apps.customList().containsKey(key)) {
 	        		jarAdd = new JarEntry(key);
 	        		out.putNextEntry(jarAdd);
-	    	        in = new FileInputStream(new File("./custom/apps_saved/"+Devices.getCurrent().getId()+File.separator+key));
+	    	        in = new FileInputStream(new File("./custom/apps_saved/"+Devices.getCurrent().getId()+File.separator+Devices.getCurrent().getBuildId()+File.separator+key));
 	    	        while (true) {
 	    	          int nRead = in.read(buffer, 0, buffer.length);
 	    	          if (nRead <= 0)

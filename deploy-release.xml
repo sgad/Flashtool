@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="all" name="Deploy Flashtool">
 	
-	<property name="version" value="0.9.10.1"/>
-	<property name="progtime" value="2013-03-26 22:30:00"/>
+	<property name="version" value="0.9.11.0"/>
+	<property name="progtime" value="2013-06-04 22:50:00"/>
 	
 	<target name="all" depends="core release,devices"/>
 
@@ -54,8 +54,6 @@
             <fileset dir="./firmwares"
                 excludes="**/.svn"/>
         </copy>
-		<copy file="./src/org/adb/config/X10list.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
-    	<copy file="./src/org/adb/config/X10customlist.properties" todir="../Deploy/FlashTool/custom/clean/X10"/>
 	    <copy todir="../Deploy/FlashTool/custom/root">
 	       <fileset dir="./romupdates" excludes="**/.svn"/>
 	    </copy>

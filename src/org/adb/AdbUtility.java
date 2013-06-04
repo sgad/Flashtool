@@ -466,4 +466,57 @@ public class AdbUtility  {
 		catch (Exception e) {}
 		return v.elements();
 	}
+	
+	public static long rawBackup(String source, String destination) {
+		String md5source = getMD5(source);
+		String result="";
+		long transferred=0L;
+		try {
+			result = AdbUtility.run("su -c 'dd if="+source+" of="+destination+" && sync && sync && sync && sync'");
+		}
+		catch (Exception e) {
+		}
+		if (!result.contains("bytes transferred")) return 0L;
+		Scanner sc = new Scanner(result);
+		while(sc.hasNextLine()) {
+			String line = sc.nextLine();
+			if (line.contains("bytes")) {
+				transferred = Long.parseLong(line.split(" ")[0]);
+			}
+		}
+		String md5destination = getMD5(destination);
+		if (!md5source.equals(md5destination)) return 0L;
+		return transferred;
+	}
+	
+	public static long getSizeOf(String source) {
+		String result = "";
+		try {
+			result = AdbUtility.run("su -c 'busybox stat "+source+"'");
+		}
+		catch (Exception e) {
+			result = "";
+		}
+		if (!result.contains("Size")) return 0L;
+		Scanner sc = new Scanner(result);
+		while (sc.hasNextLine()) {
+			String line = sc.nextLine();
+			if (line.contains("Size")) {
+				return Long.parseLong(line.substring(line.indexOf("Size"),line.indexOf("Blocks")).replace("Size:", "").trim());
+			}
+		}
+		return 0L;
+	}
+	
+	public static String getMD5(String source) {
+		try {
+			String md5 = AdbUtility.run("su -c 'busybox md5sum "+source+"'").split(" ")[0].toUpperCase().trim();
+			if (md5==null) return "";
+			if (md5.length()!=32) md5="";
+			return md5;
+		}
+		catch (Exception e) {
+			return "";
+		}
+	}
 }

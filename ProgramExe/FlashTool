@@ -56,7 +56,7 @@ then
          ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
          ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
-         ISJAVA64=$(java -version 2>&1|grep 64-Bit|wc -l)
+         ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
 	 if test $ISJAVA6 -gt 0 -o $ISJAVA7 -gt 0
 	 then
          	if test $ISJAVA64 -gt 0

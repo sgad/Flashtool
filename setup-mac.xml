@@ -75,13 +75,21 @@
 
 	
 	<target name="dotar">
-		<exec executable="tar" dir="../Deploy">
-		    <arg value="cf"/>
-			<arg value="flashtool-${Internal-Version}-mac.tar"/>
-			<arg value="FlashTool"/>
-		</exec>
-		<exec executable="gzip" dir="../Deploy">
-			<arg value="flashtool-${Internal-Version}-mac.tar"/>
+		<delete dir="../Deploy/FlashTool.app"/>
+		<copy todir="../Deploy/FlashTool.app">
+            <fileset dir="./ProgramExe/FlashTool.app"
+                excludes="**/.svn"/>
+        </copy>
+		<move todir="../Deploy/FlashTool.app/Contents/MacOS" includeEmptyDirs="yes">
+		    <fileset dir="../Deploy/FlashTool">
+		        <include name="**/*" />
+		    </fileset>
+		</move>
+		<exec executable="hdiutil" dir="../Deploy">
+		    <arg value="create"/>
+			<arg value="flashtool-${Internal-Version}-mac.dmg"/>
+			<arg value="-srcFolder"/>
+			<arg value="./FlashTool.app"/>
 		</exec>
 	</target>
 	   

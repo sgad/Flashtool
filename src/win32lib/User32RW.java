@@ -53,7 +53,7 @@ public interface User32RW extends User32 {
 	boolean SetWindowPos(HWND hWnd, HWND hWndInsAfter, int x, int y, int cx,
 			int cy, short uFlags);
 
-	int DestroyWindow(HWND hwnd);
+	boolean DestroyWindow(HWND hwnd);
 
 	HWND SetClipboardViewer(HWND hWndNewViewer);
 
@@ -130,6 +130,6 @@ public interface User32RW extends User32 {
 
 	void PostMessage(HWND hWnd, int message, WPARAM wParam, LPARAM lParam);
 
-	int DefWindowProc(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
+	LRESULT DefWindowProc(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
 
 }

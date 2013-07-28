@@ -141,6 +141,11 @@ Section /o "Xperia Tablet Z drivers SGP311, SGP312, UsbD" SEC20
   File /r "Drivers\ADB\Xperia_Tablet_Z-drivers-SGP311_SGP312_UsbD\*"
 SectionEnd
 
+Section /o "Xperia Z Ultra drivers" SEC19
+  SetOutPath "$TEMP\Flashtool\ADB\Xperia_Z_Ultra_driver"
+  File /r "Drivers\ADB\Xperia_Z_Ultra_driver\*"
+SectionEnd
+
 Section /o "Xperia UL Drivers" SEC21
   SetOutPath "$TEMP\Flashtool\ADB\Xperia UL Drivers"
   File /r "Drivers\ADB\Xperia UL Drivers\*"
